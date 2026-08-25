@@ -41,7 +41,7 @@ enum class Entry(entry: String) {
 
     override fun toString(): String = serialized
 
-    fun toSubPreference(name: String): String = "${this}.$name"
+    fun toSubPreference(name: String?): String = "${this}.$name"
 
     companion object {
         @JvmStatic
