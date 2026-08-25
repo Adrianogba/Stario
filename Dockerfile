@@ -1,14 +1,14 @@
-FROM debian:bookworm-slim
+FROM eclipse-temurin:25-jdk
 WORKDIR /usr/local
 
 # Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     git \
-    openjdk-17-jdk \
     wget \
     unzip \
-    zip
+    zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup Android SDK environment variables
 ENV ANDROID_SDK_ROOT=/usr/local/android-sdk
@@ -16,7 +16,7 @@ ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/plat
 
 # Download command line tools
 RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
-    wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip && \
+    wget https://dl.google.com/android/repository/commandlinetools-linux-16111833_latest.zip -O cmdline-tools.zip && \
     unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools && \
     mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest && \
     rm cmdline-tools.zip
