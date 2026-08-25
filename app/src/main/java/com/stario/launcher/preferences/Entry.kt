@@ -15,11 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.preferences;
+package com.stario.launcher.preferences
 
-import androidx.annotation.NonNull;
-
-public enum Entry {
+enum class Entry(entry: String) {
     CATEGORY_APPLICATION_MAP("CATEGORY_APPLICATION_MAP"),
     GRID_TEMPLATE_MANAGER("GRID_TEMPLATE_MANAGER"),
     APPLICATION_LABELS("APPLICATION_LABELS"),
@@ -39,31 +37,24 @@ public enum Entry {
     ICONS("ICONS"),
     CLOCK("CLOCK");
 
-    private final String serialized;
+    private val serialized: String = "com.stario.$entry"
 
-    Entry(String serialized) {
-        this.serialized = "com.stario." + serialized;
-    }
+    override fun toString(): String = serialized
 
-    public static boolean isValid(String serialized) {
-        if (serialized != null && !serialized.isEmpty()) {
-            for (Entry entry : Entry.values()) {
-                if (serialized.startsWith(entry.serialized)) {
-                    return true;
+    fun toSubPreference(name: String): String = "${this}.$name"
+
+    companion object {
+        @JvmStatic
+        fun isValid(serialized: String?): Boolean {
+            if (!serialized.isNullOrEmpty()) {
+                for (entry in entries) {
+                    if (serialized.startsWith(entry.serialized)) {
+                        return true
+                    }
                 }
             }
+
+            return false
         }
-
-        return false;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return serialized;
-    }
-
-    public String toSubPreference(String name) {
-        return this + "." + name;
     }
 }
