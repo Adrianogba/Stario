@@ -26,8 +26,10 @@ class BackGestureEventBus private constructor() {
         listeners.add(listener)
     }
 
-    fun removeListener(listener: BackEventListener) {
-        listeners.remove(listener)
+    fun removeListener(listener: BackEventListener?) {
+        if (listener != null) {
+            listeners.remove(listener)
+        }
     }
 
     fun postEvent(event: BackEvent) {
