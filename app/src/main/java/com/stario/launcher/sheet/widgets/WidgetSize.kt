@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Răzvan Albu
+ * Copyright (C) 2025 Răzvan Albu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.activities.launcher.widgets.glance;
+package com.stario.launcher.sheet.widgets
 
-import android.view.View;
-import android.widget.LinearLayout;
-
-import com.stario.launcher.themes.ThemedActivity;
-
-public interface GlanceViewExtension extends GlanceExtension {
-
-    View inflate(ThemedActivity activity, LinearLayout container);
-
-    default View.OnClickListener getClickListener() {
-        return null;
-    }
+enum class WidgetSize(
+    @JvmField val width: Int,
+    @JvmField val height: Int
+) {
+    SMALL(1, 1),
+    MEDIUM(2, 1),
+    LARGE(2, 2),
+    XLARGE(2, 3)
 }

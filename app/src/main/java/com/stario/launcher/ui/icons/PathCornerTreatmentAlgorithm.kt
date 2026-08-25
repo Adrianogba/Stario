@@ -15,19 +15,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.sheet.widgets;
+package com.stario.launcher.ui.icons
 
-public enum WidgetSize {
-    SMALL(1, 1),
-    MEDIUM(2, 1),
-    LARGE(2, 2),
-    XLARGE(2, 3);
+enum class PathCornerTreatmentAlgorithm {
+    REGULAR,
+    SQUIRCLE;
 
-    public final int width;
-    public final int height;
+    companion object {
+        const val PATH_ALGORITHM_ENTRY: String = "com.stario.PATH_ALGORITHM"
 
-    WidgetSize(int width, int height) {
-        this.width = width;
-        this.height = height;
+        @JvmField
+        val DEFAULT_PATH_ALGORITHM_ENTRY: Int = REGULAR.ordinal
+
+        @JvmStatic
+        fun fromIdentifier(identifier: Int): PathCornerTreatmentAlgorithm {
+            return if (identifier == 1) SQUIRCLE else REGULAR
+        }
     }
 }

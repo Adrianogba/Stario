@@ -15,20 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.ui.recyclers.overscroll;
+package com.stario.launcher.utils.objects
 
-import android.graphics.Canvas;
+class ObjectDelegate<T>(
+    initial: T?,
+    private val action: ObjectDelegateAction<T>
+) {
+    constructor(action: ObjectDelegateAction<T>) : this(null, action)
 
-import androidx.annotation.NonNull;
+    var value: T? = initial
+        set(value) {
+            field = value
 
-public interface OverScroll {
-    boolean tryCaptureOverScroll(@NonNull OverScrollEffect<?> effect);
+            action.onSet(value)
+        }
 
-    void releaseOverScroll(@NonNull OverScrollEffect<?> effect);
-
-    void addOverScrollContract(@NonNull OverScrollContract contract);
-
-    interface OverScrollContract {
-        boolean prepare(Canvas canvas);
+    interface ObjectDelegateAction<T> {
+        fun onSet(value: T?)
     }
 }

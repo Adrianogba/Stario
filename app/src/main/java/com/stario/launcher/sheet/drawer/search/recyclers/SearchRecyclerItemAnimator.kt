@@ -15,28 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.sheet.drawer.search.recyclers;
+package com.stario.launcher.sheet.drawer.search.recyclers
 
-import com.stario.launcher.ui.recyclers.RecyclerItemAnimator;
-import com.stario.launcher.ui.utils.animation.Animation;
+import com.stario.launcher.ui.recyclers.RecyclerItemAnimator
+import com.stario.launcher.ui.utils.animation.Animation
 
-public class SearchRecyclerItemAnimator extends RecyclerItemAnimator {
-    public SearchRecyclerItemAnimator(Animation animation) {
-        super(RecyclerItemAnimator.DISAPPEARANCE | RecyclerItemAnimator.APPEARANCE, animation);
-    }
+class SearchRecyclerItemAnimator(animation: Animation) : RecyclerItemAnimator(
+    RecyclerItemAnimator.DISAPPEARANCE or RecyclerItemAnimator.APPEARANCE, animation
+) {
+    override fun getRemovedAlpha(): Float = 1f
 
-    @Override
-    public float getRemovedAlpha() {
-        return 1f;
-    }
+    override fun getRemovedScaleX(): Float = 1f
 
-    @Override
-    public float getRemovedScaleX() {
-        return 1f;
-    }
-
-    @Override
-    public float getRemovedScaleY() {
-        return 1f;
-    }
+    override fun getRemovedScaleY(): Float = 1f
 }

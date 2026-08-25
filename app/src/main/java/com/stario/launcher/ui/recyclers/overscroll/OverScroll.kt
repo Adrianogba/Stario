@@ -15,27 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.ui.utils.animation;
+package com.stario.launcher.ui.recyclers.overscroll
 
-import android.graphics.Path;
-import androidx.transition.PathMotion;
+import android.graphics.Canvas
 
-import androidx.annotation.NonNull;
+interface OverScroll {
+    fun tryCaptureOverScroll(effect: OverScrollEffect<*>): Boolean
 
-public final class SharedElementMotion extends PathMotion {
+    fun releaseOverScroll(effect: OverScrollEffect<*>)
 
-    @NonNull
-    @Override
-    public Path getPath(float startX, float startY, float endX, float endY) {
-        Path path = new Path();
-        path.moveTo(startX, startY);
+    fun addOverScrollContract(contract: OverScrollContract)
 
-        path.cubicTo(startX + endX * ((float) Math.random() * 0.5f),
-                startY + endY * ((float) Math.random() * 0.5f),
-                endX + startX * ((float) Math.random() * 0.5f),
-                endY + startY * ((float) Math.random() * 0.5f),
-                endX, endY);
-
-        return path;
+    interface OverScrollContract {
+        fun prepare(canvas: Canvas): Boolean
     }
 }

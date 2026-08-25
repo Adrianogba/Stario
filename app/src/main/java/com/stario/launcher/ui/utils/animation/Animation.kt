@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Răzvan Albu
+ * Copyright (C) 2025 Răzvan Albu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.ui.back;
+package com.stario.launcher.ui.utils.animation
 
-public class BackEvent {
-    public final BackEventType type;
-    public final float progress;
-    public final Class<?> origin;
-
-
-    public BackEvent(BackEventType type, float progress, Class<?> origin) {
-        this.type = type;
-        this.origin = origin;
-        this.progress = progress;
-    }
-
-    public BackEvent(BackEventType type, Class<?> origin) {
-        this(type, 0f, origin);
-    }
+enum class Animation(val duration: Int) {
+    NONE(0),
+    BRIEF(50),
+    SHORT(125),
+    MEDIUM(200),
+    LONG(350),
+    EXTENDED(575),
+    SUSTAINED(875)
 }
