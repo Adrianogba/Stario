@@ -17,20 +17,40 @@
 
 package com.stario.launcher.sheet.briefing.rss
 
+import android.util.Log
 import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.RssParserBuilder
 import com.prof18.rssparser.model.RssChannel
+import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import java.util.concurrent.CompletableFuture
 
-class RSSHelperKt {
-    companion object {
-        @JvmStatic
-        @OptIn(DelicateCoroutinesApi::class)
-        fun parseFeed(parser: RssParser, url: String): CompletableFuture<RssChannel> =
-            GlobalScope.future {
-                parser.getRssChannel(url)
-            }
+object RSSHelper {
+    private const val TAG = "RSSHelper"
+
+    private var reader: RssParser? = null
+
+    private fun reader(): RssParser =
+        reader ?: RssParserBuilder().build().also { reader = it }
+
+    @JvmStatic
+    @OptIn(DelicateCoroutinesApi::class)
+    fun futureParse(url: String): CompletableFuture<RssChannel> {
+        val parser = reader()
+
+        return GlobalScope.future { parser.getRssChannel(url) }
+    }
+
+    @JvmStatic
+    fun parse(url: String): List<RssItem>? {
+        try {
+            return futureParse(url).get().items
+        } catch (exception: Exception) {
+            Log.e(TAG, "parse: ", exception)
+        }
+
+        return null
     }
 }
