@@ -15,8 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.sheet.drawer;
+package com.stario.launcher.sheet.drawer.search
 
-public interface ScrollToTop {
-    void scrollToTop();
+interface Searchable {
+    fun update(query: String?)
+
+    fun submit(): Boolean
 }

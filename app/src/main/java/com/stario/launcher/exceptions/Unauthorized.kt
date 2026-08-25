@@ -15,11 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.exceptions;
+package com.stario.launcher.exceptions
 
-public class NoExistingInstanceException extends RuntimeException {
-    public NoExistingInstanceException(Class<?> classAttribute) {
-        super("No existing instance of type " + classAttribute.getName() +
-                ". Did you forget to instantiate?");
-    }
-}
+class Unauthorized : Exception("You are not authorized to access this resource.")

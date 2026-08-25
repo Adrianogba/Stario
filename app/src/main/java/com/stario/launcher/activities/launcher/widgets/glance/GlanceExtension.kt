@@ -15,14 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.apps.interfaces;
+package com.stario.launcher.activities.launcher.widgets.glance
 
-import android.os.UserHandle;
-
-public interface LauncherProfileListener {
-    default void onInserted(UserHandle handle) {
-    }
-
-    default void onRemoved(UserHandle handle) {
-    }
+interface GlanceExtension {
+    fun update()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Răzvan Albu
+ * Copyright (C) 2025 Răzvan Albu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.activities.launcher.widgets.glance;
+package com.stario.launcher.sheet.drawer
 
-public interface GlanceExtension {
-    void update();
+interface ScrollToTop {
+    fun scrollToTop()
 }

@@ -15,13 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.sheet.drawer.search;
+package com.stario.launcher.sheet.drawer.search
 
-import com.stario.launcher.sheet.drawer.DrawerPage;
-import com.stario.launcher.ui.Measurements;
+import com.stario.launcher.sheet.drawer.DrawerPage
+import com.stario.launcher.ui.Measurements
+import kotlin.math.min
 
-public abstract class ListDrawerPage extends DrawerPage {
-    protected int getColumnCount(int width) {
-        return Math.min(6, width / Measurements.dpToPx(90));
+abstract class ListDrawerPage : DrawerPage() {
+    protected fun getColumnCount(width: Int): Int {
+        return min(6, width / Measurements.dpToPx(90f))
     }
 }

@@ -15,12 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.sheet.drawer.search.recyclers;
+package com.stario.launcher.ui.back
 
-import android.view.View;
-
-public interface OnVisibilityChangeListener {
-    void onPreChange(View view, int visibility);
-
-    void onChange(View view, int visibility);
+enum class BackEventType {
+    BACK_PROGRESS,
+    BACK_COMPLETED,
+    BACK_CANCELLED
 }

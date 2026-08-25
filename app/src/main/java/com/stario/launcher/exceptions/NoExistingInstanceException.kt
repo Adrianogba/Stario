@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Răzvan Albu
+ * Copyright (C) 2025 Răzvan Albu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.ui.back;
+package com.stario.launcher.exceptions
 
-public enum BackEventType {
-    BACK_PROGRESS,
-    BACK_COMPLETED,
-    BACK_CANCELLED
-}
+class NoExistingInstanceException(classAttribute: Class<*>) : RuntimeException(
+    "No existing instance of type " + classAttribute.name +
+            ". Did you forget to instantiate?"
+)

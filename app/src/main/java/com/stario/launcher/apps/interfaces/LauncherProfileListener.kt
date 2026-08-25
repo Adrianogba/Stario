@@ -15,10 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.exceptions;
+package com.stario.launcher.apps.interfaces
 
-public class Unauthorized extends Exception {
-    public Unauthorized() {
-        super("You are not authorized to access this resource.");
+import android.os.UserHandle
+
+interface LauncherProfileListener {
+    fun onInserted(handle: UserHandle?) {
+    }
+
+    fun onRemoved(handle: UserHandle?) {
     }
 }

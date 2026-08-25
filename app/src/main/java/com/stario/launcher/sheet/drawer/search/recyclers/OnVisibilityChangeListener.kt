@@ -15,10 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.sheet.drawer.search;
+package com.stario.launcher.sheet.drawer.search.recyclers
 
-public interface Searchable {
-    void update(String query);
+import android.view.View
 
-    boolean submit();
+interface OnVisibilityChangeListener {
+    fun onPreChange(view: View?, visibility: Int)
+
+    fun onChange(view: View?, visibility: Int)
 }

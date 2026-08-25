@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.stario.launcher.ui.recyclers.async;
+package com.stario.launcher.ui.recyclers.async
 
-public enum InflationType {
+enum class InflationType {
     ASYNC,
     SYNCED
 }
