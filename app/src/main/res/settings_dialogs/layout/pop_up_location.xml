@@ -42,7 +42,7 @@
             android:drawablePadding="10dp"
             android:fontFamily="@font/dm_sans_regular"
             android:gravity="start|center_vertical"
-            android:hint="@string/weather_location"
+            android:hint="@string/location_search_hint"
             android:imeOptions="actionDone"
             android:lines="1"
             android:maxLines="1"

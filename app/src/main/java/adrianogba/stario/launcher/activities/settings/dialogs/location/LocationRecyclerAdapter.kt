@@ -42,7 +42,6 @@ import adrianogba.stario.launcher.preferences.Entry
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.utils.UiUtils
 import adrianogba.stario.launcher.utils.Utils
-import java.util.Locale
 
 class LocationRecyclerAdapter(
     private val activity: ThemedActivity,
@@ -59,61 +58,10 @@ class LocationRecyclerAdapter(
 
     private var query: String? = null
 
-    private fun loadDefaultAddresses(): ArrayList<Address> {
-        val list = ArrayList<Address>()
-
-        val lindholmen = Address(Locale.ENGLISH)
-        lindholmen.setAddressLine(0, "Lindholmen, Gothenburg, Sweden")
-        lindholmen.featureName = "Lindholmen"
-        lindholmen.adminArea = "Västra Götaland County"
-        lindholmen.locality = "Gothenburg"
-        lindholmen.countryCode = "SE"
-        lindholmen.countryName = "Sweden"
-        lindholmen.latitude = 57.7077599
-        lindholmen.longitude = 11.9382865
-
-        list.add(lindholmen)
-
-        val boulderCity = Address(Locale.ENGLISH)
-        boulderCity.setAddressLine(0, "Boulder City, NV, USA")
-        boulderCity.featureName = "Boulder City"
-        boulderCity.adminArea = "Nevada"
-        boulderCity.subAdminArea = "Clark County"
-        boulderCity.locality = "Boulder City"
-        boulderCity.countryCode = "US"
-        boulderCity.countryName = "United States"
-        boulderCity.latitude = 35.9782216
-        boulderCity.longitude = -114.8345117
-
-        list.add(boulderCity)
-
-        val storo = Address(Locale.ENGLISH)
-        storo.setAddressLine(0, "Storo, Oslo, Norway")
-        storo.featureName = "Storo"
-        storo.adminArea = "Oslo"
-        storo.locality = "Oslo"
-        storo.countryCode = "NO"
-        storo.countryName = "Norway"
-        storo.latitude = 59.946576199999996
-        storo.longitude = 10.779069800000002
-
-        list.add(storo)
-
-        val sibiu = Address(Locale.ENGLISH)
-        sibiu.setAddressLine(0, "Sibiu, Romania")
-        sibiu.featureName = "Sibiu"
-        sibiu.adminArea = "Sibiu"
-        sibiu.subAdminArea = "Sibiu"
-        sibiu.locality = "Sibiu"
-        sibiu.countryCode = "Ro"
-        sibiu.countryName = "Romania"
-        sibiu.latitude = 45.803478899999995
-        sibiu.longitude = 24.1449997
-
-        list.add(sibiu)
-
-        return list
-    }
+    // Deliberately empty. This used to seed four cities the original author
+    // picked, which read like stray data rather than suggestions. With none,
+    // the list shows just the exact and approximate options until you type.
+    private fun loadDefaultAddresses(): ArrayList<Address> = ArrayList()
 
     @SuppressLint("NotifyDataSetChanged")
     fun update(query: String?) {

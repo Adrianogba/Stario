@@ -479,9 +479,8 @@ public class Settings extends ThemedActivity {
             }
         });
 
-        setupUrlButton(R.id.github, "https://github.com/albu-razvan/Stario");
-        setupUrlButton(R.id.website, "https://www.razvanalbu.com");
-        setupUrlButton(R.id.discord, "https://discord.gg/WuVapMt9gY");
+        setupUrlButton(R.id.github, "https://github.com/Adrianogba/Stario");
+        setupUrlButton(R.id.website, "https://adrianogba.github.io");
     }
 
     // Helpers

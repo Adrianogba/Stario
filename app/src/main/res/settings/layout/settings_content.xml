@@ -654,15 +654,6 @@
                         android:src="@drawable/ic_github"
                         app:carbon_cornerRadius="15dp" />
 
-                    <carbon.widget.ImageView
-                        android:id="@+id/discord"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="6dp"
-                        android:background="?attr/colorSurfaceContainer"
-                        android:padding="11dp"
-                        android:src="@drawable/ic_discord"
-                        app:carbon_cornerRadius="15dp" />
 
                 </LinearLayout>
 
