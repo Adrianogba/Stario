@@ -17,7 +17,7 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 ### In progress
 
-- **Java to Kotlin.** 147 of 206 files. The sheet gesture core, Measurements, UiUtils,
+- **Java to Kotlin.** 150 of 206 files. The sheet gesture core, Measurements, UiUtils,
   ActionDialog and ThemedActivity are all across now. Going leaf-first so the
   build stays green: every batch compiles and gets installed on an emulator before the next
   one starts.
