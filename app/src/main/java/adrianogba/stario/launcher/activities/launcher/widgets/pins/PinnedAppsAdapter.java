@@ -40,7 +40,7 @@ import adrianogba.stario.launcher.ui.utils.UiUtils;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-class PinnedAppsAdapter extends RecyclerApplicationAdapter {
+public class PinnedAppsAdapter extends RecyclerApplicationAdapter {
     private static final int GROUP_VIEW_TYPE = 2;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener;
