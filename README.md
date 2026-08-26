@@ -30,13 +30,18 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 ### In progress
 
-- **Java to Kotlin.** 109 of 206 files, roughly 7.6k of 41k lines. Going leaf-first so the
+- **Java to Kotlin.** 114 of 206 files, roughly 8.2k of 41k lines. Going leaf-first so the
   build stays green: every batch compiles and gets installed on an emulator before the next
   one starts.
 - `LauncherApplication`, `ProfileApplicationManager`, `CategoryManager` and `Category` are
   left for last and want converting as one group. They share package-private mutable state,
   and `LauncherApplication.FALLBACK_APP` is a null typed as non-null that around twenty call
   sites compare against instead of null-checking.
+- `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all while
+  carbon is still here. They extend `carbon.widget.ConstraintLayout`, which exposes two
+  declarations with the same JVM signature for `getElevation()`, and Kotlin refuses to
+  subclass that. It fails the compile and is not suppressible. Only these two files are
+  affected: holding a carbon type in a Kotlin class is fine, inheriting from one is not.
 
 ### Next
 
@@ -55,7 +60,7 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 | Library | Why |
 | --- | --- |
-| `tk.zielony:carbon:0.17.0` | Used in 39 files and has had no release since. The single biggest risk to future Android compatibility here, and the hardest to pull out |
+| `tk.zielony:carbon:0.17.0` | Used in 39 files and has had no release since. The single biggest risk to future Android compatibility here, and the hardest to pull out. Also now a hard blocker: no Kotlin class can extend a carbon widget |
 | `androidx.localbroadcastmanager` | Deprecated. 11 files use it. A flow or a plain observer would do |
 | `com.ogaclejapan.smarttablayout:2.0.0` | From 2016, 2 usages, replaceable with a TabLayout |
 | `jp.wasabeef:glide-transformations` | Last released 2020 |
