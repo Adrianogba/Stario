@@ -3,14 +3,14 @@
 <img src="docs/representative.png" alt="Stario representative">
 
 My fork of [Stario](https://github.com/albu-razvan/Stario), Răzvan Albu's minimalist Android
-launcher. He archived the project in 2026, so I picked it up to keep running it on my own phone.
+launcher. He archived the project in 2026, so I picked it up and kept it going.
 
 > [!NOTE]
-> I build this for myself and don't publish it anywhere.
+> I mainly work on this for my own use, but anyone who wants it is welcome to it.
 >
 > Part of why the original was archived is that Play Store rules and OEM restrictions make an
-> independent launcher hard to keep alive. None of that applies to something I sideload onto my
-> own device, so this fork is free to use APIs a published launcher would have to avoid.
+> independent launcher hard to keep alive. This fork is not bound by those rules, so it is free
+> to use APIs a published launcher would have to avoid.
 >
 > Original work Copyright (C) 2025 Răzvan Albu, GPL-3.0. This fork stays GPL-3.0 and keeps the
 > upstream copyright notices intact.
@@ -83,8 +83,8 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 ### Feature ideas
 
-Nothing here is committed to. This fork is sideloaded and never published, so the Play Store
-rules that shaped the original do not apply.
+Nothing here is committed to. This fork is not published through the Play Store, so the rules
+that shaped the original do not apply.
 
 - **Usage based sorting.** `UsageStatsManager` is not used anywhere yet. Most-used apps in the
   drawer is probably the biggest single quality of life win available
@@ -140,7 +140,7 @@ Stario Launcher. This version offers significant improvements in both performanc
 
 ## Availability
 
-There are no builds to download. Build it yourself with the steps below.
+There are no prebuilt releases yet. Build it yourself with the steps below.
 
 The original project's releases are still up at
 [albu-razvan/Stario](https://github.com/albu-razvan/Stario/releases/latest).
