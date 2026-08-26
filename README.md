@@ -38,15 +38,18 @@ before trusting them.
 
 ### Doing
 
-- **Java to Kotlin.** 152 of 204 files. The whole app model is across now:
-  `LauncherApplication`, `Category`, `CategoryMappings`, `CategoryManager`,
-  `ProfileManager`, `ProfileApplicationManager` and `IconPackManager`. So are
-  the sheet gesture core, `Measurements`, `UiUtils`, `ActionDialog` and
-  `ThemedActivity`. Going leaf-first so the build stays green: every batch
-  compiles, and anything central gets installed on an emulator before the next
-  batch starts.
-- Dead SDK checks come out as each file is converted, rather than in one sweep
-  across a half-migrated tree.
+- **Java to Kotlin.** 162 of 204 files. Across: the whole app model
+  (`LauncherApplication`, `Category`, `CategoryMappings`, `CategoryManager`,
+  `ProfileManager`, `ProfileApplicationManager`, `IconPackManager`), the
+  recycler stack (`AsyncRecyclerAdapter`, `RecyclerApplicationAdapter`,
+  `FolderListAdapter`, `RecyclerItemAnimator`, `OverScrollRecyclerView`), the
+  keyboard animation classes, the sheet gesture core, `Measurements`,
+  `UiUtils`, `ActionDialog` and `ThemedActivity`. Going leaf-first so the build
+  stays green: every batch compiles, and anything central gets installed on an
+  emulator before the next batch starts.
+- Dead SDK checks are out of every Kotlin file. minSdk 33 makes each check for
+  R, S and TIRAMISU always true. The Java files keep theirs until they are
+  converted, so each one stays a single reviewable diff.
 - What is left is the view layer and the sheets: `DynamicGridLayout` at 1412
   lines is the biggest single file in the project, then `Media`, `Weather`,
   `SheetsFocusController` and `StylizedClockView`.
