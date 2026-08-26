@@ -104,6 +104,66 @@ So the plan, if this gets picked up:
 Also worth saying plainly: 176 of the 314 XML files are drawables and 29 are values.
 Compose does not replace those. The XML count is not as damning as it looks.
 
+### Simplification opportunities
+
+Measured, not guessed. Line counts and diff counts below come from the tree
+and from the lint and dependency-analysis reports, so re-check them before
+acting.
+
+One thing that is already clean: `./gradlew projectHealth` reports no unused
+and no misused dependencies, and no duplicate classes on the classpath. The
+dependency list is honest.
+
+**The four sheet dialogs are the same file four times.** `TopSheetDialog`,
+`BottomSheetDialog`, `LeftSheetDialog` and `RightSheetDialog` are 44 lines
+each, 176 in total. Neutralise the direction words and only 4 lines differ
+between any two. They vary by a layout id, a view id and a `SheetType`. One
+class taking those three values, plus the existing `SheetDialogFactory`,
+would replace all four and drop roughly 125 lines with no behaviour change.
+This is the easiest real win in the project.
+
+**The four sheet behaviors are nearly the same twice.** 1,393 lines across
+`TopSheetBehavior`, `BottomSheetBehavior`, `LeftSheetBehavior` and
+`RightSheetBehavior`. Same-axis pairs are close: neutralising direction words
+leaves 74 differing lines between top and bottom, and 53 between left and
+right. Across axes they genuinely diverge, 184 lines between top and left.
+So the realistic shape is two axis classes with a sign parameter rather than
+one class for all four. Worth maybe 400 lines, but this is the drag and
+gesture core and there are no tests, so it should come last and be done with
+the emulator in hand.
+
+**Three home screen widgets share one shape.** `ClockWidget`, `SearchWidget`
+and `PinnedCategory` total 382 lines and each does the same five things:
+build a `DraggableGridItem`, set an `ItemLayoutData`, register a preference
+listener, flip visibility in `updateContainerState`, unregister in `detach`.
+Only the layout, the tag and the span constraints differ. A small base class
+holding the attach and detach lifecycle would remove around 120 lines and,
+more usefully, means a fourth home screen widget is a short subclass.
+
+**Two classes are both called `IconsRecyclerAdapter`**, one in `apps/popup`
+and one in `activities/settings/dialogs/icons`, 177 lines together. They do
+different jobs, one lists icons within a pack and the other lists packs, so
+this is a naming problem rather than duplication. Renaming them to say what
+they list would stop the import list being a coin flip.
+
+**41 unused resources.** Lint lists them by name. Mostly `Theme_*_Opaque`
+styles and stray drawables. Straight deletions.
+
+**Three obsolete resource folders.** A `-v29` drawable folder and two `-v26`
+mipmap folders, all redundant now that `minSdk` is 29. Merge them into their
+parent folders.
+
+**40 places where an androidx KTX extension would be shorter**, mostly
+`edit().apply()` in place of `edit { }`. Upstream deliberately avoided the
+KTX artifacts, which is why the old build file carried
+`noinspection KtxExtensionAvailable` comments. Adopting them means adding
+`core-ktx` and friends, so it is a trade: fewer lines against more
+dependencies. Reasonable either way, but decide it once rather than per file.
+
+**The adaptive launcher icon has no monochrome layer.** Not a simplification,
+but it is one XML attribute and the app already supports themed icons, so it
+is odd that its own icon does not.
+
 ### Feature ideas
 
 Nothing here is committed to. This fork is not published through the Play Store, so the rules

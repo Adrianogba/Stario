@@ -1,7 +1,7 @@
 [versions]
 agp = "9.3.2"
 kotlin = "2.4.10"
-dependencyAnalysis = "3.18.0"
+dependencyAnalysis = "3.19.1"
 refine = "4.4.0"
 
 activity = "1.13.0"
@@ -21,7 +21,7 @@ lifecycle = "2.11.0"
 localbroadcastmanager = "1.1.0"
 palette = "1.0.0"
 recyclerview = "1.4.0"
-swiperefreshlayout = "1.1.0"
+swiperefreshlayout = "1.2.0"
 transition = "1.7.0"
 viewpager = "1.1.0"
 
