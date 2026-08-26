@@ -48,7 +48,7 @@ open class CenterTabLayout : SmartTabLayout {
     }
 
     private fun setup(context: Context) {
-        inflater = UiUtils.unwrapContext(context).layoutInflater
+        inflater = UiUtils.unwrapContext(context)!!.layoutInflater
 
         setCustomTabView { viewGroup, position, adapter ->
             val text = adapter.getPageTitle(position)
