@@ -111,7 +111,7 @@ class AutoGridLayoutManager(
             clearHorizontalMargins(recycler)
         } else {
             val rawCount = if (adapter is AsyncRecyclerAdapter<*>) {
-                adapter.totalItemCount
+                adapter.getTotalItemCount()
             } else {
                 adapter.itemCount
             }

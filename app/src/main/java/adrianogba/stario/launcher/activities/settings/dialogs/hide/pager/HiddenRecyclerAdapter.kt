@@ -18,7 +18,6 @@
 
 package adrianogba.stario.launcher.activities.settings.dialogs.hide.pager
 
-import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import adrianogba.stario.launcher.R
@@ -27,7 +26,6 @@ import adrianogba.stario.launcher.apps.ProfileApplicationManager
 import adrianogba.stario.launcher.apps.interfaces.LauncherApplicationListener
 import adrianogba.stario.launcher.sheet.drawer.RecyclerApplicationAdapter
 import adrianogba.stario.launcher.themes.ThemedActivity
-import adrianogba.stario.launcher.ui.icons.AdaptiveIconView
 import adrianogba.stario.launcher.ui.recyclers.async.InflationType
 import java.util.function.Supplier
 
@@ -65,15 +63,8 @@ class HiddenRecyclerAdapter(
     }
 
     inner class HiddenViewHolder : ApplicationViewHolder() {
-        var icon: AdaptiveIconView? = null
-            private set
-
-        @SuppressLint("ClickableViewAccessibility")
-        override fun onInflated() {
-            super.onInflated()
-
-            icon = itemView.findViewById(R.id.icon)
-        }
+        // The icon field it used to keep is the one ApplicationViewHolder now
+        // exposes, found from the same id in the same super call.
 
         override fun getOnClickListener(): View.OnClickListener = View.OnClickListener {
             val index = bindingAdapterPosition
@@ -101,10 +92,12 @@ class HiddenRecyclerAdapter(
         val hidden = !applicationManager!!.isVisibleToUser(getApplication(index))
         val hiddenViewHolder = viewHolder as HiddenViewHolder
 
-        hiddenViewHolder.icon!!.alpha = if (hidden) HIDDEN_ALPHA else 1f
-        hiddenViewHolder.icon!!.scaleX = if (hidden) HIDDEN_SCALE else 1f
-        hiddenViewHolder.icon!!.scaleY = if (hidden) HIDDEN_SCALE else 1f
-        hiddenViewHolder.icon!!.setGrayscale(hidden)
+        val icon = hiddenViewHolder.icon!!
+
+        icon.alpha = if (hidden) HIDDEN_ALPHA else 1f
+        icon.scaleX = if (hidden) HIDDEN_SCALE else 1f
+        icon.scaleY = if (hidden) HIDDEN_SCALE else 1f
+        icon.setGrayscale(hidden)
     }
 
     override fun getHolderSupplier(viewType: Int): Supplier<ApplicationViewHolder> =
