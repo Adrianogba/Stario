@@ -1,21 +1,13 @@
-buildscript {
-    ext.kotlin_version = '2.4.10'
-
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:9.3.2'
-        // AGP 9 brings its own Kotlin plugin. This line only bumps KGP past
-        // the version AGP ships with. Don't apply kotlin.android on top.
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 plugins {
-    id 'com.autonomousapps.dependency-analysis' version '3.18.0'
+    alias libs.plugins.android.application apply false
+    alias libs.plugins.android.library apply false
+    // AGP 9 brings its own Kotlin plugin. Declaring KGP here without applying
+    // it only bumps the version past the one AGP ships with. Do not apply
+    // kotlin.android on top of it.
+    alias libs.plugins.kotlin.android apply false
+    alias libs.plugins.compose.compiler apply false
+    alias libs.plugins.refine apply false
+    alias libs.plugins.dependency.analysis
 }
 
 allprojects {

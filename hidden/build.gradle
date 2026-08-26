@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.library'
-    id 'com.autonomousapps.dependency-analysis'
+    alias libs.plugins.android.library
+    alias libs.plugins.dependency.analysis
 }
 
 android {
@@ -19,6 +19,6 @@ android {
 }
 
 dependencies {
-    compileOnly 'dev.rikka.tools.refine:annotation:4.4.0'
-    annotationProcessor 'dev.rikka.tools.refine:annotation-processor:4.4.0'
+    compileOnly libs.refine.annotation
+    annotationProcessor libs.refine.annotation.processor
 }

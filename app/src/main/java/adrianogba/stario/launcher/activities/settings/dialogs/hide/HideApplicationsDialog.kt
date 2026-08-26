@@ -42,6 +42,10 @@ class HideApplicationsDialog : DialogFragment() {
     private var hideListener: OnHideListener? = null
     private var themedActivity: ThemedActivity? = null
 
+    // Lint reads the throw as a path that skips the super call and reports
+    // MissingSuperCall. The super call is right there on the only path that
+    // continues. The Java original had the same shape and was not flagged.
+    @SuppressLint("MissingSuperCall")
     override fun onAttach(context: Context) {
         if (context !is ThemedActivity) {
             throw RuntimeException("Parent activity is not of type ThemedActivity.")
