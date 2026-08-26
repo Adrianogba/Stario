@@ -63,7 +63,7 @@ class HideApplicationsPage : Fragment {
             recycler.paddingRight, Measurements.dpToPx(40f) + Measurements.spToPx(60f)
         )
 
-        val manager = AutoGridLayoutManager(activity, 1)
+        val manager = AutoGridLayoutManager(requireActivity(), 1)
         LayoutSizeObserver.attach(root, LayoutSizeObserver.WIDTH,
             object : LayoutSizeObserver.OnChange {
                 override fun onChange(view: View, watchFlags: Int, rect: Rect) {
