@@ -5,3 +5,4 @@ build/
 keystore/
 TODO.md
 local.properties
+.claude/
