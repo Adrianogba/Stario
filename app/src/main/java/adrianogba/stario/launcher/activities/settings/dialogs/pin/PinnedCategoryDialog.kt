@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2025 Răzvan Albu
+ * Copyright (C) 2026 Adriano Pontes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
+
+package adrianogba.stario.launcher.activities.settings.dialogs.pin
+
+import android.annotation.SuppressLint
+import android.content.SharedPreferences
+import android.view.LayoutInflater
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.divider.MaterialDividerItemDecoration
+import com.google.android.material.materialswitch.MaterialSwitch
+import adrianogba.stario.launcher.R
+import adrianogba.stario.launcher.activities.launcher.widgets.pins.PinnedCategory
+import adrianogba.stario.launcher.themes.ThemedActivity
+import adrianogba.stario.launcher.ui.dialogs.ActionDialog
+import adrianogba.stario.launcher.ui.recyclers.DividerItemDecorator
+
+class PinnedCategoryDialog(
+    activity: ThemedActivity,
+    private val preferences: SharedPreferences,
+    private val checkedChangeListener: OnCheckedChangeListener?
+) : ActionDialog(activity) {
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun inflateContent(inflater: LayoutInflater): View {
+        val root = inflater.inflate(R.layout.pop_up_pinned_category, null)
+        val recycler = root.findViewById<RecyclerView>(R.id.recycler)
+
+        val materialSwitch = root.findViewById<MaterialSwitch>(R.id.pinned_category)
+        materialSwitch.isChecked =
+            preferences.getBoolean(PinnedCategory.PINNED_CATEGORY_VISIBLE, false)
+        materialSwitch.jumpDrawablesToCurrentState()
+
+        materialSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (checkedChangeListener != null) {
+                val override = checkedChangeListener.onChecked(isChecked)
+
+                if (override != isChecked) {
+                    materialSwitch.isChecked = override
+                }
+            }
+        }
+
+        root.setOnClickListener { materialSwitch.performClick() }
+
+        recycler.layoutManager = LinearLayoutManager(
+            activity, LinearLayoutManager.VERTICAL, false
+        )
+        recycler.addItemDecoration(
+            DividerItemDecorator(activity, MaterialDividerItemDecoration.VERTICAL)
+        )
+        recycler.adapter = PinnedCategoryRecyclerAdapter(activity) {
+            if (materialSwitch.isChecked) {
+                dismiss()
+            } else {
+                materialSwitch.isChecked = true
+            }
+        }
+
+        return root
+    }
+
+    override fun blurBehind(): Boolean = true
+
+    override fun getDesiredInitialState(): Int = BottomSheetBehavior.STATE_EXPANDED
+
+    fun interface OnCheckedChangeListener {
+
+        /**
+         * @return checked state override value
+         */
+        fun onChecked(isChecked: Boolean): Boolean
+    }
+}
