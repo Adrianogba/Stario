@@ -40,7 +40,7 @@ class IconsRecyclerAdapter(
 
     private val manager: IconPackManager = IconPackManager.from(activity)
 
-    private var icons: List<Pair<IconPackManager.IconPack, Pair<String, Drawable>>> =
+    private var icons: List<Pair<IconPackManager.IconPack?, Pair<String?, Drawable?>>> =
         ArrayList()
 
     init {

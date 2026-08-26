@@ -55,7 +55,7 @@ class IconsRecyclerAdapter(
             viewHolder.count.visibility = View.VISIBLE
             viewHolder.count.setText(R.string.calculating)
 
-            pack.componentCount.thenAccept { integer ->
+            pack.getComponentCount().thenAccept { integer ->
                 UiUtils.post {
                     viewHolder.count.text = String.format("%,d", integer) + " " +
                             activity.resources.getString(R.string.components)
