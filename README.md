@@ -14,9 +14,6 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 - Toolchain brought up to current: Gradle 9.7.1, AGP 9.3.2, Kotlin 2.4.10,
   compileSdk 37.1, targetSdk 37, Java 21, JDK 25 locally and in CI
-- Package renamed to `adrianogba.stario.launcher`
-- Dropped the store metadata, archived APK and community files this fork has no use for
-- Reviewed the [yutila-org fork](https://github.com/yutila-org/stario) for anything worth taking
 
 ### In progress
 
