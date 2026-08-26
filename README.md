@@ -228,12 +228,17 @@ second time:
 3. The same read, write and dismiss-diff in `ThemeDialog`, so flipping it
    recreates the activity the way a colour change already does.
 
-On presenting it as two switches, Material and Glass, where turning one on turns
-the other off: that is a single choice between two options, and two switches wired
-to contradict each other is the one control that consistently confuses people,
-because a switch reads as independent. A segmented control or a pair of chips,
-which is what the colour row below already uses, says the same thing without the
-trap. Same preference underneath either way, so this is only about the control.
+Present it as two option chips rather than two switches, and draw each chip in
+the style it selects: the Material one as a normal Material surface, the glass
+one as actual liquid glass. The control then shows you what you are choosing
+instead of describing it, the way a font picker renders each option in its own
+typeface. It also sidesteps the problem with two switches wired to contradict
+each other, which reads wrong because a switch looks independent. The chip row
+below for colours is already this shape.
+
+That also gives the glass code its first home: the chip has to render glass
+before anything else does, so it doubles as the proof that the wallpaper
+backdrop works, in a place where getting it wrong costs nothing.
 
 **Surface style and colour stay separate axes, and that is the point.** Glass
 changes how a surface is drawn; the theme still decides what colour it is.
