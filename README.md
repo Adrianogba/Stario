@@ -38,14 +38,18 @@ before trusting them.
 
 ### Doing
 
-- **Java to Kotlin.** 150 of 206 files. The sheet gesture core, `Measurements`,
-  `UiUtils`, `ActionDialog`, `ThemedActivity` and most of the app model are
-  across. Going leaf-first so the build stays green: every batch compiles, and
-  anything central gets installed on an emulator before the next batch starts.
+- **Java to Kotlin.** 152 of 204 files. The whole app model is across now:
+  `LauncherApplication`, `Category`, `CategoryMappings`, `CategoryManager`,
+  `ProfileManager`, `ProfileApplicationManager` and `IconPackManager`. So are
+  the sheet gesture core, `Measurements`, `UiUtils`, `ActionDialog` and
+  `ThemedActivity`. Going leaf-first so the build stays green: every batch
+  compiles, and anything central gets installed on an emulator before the next
+  batch starts.
 - Dead SDK checks come out as each file is converted, rather than in one sweep
   across a half-migrated tree.
-- `CategoryManager`, `ProfileApplicationManager` and `IconPackManager` are what
-  is left of the app model cluster.
+- What is left is the view layer and the sheets: `DynamicGridLayout` at 1412
+  lines is the biggest single file in the project, then `Media`, `Weather`,
+  `SheetsFocusController` and `StylizedClockView`.
 - `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all
   while carbon is here. They extend `carbon.widget.ConstraintLayout`, which
   exposes two declarations with the same JVM signature for `getElevation()`, and
