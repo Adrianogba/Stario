@@ -30,11 +30,6 @@ their peak in a simple and elegant format.
 This repository contains the complete codebase for Stario, a full rewrite of the previous
 Stario Launcher. This version offers significant improvements in both performance and usability.
 
-> **Note:** This repository replaces all previous Play Store versions of the app. If you’d like to 
-> use an older release, you can download it from the [archive ↗](./archive/Stario-v1.41.apk). Please 
-> note that **Stario v1.X is no longer supported**, and no further updates or maintenance will be 
-> provided.
-
 ## Features
 
 - **Material You Support**  
@@ -116,21 +111,3 @@ git checkout v2.9
   -a key_alias \
   -p key_password
 ```
-
-## Reproducible Builds
-
-Check for RBs with the locally built unsigned APK and [apksigcopier](https://github.com/obfusk/apksigcopier). 
-
-Firstly, copy the signature from the signed APK onto your built unsigned APK:
-
-```bash
-apksigcopier copy signed-from-source.apk unsigned-built-locally.apk out.apk
-```
-
-Then compare the two APKs:
-
-```bash
-apksigcopier compare stario-from-source.apk stario-built-locally.apk
-```
-
-> NOTE: `apksigcopier compare` requires [apksigner](https://developer.android.com/tools/apksigner).
