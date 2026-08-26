@@ -15,11 +15,84 @@ launcher. He archived the project in 2026, so I picked it up to keep running it 
 > Original work Copyright (C) 2025 Răzvan Albu, GPL-3.0. This fork stays GPL-3.0 and keeps the
 > upstream copyright notices intact.
 
-## What's different here
+## Roadmap
 
-- App ID is `adrianogba.stario.launcher`
-- Builds on Gradle 9.7.1, AGP 9, Kotlin 2.4, compileSdk 37, Java 21, JDK 25
-- The Java source is being rewritten in Kotlin
+Running notes on what is done, what is in flight, and what is worth doing next.
+Numbers here are counted from the tree, so they go stale; re-check before trusting them.
+
+### Done
+
+- Toolchain brought up to current: Gradle 9.7.1, AGP 9.3.2, Kotlin 2.4.10,
+  compileSdk 37.1, targetSdk 37, Java 21, JDK 25 locally and in CI
+- Package renamed to `adrianogba.stario.launcher`
+- Dropped the store metadata, archived APK and community files this fork has no use for
+- Reviewed the [yutila-org fork](https://github.com/yutila-org/stario) for anything worth taking
+
+### In progress
+
+- **Java to Kotlin.** 73 of 206 files, roughly 3.7k of 41k lines. Going leaf-first so the
+  build stays green: every batch compiles and gets installed on an emulator before the next
+  one starts.
+
+### Next
+
+- Port the `IconPackManager` drawable `LruCache` from the yutila fork. Standalone, and it
+  speeds up icon lookup on its own
+- Port their icon picker, which lets you override one app's icon from any installed pack
+- Port their Notes sheet. `app/build.gradle` already lists `src/main/res/notes` as a resource
+  directory, but no Notes code was ever written, so the wiring is half there already
+- Add Detekt as a Gradle plugin, once enough of the code is Kotlin for the first run to mean
+  something
+- Pin the GitHub Actions in `build.yml` to commit SHAs rather than floating tags
+- Turn Actions on for this fork. GitHub disables workflow runs on forks until you click
+  through once in the Actions tab
+
+### Libraries worth replacing
+
+| Library | Why |
+| --- | --- |
+| `tk.zielony:carbon:0.17.0` | Used in 39 files and has had no release since. The single biggest risk to future Android compatibility here, and the hardest to pull out |
+| `androidx.localbroadcastmanager` | Deprecated. 11 files use it. A flow or a plain observer would do |
+| `com.ogaclejapan.smarttablayout:2.0.0` | From 2016, 2 usages, replaceable with a TabLayout |
+| `jp.wasabeef:glide-transformations` | Last released 2020 |
+| `com.luckycatlabs:SunriseSunsetCalculator:1.2` | Ancient. Only used for sunrise and sunset times, which is not much code to own outright |
+| `com.github.ChickenHook:RestrictionBypass` | Pinned to a commit because every tagged release fails to build on JitPack. Worth watching |
+
+### Structure and code health
+
+- **No tests anywhere.** Zero files under `test` or `androidTest`. Compilation is currently the
+  only automated check, and it does not catch the nullability breaks that the Kotlin migration
+  keeps producing
+- **No static analysis.** See Detekt above
+- `hidden/` has to stay Java. It drives Rikka's `refine` through a Java annotation processor,
+  and converting it without adding KAPT would stop the processor running with no compile error
+  and break hidden API access at runtime
+- `Widget` overrides `equals` without `hashCode`
+- `Feed.equals` compares only `rss` while `Feed.hashCode` also folds in `title`, so two equal
+  feeds can hash apart. Both of these are carried over from upstream and left alone so far,
+  since fixing them changes behaviour
+
+### Feature ideas
+
+Nothing here is committed to. This fork is sideloaded and never published, so the Play Store
+rules that shaped the original do not apply.
+
+- **Usage based sorting.** `UsageStatsManager` is not used anywhere yet. Most-used apps in the
+  drawer is probably the biggest single quality of life win available
+- **Shizuku.** The project already pulls in `refine` and `RestrictionBypass`, so half the
+  plumbing exists. Opens up silent freeze, force stop and uninstall, plus real usage data
+- **A useful accessibility service.** Right now it does exactly one thing, lock the screen.
+  The API allows back, recents, quick settings and per-app gestures
+- **`WRITE_SECURE_SETTINGS`** through a one time adb grant, for toggling gesture navigation,
+  immersive mode and animation scales from the launcher
+- **More search sources.** Contacts, files, settings entries, inline maths and unit conversion,
+  and app shortcuts all fit the existing `Searchable` adapter pattern
+- **Notification content on long press.** Per-package counts are already tracked, so most of
+  the plumbing is there
+- **Config export and import.** `allowBackup` is false and there is no export path, so a
+  reinstall loses the whole layout
+- **New glance cards.** `GlanceExtension` is a real plugin point: implement the interface and
+  attach it in `Launcher`. Battery, next alarm, Home Assistant state and transit all fit
 
 ## Overview
 
