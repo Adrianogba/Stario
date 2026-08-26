@@ -264,7 +264,8 @@ abstract class RecyclerApplicationAdapter(
 
             (itemView as ViewGroup).requestDisallowInterceptTouchEvent(true)
 
-            dialog = menu.show(activity, icon, popupInsets(), popupPivot(), itemTouchHelper == null)
+            // the Java version dereferenced the icon inside show, so a null one still throws here
+            dialog = menu.show(activity, icon!!, popupInsets(), popupPivot(), itemTouchHelper == null)
         }
 
         private fun popupInsets(): Rect {
