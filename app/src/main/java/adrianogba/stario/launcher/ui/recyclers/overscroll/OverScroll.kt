@@ -27,7 +27,7 @@ interface OverScroll {
 
     fun addOverScrollContract(contract: OverScrollContract)
 
-    interface OverScrollContract {
+    fun interface OverScrollContract {
         fun prepare(canvas: Canvas): Boolean
     }
 }
