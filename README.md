@@ -5,16 +5,6 @@
 My fork of [Stario](https://github.com/albu-razvan/Stario), Răzvan Albu's minimalist Android
 launcher. He archived the project in 2026, so I picked it up and kept it going.
 
-> [!NOTE]
-> I mainly work on this for my own use, but anyone who wants it is welcome to it.
->
-> Part of why the original was archived is that Play Store rules and OEM restrictions make an
-> independent launcher hard to keep alive. This fork is not bound by those rules, so it is free
-> to use APIs a published launcher would have to avoid.
->
-> Original work Copyright (C) 2025 Răzvan Albu, GPL-3.0. This fork stays GPL-3.0 and keeps the
-> upstream copyright notices intact.
-
 ## Roadmap
 
 Running notes on what is done, what is in flight, and what is worth doing next.
