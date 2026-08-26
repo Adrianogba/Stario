@@ -124,7 +124,7 @@ public class BriefingFeedList {
             return;
         }
 
-        items.get(position).title = name;
+        items.get(position).setTitle(name);
         serialize();
 
         for (FeedListener listener : listeners) {
