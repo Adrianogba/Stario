@@ -2,25 +2,24 @@
 
 <img src="docs/representative.png" alt="Stario representative">
 
-A personal fork of [Stario](https://github.com/albu-razvan/Stario) by Răzvan Albu,
-continued after the original project was archived in 2026.
+My fork of [Stario](https://github.com/albu-razvan/Stario), Răzvan Albu's minimalist Android
+launcher. He archived the project in 2026, so I picked it up to keep running it on my own phone.
 
 > [!NOTE]
-> **This fork is built for personal use and is not distributed.**
+> I build this for myself and don't publish it anywhere.
 >
-> Upstream was archived because Play Store policy, OEM restrictions and tightening
-> platform APIs made an independently-developed launcher hard to sustain. None of
-> those constraints apply to a sideloaded personal build, so this fork deliberately
-> uses platform capabilities that a published launcher could not.
+> Part of why the original was archived is that Play Store rules and OEM restrictions make an
+> independent launcher hard to keep alive. None of that applies to something I sideload onto my
+> own device, so this fork is free to use APIs a published launcher would have to avoid.
 >
-> Original work Copyright (C) 2025 Răzvan Albu, licensed GPL-3.0. This fork remains
-> GPL-3.0 and preserves all upstream copyright notices.
+> Original work Copyright (C) 2025 Răzvan Albu, GPL-3.0. This fork stays GPL-3.0 and keeps the
+> upstream copyright notices intact.
 
-## Fork changes
+## What's different here
 
-- Application ID changed to `adrianogba.stario.launcher`
-- Build modernized: Gradle 9.7.1, AGP 9, Kotlin 2.4, compileSdk 37, Java 21, JDK 25
-- Source being migrated from Java to Kotlin
+- App ID is `adrianogba.stario.launcher`
+- Builds on Gradle 9.7.1, AGP 9, Kotlin 2.4, compileSdk 37, Java 21, JDK 25
+- The Java source is being rewritten in Kotlin
 
 ## Overview
 
@@ -59,14 +58,16 @@ Stario Launcher. This version offers significant improvements in both performanc
 
 ## Availability
 
-- This fork is not published. Build it yourself with the instructions below.
-- Upstream releases remain available at [albu-razvan/Stario](https://github.com/albu-razvan/Stario/releases/latest).
+There are no builds to download. Build it yourself with the steps below.
+
+The original project's releases are still up at
+[albu-razvan/Stario](https://github.com/albu-razvan/Stario/releases/latest).
 
 ## Compatibility
 
 - Requires **Android SDK 29+** (Android 10.0 or later)
 - Compatible with AOSP and most major OEM devices
-- Should work with custom ROMs, though these are not officially tested — user feedback is welcome
+- Probably fine on custom ROMs, though I haven't tried any
 
 ## Development
 

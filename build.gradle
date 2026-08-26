@@ -8,8 +8,8 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:9.3.2'
-        // AGP 9 applies Kotlin support itself; this classpath entry only raises
-        // the bundled KGP above AGP's default. Do not apply kotlin.android.
+        // AGP 9 brings its own Kotlin plugin. This line only bumps KGP past
+        // the version AGP ships with. Don't apply kotlin.android on top.
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
