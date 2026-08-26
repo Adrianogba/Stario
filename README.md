@@ -30,7 +30,7 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 ### In progress
 
-- **Java to Kotlin.** 100 of 206 files, roughly 6.5k of 41k lines. Going leaf-first so the
+- **Java to Kotlin.** 105 of 206 files, roughly 7k of 41k lines. Going leaf-first so the
   build stays green: every batch compiles and gets installed on an emulator before the next
   one starts.
 - `LauncherApplication`, `ProfileApplicationManager`, `CategoryManager` and `Category` are
