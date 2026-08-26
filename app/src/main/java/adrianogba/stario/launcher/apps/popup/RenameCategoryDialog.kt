@@ -18,14 +18,13 @@
 
 package adrianogba.stario.launcher.apps.popup
 
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.apps.CategoryManager
@@ -70,39 +69,22 @@ class RenameCategoryDialog(
         editText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or
                 InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
 
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                charSequence: CharSequence?, i: Int, i1: Int, i2: Int
-            ) {
+        editText.doAfterTextChanged { editable ->
+            val text = editable ?: return@doAfterTextChanged
+
+            val taken = !text.toString().equals(initialName, ignoreCase = true) &&
+                    categoryManager.getIdentifier(text.toString(), true) != null
+
+            val target = if (taken) View.VISIBLE else View.GONE
+
+            if (warning.visibility != target) {
+                TransitionManager.beginDelayedTransition(
+                    root.rootView as ViewGroup, ChangeBounds()
+                )
+
+                warning.visibility = target
             }
-
-            override fun onTextChanged(
-                charSequence: CharSequence?, i: Int, i1: Int, i2: Int
-            ) {
-            }
-
-            override fun afterTextChanged(editable: Editable?) {
-                val text = editText.text ?: return
-
-                if (text.toString().equals(initialName, ignoreCase = true) ||
-                    categoryManager.getIdentifier(text.toString(), true) == null
-                ) {
-                    if (warning.visibility != View.GONE) {
-                        TransitionManager.beginDelayedTransition(
-                            root.rootView as ViewGroup, ChangeBounds()
-                        )
-
-                        warning.visibility = View.GONE
-                    }
-                } else if (warning.visibility != View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(
-                        root.rootView as ViewGroup, ChangeBounds()
-                    )
-
-                    warning.visibility = View.VISIBLE
-                }
-            }
-        })
+        }
 
         root.findViewById<View>(R.id.reset).setOnClickListener {
             editText.setText(initialName)

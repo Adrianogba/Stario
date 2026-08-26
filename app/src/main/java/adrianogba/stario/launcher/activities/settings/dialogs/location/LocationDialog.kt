@@ -19,12 +19,11 @@
 package adrianogba.stario.launcher.activities.settings.dialogs.location
 
 import android.annotation.SuppressLint
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -93,17 +92,7 @@ class LocationDialog(activity: ThemedActivity) : ActionDialog(activity) {
         }
         recycler.adapter = adapter
 
-        query.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(editable: Editable?) {
-                adapter.update(editable?.toString())
-            }
-        })
+        query.doAfterTextChanged { editable -> adapter.update(editable?.toString()) }
 
         return root
     }

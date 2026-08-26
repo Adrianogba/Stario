@@ -22,11 +22,10 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.materialswitch.MaterialSwitch
 import adrianogba.stario.launcher.R
@@ -64,19 +63,11 @@ class SearchResultsDialog(activity: ThemedActivity) : ActionDialog(activity) {
 
         val editText = root.findViewById<EditText>(R.id.edit_text)
         editText.setText(preferences.getString(WebAdapter.KAGI_API_KEY, ""))
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(content: Editable?) {
-                preferences.edit()
-                    .putString(WebAdapter.KAGI_API_KEY, content.toString())
-                    .apply()
-            }
-        })
+        editText.doAfterTextChanged { content ->
+            preferences.edit()
+                .putString(WebAdapter.KAGI_API_KEY, content.toString())
+                .apply()
+        }
 
         root.findViewById<View>(R.id.paste).setOnClickListener {
             val clipboard =
