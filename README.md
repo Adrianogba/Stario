@@ -17,14 +17,16 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 ### In progress
 
-- **Java to Kotlin.** 146 of 206 files. The sheet gesture core, Measurements, UiUtils,
+- **Java to Kotlin.** 147 of 206 files. The sheet gesture core, Measurements, UiUtils,
   ActionDialog and ThemedActivity are all across now. Going leaf-first so the
   build stays green: every batch compiles and gets installed on an emulator before the next
   one starts.
-- `LauncherApplication`, `ProfileApplicationManager`, `CategoryManager` and `Category` are
-  left for last and want converting as one group. They share package-private mutable state,
-  and `LauncherApplication.FALLBACK_APP` is a null typed as non-null that around twenty call
-  sites compare against instead of null-checking.
+- `LauncherApplication` is converted and `FALLBACK_APP` is gone; it was a constant set
+  to null that thirteen files compared against instead of comparing to null.
+  `ProfileApplicationManager`, `CategoryManager`, `CategoryMappings` and `Category` are
+  the remaining cluster. They share package-private mutable state on
+  `LauncherApplication`, which is why its fields are `@JvmField` for now; once the
+  package is all Kotlin they can become ordinary properties.
 - `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all while
   carbon is still here. They extend `carbon.widget.ConstraintLayout`, which exposes two
   declarations with the same JVM signature for `getElevation()`, and Kotlin refuses to
