@@ -42,7 +42,7 @@ class SearchEngineRecyclerAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val engine = SearchEngine.values()[position]
+        val engine = SearchEngine.entries[position]
 
         viewHolder.icon.setImageDrawable(engine.getDrawable(activity))
         viewHolder.label.text = engine.toString()
@@ -55,7 +55,7 @@ class SearchEngineRecyclerAdapter(
         }
     }
 
-    override fun getItemCount(): Int = SearchEngine.values().size
+    override fun getItemCount(): Int = SearchEngine.entries.size
 
     override fun onCreateViewHolder(container: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
