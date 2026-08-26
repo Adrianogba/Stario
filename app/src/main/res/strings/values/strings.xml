@@ -68,6 +68,9 @@
     <string name="lock_gesture">Double tap to lock</string>
     <string name="legacy_lock_animation">Legacy lock animation</string>
     <string name="imperial_units">Imperial units</string>
+    <string name="units_metric">Metric °C</string>
+    <string name="units_imperial">Imperial °F</string>
+    <string name="time_format_12h">12-hour time</string>
     <string name="weather_forecast">Weather forecast</string>
     <string name="weather_location">Location</string>
     <string name="location_search_hint">Search for a city</string>

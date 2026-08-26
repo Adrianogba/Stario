@@ -259,13 +259,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clickable="false"
-                            android:drawableStart="@drawable/ic_ruler"
+                            android:drawableStart="@drawable/ic_watch"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/dm_sans_medium"
                             android:letterSpacing="-0.03"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"
-                            android:text="@string/imperial_units"
+                            android:text="@string/time_format_12h"
                             android:textColor="?attr/colorOnSurface"
                             android:textSize="20sp" />
 
@@ -369,30 +369,37 @@
 
                     </carbon.widget.LinearLayout>
 
-                    <carbon.widget.RelativeLayout
-                        android:id="@+id/imperial_weather_container"
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/units"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/ripple"
-                        android:padding="7dp"
-                        app:carbon_cornerRadius="5dp">
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="4dp"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
 
-                        <com.google.android.material.materialswitch.MaterialSwitch
-                            android:id="@+id/imperial_weather"
-                            android:layout_width="match_parent"
+                        <Button
+                            android:id="@+id/units_metric"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:drawableStart="@drawable/ic_ruler"
-                            android:drawablePadding="10dp"
-                            android:fontFamily="@font/dm_sans_medium"
-                            android:letterSpacing="-0.03"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:text="@string/imperial_units"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textSize="20sp" />
+                            android:layout_weight="1"
+                            android:fontFamily="@font/dm_sans_regular"
+                            android:text="@string/units_metric"
+                            android:textSize="16sp" />
 
-                    </carbon.widget.RelativeLayout>
+                        <Button
+                            android:id="@+id/units_imperial"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/dm_sans_regular"
+                            android:text="@string/units_imperial"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
 
                 </carbon.widget.LinearLayout>
 

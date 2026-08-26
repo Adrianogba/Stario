@@ -36,6 +36,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.slider.Slider;
 import adrianogba.stario.launcher.R;
@@ -246,12 +247,20 @@ public class HomeScreenDialog extends ActionDialog {
             }
         });
 
-        setupSwitch(root.findViewById(R.id.imperial_weather), root.findViewById(R.id.imperial_weather_container),
-                weatherPrefs.getBoolean(Weather.IMPERIAL_KEY, Utils.isSystemUsingImperial(activity)),
-                (button, checked) ->
-                        weatherPrefs.edit()
-                                .putBoolean(Weather.IMPERIAL_KEY, checked)
-                                .apply());
+        MaterialButtonToggleGroup units = root.findViewById(R.id.units);
+        boolean imperial = weatherPrefs.getBoolean(
+                Weather.IMPERIAL_KEY, Utils.isSystemUsingImperial(activity));
+
+        units.check(imperial ? R.id.units_imperial : R.id.units_metric);
+        units.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
+            }
+
+            weatherPrefs.edit()
+                    .putBoolean(Weather.IMPERIAL_KEY, checkedId == R.id.units_imperial)
+                    .apply();
+        });
     }
 
     private void initGestureSection() {
