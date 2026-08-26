@@ -71,6 +71,41 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
   feeds can hash apart. Both of these are carried over from upstream and left alone so far,
   since fixing them changes behaviour
 
+### Compose, and why not all at once
+
+Compose is already a dependency here and already used once, in
+`SliderComposeView`, embedded in the view hierarchy through a `ComposeView`.
+So the question is not whether to adopt it but how far to take it.
+
+The tree has 74 layout files. 48 of them embed one of this project's own custom
+views, which is the part that matters: a launcher is close to the worst case for
+a full Compose rewrite.
+
+- Third-party home screen widgets arrive as `RemoteViews` and have to be hosted by
+  a real `AppWidgetHostView`. Under Compose that becomes an `AndroidView` wrapper,
+  so nothing is gained.
+- The sheet system is roughly 2,900 lines of `CoordinatorLayout.Behavior` and custom
+  drag maths across `SheetBehavior` and `SheetDragHelper`. There is no equivalent to
+  port to; it would be a rewrite from scratch, and it is the fiddliest code here.
+- Home screen drag and drop uses `startDragAndDrop` with a `DragShadowBuilder`.
+- The icon rendering in `AdaptiveIconView` is `Canvas` work that is no nicer either way.
+
+Where it genuinely pays is the settings surface: 21 of the 74 layouts are settings
+and settings dialogs, mostly lists, switches and text. Those have no custom gesture
+work and are the sort of thing Compose makes shorter and easier to change.
+
+So the plan, if this gets picked up:
+
+1. Finish the Kotlin migration first. Converting screens that then get rewritten in
+   Compose is wasted work, and Compose wants Kotlin anyway.
+2. Move the settings screens over incrementally, one dialog at a time, using
+   `ComposeView` exactly the way `SliderComposeView` already does.
+3. Leave the launcher surface on Views: the grid, the sheets, the widget host and the
+   drawer. Not out of caution, but because Compose has nothing better to offer there.
+
+Also worth saying plainly: 176 of the 314 XML files are drawables and 29 are values.
+Compose does not replace those. The XML count is not as damning as it looks.
+
 ### Feature ideas
 
 Nothing here is committed to. This fork is not published through the Play Store, so the rules
