@@ -7,45 +7,88 @@ launcher. He archived the project in 2026, so I picked it up and kept it going.
 
 ## Roadmap
 
-Running notes on what is done, what is in flight, and what is worth doing next.
-Numbers here are counted from the tree, so they go stale; re-check before trusting them.
+Running notes on what is done, what is in flight, what is next and what is
+still only an idea. Counts are taken from the tree, so they go stale; re-check
+before trusting them.
 
 ### Done
 
 - Toolchain brought up to current: Gradle 9.7.1, AGP 9.3.2, Kotlin 2.4.10,
   compileSdk 37.1, targetSdk 37, Java 21, JDK 25 locally and in CI
+- Build moved onto a version catalog and the plugins DSL, so versions live in
+  one file
+- minSdk raised to 33, which the liquid glass shader needs and which made 34 of
+  the 36 SDK version checks in the source dead
+- Gradle daemon, build cache and parallel execution turned on. An incremental
+  compile went from about 40 seconds to under 3
+- Package renamed to `adrianogba.stario.launcher`
+- CI hardened: every action pinned to a commit SHA, concurrency group, gradle
+  cache, debug APK uploaded as an artifact
+- Dropped the store metadata, archived APK and community files this fork has no
+  use for, plus 41 unused resources and three obsolete resource folders
+- `FALLBACK_APP` removed. It was a constant set to null that thirteen files
+  compared against instead of comparing to null, and it was hiding two real
+  nullability bugs that surfaced the moment it went
+- Info section points at this fork, its own site, and drops the Discord link
+- Weather units name both systems instead of only Imperial, and the clock
+  toggle says what it actually does
+- Location picker no longer seeds four cities that were not suggestions
+- Reviewed the [yutila-org fork](https://github.com/yutila-org/stario) for
+  anything worth taking
 
-### In progress
+### Doing
 
-- **Java to Kotlin.** 150 of 206 files. The sheet gesture core, Measurements, UiUtils,
-  ActionDialog and ThemedActivity are all across now. Going leaf-first so the
-  build stays green: every batch compiles and gets installed on an emulator before the next
-  one starts.
-- `LauncherApplication` is converted and `FALLBACK_APP` is gone; it was a constant set
-  to null that thirteen files compared against instead of comparing to null.
-  `ProfileApplicationManager`, `CategoryManager`, `CategoryMappings` and `Category` are
-  the remaining cluster. They share package-private mutable state on
-  `LauncherApplication`, which is why its fields are `@JvmField` for now; once the
-  package is all Kotlin they can become ordinary properties.
-- `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all while
-  carbon is still here. They extend `carbon.widget.ConstraintLayout`, which exposes two
-  declarations with the same JVM signature for `getElevation()`, and Kotlin refuses to
-  subclass that. It fails the compile and is not suppressible. Only these two files are
-  affected: holding a carbon type in a Kotlin class is fine, inheriting from one is not.
+- **Java to Kotlin.** 150 of 206 files. The sheet gesture core, `Measurements`,
+  `UiUtils`, `ActionDialog`, `ThemedActivity` and most of the app model are
+  across. Going leaf-first so the build stays green: every batch compiles, and
+  anything central gets installed on an emulator before the next batch starts.
+- Dead SDK checks come out as each file is converted, rather than in one sweep
+  across a half-migrated tree.
+- `CategoryManager`, `ProfileApplicationManager` and `IconPackManager` are what
+  is left of the app model cluster.
+- `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all
+  while carbon is here. They extend `carbon.widget.ConstraintLayout`, which
+  exposes two declarations with the same JVM signature for `getElevation()`, and
+  Kotlin refuses to subclass that. Not suppressible; it fails the compile.
 
 ### Next
 
-- Port the `IconPackManager` drawable `LruCache` from the yutila fork. Standalone, and it
-  speeds up icon lookup on its own
-- Port their icon picker, which lets you override one app's icon from any installed pack
-- Port their Notes sheet. `app/build.gradle` already lists `src/main/res/notes` as a resource
-  directory, but no Notes code was ever written, so the wiring is half there already
-- Add Detekt as a Gradle plugin, once enough of the code is Kotlin for the first run to mean
-  something
-- Pin the GitHub Actions in `build.yml` to commit SHAs rather than floating tags
-- Turn Actions on for this fork. GitHub disables workflow runs on forks until you click
-  through once in the Actions tab
+In rough order, once the migration is finished:
 
+1. Collapse the four sheet dialogs into one. They are the same 44 line file four
+   times and only 4 lines differ between any two. Easiest real win here.
+2. Add Detekt as a Gradle plugin, now that the code is mostly Kotlin.
+3. Port the `IconPackManager` drawable cache from the yutila fork. Standalone,
+   and it speeds up icon lookup on its own.
+4. Port their icon picker, which overrides one app's icon from any pack.
+5. Port their Notes sheet. `app/build.gradle` already lists `src/main/res/notes`
+   as a resource directory, so the wiring is half there.
+6. Give the home screen widgets a shared base class. `ClockWidget`,
+   `SearchWidget` and `PinnedCategory` each repeat the same five step attach and
+   detach lifecycle.
+
+### Evaluating
+
+Decided in principle, not started, and each has an open question worth settling
+before writing code:
+
+- **Liquid glass as a surface option.** Feasible; the wallpaper read has been
+  tested and works. Open question is whether a launcher asking for
+  `READ_MEDIA_IMAGES` is an acceptable trade. See the liquid glass section below.
+- **Compose for the settings screens.** 21 of the 74 layouts are settings and
+  settings dialogs, with no custom gesture work. The launcher surface should
+  stay on Views. See the Compose section below.
+- **Inter as the type system.** Would suit the glass look, but the font should
+  not change with the surface style, so it is an app-wide decision rather than
+  a glass one.
+- **Pluggable inline search results.** Kagi is the only option today because
+  inline results need a keyed search API. Brave is the strongest addition;
+  DuckDuckGo genuinely cannot do it. See the search section below.
+- **Collapsing the four sheet behaviors.** Worth around 400 lines, but it is the
+  drag core with no tests, so it goes last and wants the emulator in hand.
+- **Tests.** Deliberately deferred until the migration is finished. There is one
+  unit test today, for the fuzzy matcher, written because the conversion touched
+  its arithmetic.
 ### Libraries worth replacing
 
 | Library | Why |
