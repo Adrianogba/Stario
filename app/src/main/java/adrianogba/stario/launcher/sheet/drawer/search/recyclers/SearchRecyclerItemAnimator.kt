@@ -24,9 +24,12 @@ import adrianogba.stario.launcher.ui.utils.animation.Animation
 class SearchRecyclerItemAnimator(animation: Animation) : RecyclerItemAnimator(
     RecyclerItemAnimator.DISAPPEARANCE or RecyclerItemAnimator.APPEARANCE, animation
 ) {
-    override fun getRemovedAlpha(): Float = 1f
+    override val removedAlpha: Float
+        get() = 1f
 
-    override fun getRemovedScaleX(): Float = 1f
+    override val removedScaleX: Float
+        get() = 1f
 
-    override fun getRemovedScaleY(): Float = 1f
+    override val removedScaleY: Float
+        get() = 1f
 }
