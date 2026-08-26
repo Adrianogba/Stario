@@ -228,6 +228,13 @@ second time:
 3. The same read, write and dismiss-diff in `ThemeDialog`, so flipping it
    recreates the activity the way a colour change already does.
 
+On presenting it as two switches, Material and Glass, where turning one on turns
+the other off: that is a single choice between two options, and two switches wired
+to contradict each other is the one control that consistently confuses people,
+because a switch reads as independent. A segmented control or a pair of chips,
+which is what the colour row below already uses, says the same thing without the
+trap. Same preference underneath either way, so this is only about the control.
+
 **Surface style and colour stay separate axes, and that is the point.** Glass
 changes how a surface is drawn; the theme still decides what colour it is.
 The colour list keeps working untouched, Dynamic included, because
@@ -252,6 +259,70 @@ surfaces sitting on top, not for the window behind them.
 
 The library also ships no components by design. Buttons, toggles and cards are
 yours to build, with their catalog app as reference.
+
+### Why Kagi is the only inline-results option
+
+The engine list (Google, DuckDuckGo, Brave, Kagi and the rest) only decides
+which site a query opens in. That is unrelated to the Kagi setting, which does
+something different: it shows web results **inside** the launcher, above the
+app results. `WebAdapter` calls `kagi.com/api/v0/search` with an
+`Authorization: Bot <key>` header and renders each hit as a url, title and
+snippet.
+
+So it needs a search API that returns structured JSON, and that is a much
+shorter list than the engine picker suggests. When the setting is on,
+`SearchEngine.getEngine()` also forces the engine to Kagi so that tapping
+through lands somewhere consistent with the results shown.
+
+**DuckDuckGo cannot replace it.** Its public API is the Instant Answer API,
+which returns definitions, disambiguations and zero-click answers, not general
+web results. There is no official DuckDuckGo web-search API. Worth stating
+plainly because it is the obvious first suggestion and it does not work.
+
+Candidates that could actually slot in:
+
+| Provider | Key | Notes |
+| --- | --- | --- |
+| Kagi | `Authorization: Bot` | What exists today. Paid, no free tier |
+| Brave Search API | `X-Subscription-Token` | Free tier, returns JSON web results with title, url and description. The strongest candidate |
+| Google Custom Search JSON | key plus engine id | Small free daily quota, two values to configure rather than one |
+| SearXNG | none | Self-hosted, JSON output, no key at all. Appealing for a personal build if you already run an instance |
+
+The work to generalise it is well contained, because `WebAdapter` already
+reduces everything to a url, a title and a snippet:
+
+1. Pull the fetch and parse out of `WebAdapter` into a small interface, one
+   implementation per provider.
+2. Store a chosen provider alongside the key instead of assuming Kagi. The
+   settings dialog already has the key field and the paste button, so it needs
+   a provider picker above them and a hint that changes with the choice, since
+   `KAGI_API_KEY` becomes provider-specific.
+3. Drop the `getEngine()` special case that forces Kagi and instead force
+   whichever provider is selected, or leave the engine alone entirely for
+   providers like SearXNG that have no public site to open.
+
+The string `Kagi servers reported unauthorized access. Is your API key valid?`
+would want generalising too.
+
+### On Inter
+
+The app currently sets DM Sans everywhere through `android:fontFamily`, plus a
+custom variable font for the clock face, which should stay whatever else
+happens.
+
+Inter on its own would be enough. It is the usual open stand-in for the Apple
+system font and it covers the whole range through its weights, so a second
+family is not needed and would probably hurt. Inter v4 also carries an optical
+size axis, which is the thing that actually makes large text feel right; that
+matters more here than adding another typeface, given how much of this UI is
+big headings over wallpaper.
+
+One caution about tying it to the glass switch: **the font should not change
+with the surface style.** Flipping a glass toggle and having every label in the
+app reflow is jarring, and it makes the two styles feel like two different
+apps rather than one app with two skins. Pick one type system and keep it on
+both. If Inter is the better fit, switch to it outright rather than only under
+glass.
 
 ### Feature ideas
 
