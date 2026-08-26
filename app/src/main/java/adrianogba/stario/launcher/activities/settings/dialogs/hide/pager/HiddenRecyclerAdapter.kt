@@ -81,7 +81,7 @@ class HiddenRecyclerAdapter(
                 return@OnClickListener
             }
 
-            val application = getApplication(index)
+            val application = getApplication(index) ?: return@OnClickListener
 
             if (applicationManager!!.isVisibleToUser(application)) {
                 applicationManager!!.hideApplication(application)

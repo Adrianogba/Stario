@@ -54,7 +54,7 @@ internal class PinnedCategoryRecyclerAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val category = categoryManager.get(position) ?: return
+        val category = categoryManager.get(position)
 
         viewHolder.label.text = CategoryManager.getInstance()
             .getCategoryName(category.identifier)

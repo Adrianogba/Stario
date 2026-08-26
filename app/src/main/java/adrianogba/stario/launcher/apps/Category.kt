@@ -26,13 +26,10 @@ class Category(@JvmField val identifier: UUID) {
     private val comparator: CategoryMappings.Comparator<LauncherApplication> =
         CategoryMappings.getCategoryApplicationComparator(this)
 
-    // @JvmField because CategoryManager, still Java and in this package, reads
-    // both of these directly.
-    @JvmField
+    // CategoryManager walks both of these directly.
     val applications: MutableList<LauncherApplication> =
         Collections.synchronizedList(ArrayList())
 
-    @JvmField
     val listeners: MutableList<CategoryItemListener> =
         Collections.synchronizedList(ArrayList())
 

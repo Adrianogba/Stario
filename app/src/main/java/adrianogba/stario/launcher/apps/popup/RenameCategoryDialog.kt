@@ -56,7 +56,10 @@ class RenameCategoryDialog(
     override fun inflateContent(inflater: LayoutInflater): View {
         val root = inflater.inflate(R.layout.pop_up_category, null)
 
-        val initialName = categoryManager.getCategoryName(categoryIdentifier)
+        // getCategoryName returns null for a category with neither a custom name
+        // nor a default resource. The reset button below used to dereference it,
+        // so that case threw. Empty string reads the same and does not.
+        val initialName = categoryManager.getCategoryName(categoryIdentifier).orEmpty()
 
         val warning = root.findViewById<View>(R.id.warning)
 
