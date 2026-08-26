@@ -56,7 +56,7 @@ class HideApplicationsPage : Fragment {
         val recycler = root.findViewById<OverScrollRecyclerView>(R.id.recycler)
         recyclerView = recycler
 
-        recycler.setOverscrollPullEdges(OverScrollEffect.PULL_EDGE_BOTTOM)
+        recycler.overscrollPullEdges = OverScrollEffect.PULL_EDGE_BOTTOM
 
         recycler.setPadding(
             recycler.paddingLeft, recycler.paddingTop,
