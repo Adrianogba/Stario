@@ -167,42 +167,60 @@ is odd that its own icon does not.
 ### Liquid glass
 
 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass),
-published as `io.github.kyant0:backdrop` on Maven Central. Apache-2.0, which
-is fine to use from a GPL-3.0 project, actively maintained, minSdk 21 and
-compileSdk 37, so nothing about it conflicts with this project.
+published as `io.github.kyant0:backdrop`. Apache-2.0, which is fine to use
+from a GPL-3.0 project, actively maintained, and already a dependency here.
+minSdk moved to 33 for it, which also made 34 of the 36 SDK checks in the
+source dead.
 
-What it can and cannot do here, before anyone spends a weekend on it:
+The intended shape is a glass option: a preference that switches the launcher
+surfaces over to glass, not a rewrite.
 
-- **It is Compose.** The library ships no high-level components by design; you
-  build the button, the toggle, the card yourself. So any surface using it has
-  to be a `ComposeView` first. `SliderComposeView` already shows the pattern.
-- **The obvious idea does not work directly.** Dropping a glass card onto the
-  home screen will not refract the wallpaper, because a Compose island cannot
-  sample the View hierarchy or the wallpaper sitting behind it. It would sample
-  an empty tree and look like nothing.
-- **But there is a way through.** Alongside `LayerBackdrop`, which captures a
-  Compose subtree, the library has `CanvasBackdrop`, which takes arbitrary
-  drawing as the backdrop source. This project already reaches the wallpaper
-  bitmap through `WallpaperManagerHidden`, which `WallpaperAnimator` uses for
-  the zoom effect. Feeding that into a `CanvasBackdrop` is the route to real
-  glass over the wallpaper.
-- **The full effect needs API 33.** The library gates itself honestly and
-  exposes the checks: `isRenderEffectSupported()` is API 31, and
-  `isRuntimeShaderSupported()` is API 33, because the refraction is an AGSL
-  runtime shader. minSdk here is 29, so devices on 29 and 30 get very little,
-  31 and 32 get blur, and 33 and up get the real thing. Worth deciding whether
-  that split is acceptable before starting.
-- **It does not replace the blur already here.** Sheets currently blur their
-  background with `Window.setBackgroundBlurRadius`, which is composited by the
-  system and blurs everything behind the window, wallpaper and other apps
-  included. Nothing in Compose can do that, and it is the right tool for the
-  job. Liquid glass is for surfaces, not for the window behind them.
+#### Can we actually get the wallpaper? Yes, tested
 
-Best first target if this gets picked up: the glance card or the search
-widget. Both are small, self-contained, already sit over the wallpaper and are
-not part of the sheet gesture machinery, so converting one to a `ComposeView`
-with a wallpaper-fed `CanvasBackdrop` is a contained experiment that either
-looks good or gets reverted in one commit.
+Glass has to sample what is behind it, and the wallpaper is composited by the
+system behind a translucent window, so it is in no view or Compose tree this
+app owns. The library's `CanvasBackdrop` accepts arbitrary drawing as the
+backdrop source, so the question is only whether the wallpaper bitmap can be
+read at all.
+
+Probed on an API 37 emulator, three attempts:
+
+| Setup | `WallpaperManager.getDrawable()` |
+| --- | --- |
+| No permission, not default home | SecurityException, READ_EXTERNAL_STORAGE denied |
+| No permission, set as default home | same SecurityException |
+| `READ_MEDIA_IMAGES` declared and granted | `BitmapDrawable 922x1024` |
+
+So being the default launcher is **not** sufficient, contrary to what is often
+assumed. From Android 13 the wallpaper counts as media and needs
+`READ_MEDIA_IMAGES`, granted at runtime like any other media permission.
+
+That is the real cost of this feature, and it is worth being honest about it:
+a launcher asking for photo access looks alarming, even though the wallpaper
+is the only thing it reads. The permission should be requested lazily, only
+when someone turns the glass option on, never at first run, and the option
+should degrade to the current flat surfaces if it is refused.
+
+#### The rest, if that trade is acceptable
+
+1. A reusable `AbstractComposeView` rendering one glass surface, taking the
+   wallpaper through a `CanvasBackdrop`, with the offset and zoom the launcher
+   already applies so the glass lines up with what is on screen.
+2. Put it behind the glance card first. Small, self-contained, already over the
+   wallpaper and outside the sheet gesture machinery, so it either looks good
+   or reverts in one commit.
+3. A preference to switch it on, defaulting off, gated on the permission.
+4. Then the search widget and the popup menus, if it holds up.
+
+#### What it does not replace
+
+Sheets blur their background with `Window.setBackgroundBlurRadius`, which the
+system composites and which blurs everything behind the window, wallpaper and
+other apps included. Nothing in Compose can do that. Liquid glass is for the
+surfaces sitting on top, not for the window behind them.
+
+The library also ships no components by design. Buttons, toggles and cards are
+yours to build, with their catalog app as reference.
 
 ### Feature ideas
 
