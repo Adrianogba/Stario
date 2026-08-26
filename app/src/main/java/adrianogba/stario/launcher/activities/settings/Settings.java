@@ -61,12 +61,14 @@ import adrianogba.stario.launcher.activities.settings.dialogs.icons.IconsDialog;
 import adrianogba.stario.launcher.activities.settings.dialogs.license.LicensesDialog;
 import adrianogba.stario.launcher.activities.settings.dialogs.search.engine.SearchEngineDialog;
 import adrianogba.stario.launcher.activities.settings.dialogs.search.results.SearchResultsDialog;
+import adrianogba.stario.launcher.activities.settings.dialogs.language.LanguageDialog;
 import adrianogba.stario.launcher.activities.settings.dialogs.theme.ThemeDialog;
 import adrianogba.stario.launcher.apps.IconPackManager;
 import adrianogba.stario.launcher.apps.LauncherApplication;
 import adrianogba.stario.launcher.apps.ProfileApplicationManager;
 import adrianogba.stario.launcher.apps.ProfileManager;
 import adrianogba.stario.launcher.preferences.Entry;
+import adrianogba.stario.launcher.preferences.Language;
 import adrianogba.stario.launcher.preferences.Vibrations;
 import adrianogba.stario.launcher.sheet.drawer.search.SearchEngine;
 import adrianogba.stario.launcher.sheet.drawer.search.SearchFragment;
@@ -265,6 +267,35 @@ public class Settings extends ThemedActivity {
         findViewById(R.id.pages).setOnClickListener(view ->
                 startActivity(new Intent(this, PageManager.class),
                         ActivityOptions.makeSceneTransitionAnimation(this).toBundle()));
+
+        // Language
+        ((TextView) findViewById(R.id.language_name))
+                .setText(Language.current().getDisplayName());
+
+        findViewById(R.id.language).setOnClickListener(new View.OnClickListener() {
+            private LanguageDialog dialog;
+            private boolean showing = false;
+
+            @Override
+            public void onClick(View view) {
+                if (dialog == null) {
+                    dialog = new LanguageDialog(Settings.this);
+
+                    dialog.setOnLanguageSelected(stateChanged -> {
+                        showing = false;
+
+                        if (stateChanged) {
+                            restart();
+                        }
+                    });
+                }
+
+                if (!showing) {
+                    dialog.show();
+                    showing = true;
+                }
+            }
+        });
 
         // Theme
         TextView themeName = findViewById(R.id.theme_name);

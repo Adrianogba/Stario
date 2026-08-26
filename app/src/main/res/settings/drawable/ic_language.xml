@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="?attr/colorOnSurface"
+        android:pathData="M480,880q-83,0 -156,-31.5T197,763q-54,-54 -85.5,-127T80,480q0,-83 31.5,-156T197,197q54,-54 127,-85.5T480,80q83,0 156,31.5T763,197q54,54 85.5,127T880,480q0,83 -31.5,156T763,763q-54,54 -127,85.5T480,880ZM480,798q26,-36 45,-75t31,-83L404,640q12,44 31,83t45,75ZM376,782q-18,-33 -31.5,-68.5T322,640L170,640q29,50 72.5,87t133.5,55ZM584,782q90,-18 133.5,-55t72.5,-87L638,640q-9,38 -22.5,73.5T584,782ZM137,560h176q-3,-20 -4.5,-39.5T307,480q0,-21 1.5,-40.5T313,400L137,400q-5,20 -7.5,39.5T127,480q0,21 2.5,40.5T137,560ZM393,560h174q3,-20 4.5,-39.5T573,480q0,-21 -1.5,-40.5T567,400L393,400q-3,20 -4.5,39.5T387,480q0,21 1.5,40.5T393,560ZM647,560h176q5,-20 7.5,-39.5T833,480q0,-21 -2.5,-40.5T823,400L647,400q3,20 4.5,39.5T653,480q0,21 -1.5,40.5T647,560ZM638,320h152q-29,-50 -72.5,-87T584,178q18,33 31.5,68.5T638,320ZM404,320h152q-12,-44 -31,-83t-45,-75q-26,36 -45,75t-31,83ZM170,320h152q9,-38 22.5,-73.5T376,178q-90,18 -133.5,55T170,320Z" />
+</vector>
