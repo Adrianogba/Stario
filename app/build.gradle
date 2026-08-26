@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId 'adrianogba.stario.launcher'
-        minSdkVersion 29
+        minSdkVersion 33
         targetSdkVersion 37
         versionCode 97
         versionName '2.16'
@@ -150,6 +150,7 @@ dependencies {
     implementation libs.compose.ui.graphics
     implementation libs.compose.ui.unit
     implementation libs.compose.material3
+    implementation libs.backdrop
 
     implementation libs.google.material
     implementation libs.google.flexbox

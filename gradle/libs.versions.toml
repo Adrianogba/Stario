@@ -45,6 +45,8 @@ restrictionBypass = "c59bd6a680"
 sunriseSunset = "1.2"
 dateparser = "1.0.11"
 
+backdrop = "2.0.1"
+
 junit = "4.13.2"
 
 [libraries]
@@ -103,6 +105,10 @@ refine-annotation-processor = { module = "dev.rikka.tools.refine:annotation-proc
 restriction-bypass = { module = "com.github.ChickenHook:RestrictionBypass", version.ref = "restrictionBypass" }
 sunrise-sunset = { module = "com.luckycatlabs:SunriseSunsetCalculator", version.ref = "sunriseSunset" }
 dateparser = { module = "com.github.sisyphsu:dateparser", version.ref = "dateparser" }
+
+# Liquid glass surfaces. Needs API 33 for the AGSL shader, which is why
+# minSdk is 33.
+backdrop = { module = "io.github.kyant0:backdrop", version.ref = "backdrop" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 
