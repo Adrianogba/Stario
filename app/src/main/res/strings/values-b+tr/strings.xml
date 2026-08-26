@@ -21,7 +21,6 @@
     <string name="rearrange">Yeniden Düzenle</string>
 
     <string name="preferences">Tercihler</string>
-    <string name="notification_dots">Bildirim noktaları</string>
     <string name="vibrations">Titreşimler</string>
     <string name="theme">Tema</string>
     <string name="pages">Sayfa yöneticisi</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Köşe yarıçapı</string>
     <string name="regular">Normal</string>
-    <string name="squircle">Yuvarlak kare</string>
     <string name="components">bileşenler</string>
     <string name="calculating">Hesaplanıyor…</string>
 
     <string name="hidden_apps">Gizli uygulamalar</string>
 
     <string name="license">Lisans</string>
-    <string name="main_dependencies">Ana bağımlılıklar</string>
-    <string name="all_dependencies">Tüm bağımlılıklar</string>
 
     <string name="nothing_here_yet">Henüz burada bir şey yok!</string>
     <string name="create_a_widget">Bir widget ekle</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Bu, sağlanan adla yeni bir kategori oluşturacaktır.</string>
 
     <string name="briefing">Brifinginiz</string>
-    <string name="briefing_configurator">Brifing</string>
     <string name="import_feed">Bir besleme içe aktar</string>
     <string name="link_feed">İçe Aktar</string>
     <string name="unknown_feed">Bilinmeyen Besleme</string>

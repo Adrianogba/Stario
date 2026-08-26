@@ -21,7 +21,6 @@
     <string name="rearrange">Pārkārtot</string>
 
     <string name="preferences">Preferences</string>
-    <string name="notification_dots">Paziņojumu punkti</string>
     <string name="vibrations">Vibrācijas</string>
     <string name="theme">Motīvs</string>
     <string name="pages">Lapu pārvaldnieks</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Stūru rādiuss</string>
     <string name="regular">Parasts</string>
-    <string name="squircle">Squircle</string>
     <string name="components">komponenti</string>
     <string name="calculating">Aprēķina…</string>
 
     <string name="hidden_apps">Slēptās lietotnes</string>
 
     <string name="license">Licence</string>
-    <string name="main_dependencies">Galvenās atkarības</string>
-    <string name="all_dependencies">Visas atkarības</string>
 
     <string name="nothing_here_yet">Šeit vēl nekā nav!</string>
     <string name="create_a_widget">Pievienot logrīku</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Tiks izveidota jauna kategorija ar norādīto nosaukumu.</string>
 
     <string name="briefing">Jūsu apskats</string>
-    <string name="briefing_configurator">Apskats</string>
     <string name="import_feed">Importēt plūsmu</string>
     <string name="link_feed">Importēt</string>
     <string name="unknown_feed">Nezināma plūsma</string>

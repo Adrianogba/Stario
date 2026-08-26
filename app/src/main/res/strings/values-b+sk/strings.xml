@@ -21,7 +21,6 @@
     <string name="rearrange">Preusporiadať</string>
 
     <string name="preferences">Predvoľby</string>
-    <string name="notification_dots">Bodky upozornení</string>
     <string name="vibrations">Vibrácie</string>
     <string name="theme">Téma</string>
     <string name="pages">Správca stránok</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Polomer rohov</string>
     <string name="regular">Pravidelné</string>
-    <string name="squircle">Squircle</string>
     <string name="components">komponenty</string>
     <string name="calculating">Počíta sa…</string>
 
     <string name="hidden_apps">Skryté aplikácie</string>
 
     <string name="license">Licencia</string>
-    <string name="main_dependencies">Hlavné závislosti</string>
-    <string name="all_dependencies">Všetky závislosti</string>
 
     <string name="nothing_here_yet">Zatiaľ tu nič nie je!</string>
     <string name="create_a_widget">Pridať widget</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Tým sa vytvorí nová kategória s poskytnutým názvom.</string>
 
     <string name="briefing">Vaše zhrnutie</string>
-    <string name="briefing_configurator">Zhrnutie</string>
     <string name="import_feed">Importovať kanál</string>
     <string name="link_feed">Importovať</string>
     <string name="unknown_feed">Neznámy kanál</string>

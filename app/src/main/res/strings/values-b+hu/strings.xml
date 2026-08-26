@@ -21,7 +21,6 @@
     <string name="rearrange">Rendezés</string>
 
     <string name="preferences">Beállítások</string>
-    <string name="notification_dots">Értesítési pontok</string>
     <string name="vibrations">Rezgések</string>
     <string name="theme">Téma</string>
     <string name="pages">Oldalkezelő</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Sarokkerekítés</string>
     <string name="regular">Normál</string>
-    <string name="squircle">Lekerekített négyzet</string>
     <string name="components">összetevő</string>
     <string name="calculating">Számítás…</string>
 
     <string name="hidden_apps">Rejtett alkalmazások</string>
 
     <string name="license">Licenc</string>
-    <string name="main_dependencies">Fő függőségek</string>
-    <string name="all_dependencies">Minden függőség</string>
 
     <string name="nothing_here_yet">Még nincs itt semmi!</string>
     <string name="create_a_widget">Widget hozzáadása</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Ez egy új kategóriát hoz létre a megadott névvel.</string>
 
     <string name="briefing">Összefoglaló</string>
-    <string name="briefing_configurator">Összefoglaló</string>
     <string name="import_feed">Hírfolyam importálása</string>
     <string name="link_feed">Importálás</string>
     <string name="unknown_feed">Ismeretlen hírfolyam</string>

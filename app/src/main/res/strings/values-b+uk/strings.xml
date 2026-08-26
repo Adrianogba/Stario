@@ -25,7 +25,6 @@
 
     <!-- Settings -->
     <string name="preferences">Налаштування</string>
-    <string name="notification_dots">Крапки сповіщень</string>
     <string name="vibrations">Вібрація</string>
     <string name="theme">Тема</string>
     <string name="pages">Керування сторінками</string>
@@ -99,7 +98,6 @@
     <!-- Icons pop-up -->
     <string name="corner_radius">Радіус заокруглення кутів</string>
     <string name="regular">Звичайний</string>
-    <string name="squircle">Сквіркл</string>
     <string name="components">компоненти</string>
     <string name="calculating">Обчислення…</string>
 
@@ -108,8 +106,6 @@
 
     <!-- License pop-up -->
     <string name="license">Ліцензія</string>
-    <string name="main_dependencies">Основні залежності</string>
-    <string name="all_dependencies">Усі залежності</string>
 
     <!-- Widgets -->
     <string name="nothing_here_yet">Тут поки що нічого немає!</string>
@@ -153,7 +149,6 @@
 
     <!-- Briefing -->
     <string name="briefing">Ваш дайджест</string>
-    <string name="briefing_configurator">Дайджест</string>
     <string name="import_feed">Імпортувати стрічку</string>
     <string name="link_feed">Імпортувати</string>
     <string name="unknown_feed">Невідома стрічка</string>

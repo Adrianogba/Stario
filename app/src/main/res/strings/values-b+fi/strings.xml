@@ -21,7 +21,6 @@
     <string name="rearrange">Järjestä uudelleen</string>
 
     <string name="preferences">Asetukset</string>
-    <string name="notification_dots">Ilmoituspisteet</string>
     <string name="vibrations">Värinät</string>
     <string name="theme">Teema</string>
     <string name="pages">Sivujen hallinta</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Kulman säde</string>
     <string name="regular">Normaali</string>
-    <string name="squircle">Squircle</string>
     <string name="components">komponentit</string>
     <string name="calculating">Lasketaan…</string>
 
     <string name="hidden_apps">Piilotetut sovellukset</string>
 
     <string name="license">Lisenssi</string>
-    <string name="main_dependencies">Pääriippuvuudet</string>
-    <string name="all_dependencies">Kaikki riippuvuudet</string>
 
     <string name="nothing_here_yet">Ei mitään täällä vielä!</string>
     <string name="create_a_widget">Lisää widget</string>
@@ -133,7 +129,6 @@
     <string name="category_warning">Tämä luo uuden luokan annetulla nimellä.</string>
 
     <string name="briefing">Yhteenveto</string>
-    <string name="briefing_configurator">Yhteenveto</string>
     <string name="import_feed">Tuo syöte</string>
     <string name="link_feed">Tuo</string>
     <string name="unknown_feed">Tuntematon syöte</string>

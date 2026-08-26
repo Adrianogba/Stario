@@ -21,7 +21,6 @@
     <string name="rearrange">Rearanjează</string>
 
     <string name="preferences">Preferințe</string>
-    <string name="notification_dots">Puncte de notificare</string>
     <string name="vibrations">Vibrații</string>
     <string name="theme">Temă</string>
     <string name="pages">Gestionare pagini</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Raza colțului</string>
     <string name="regular">Regular</string>
-    <string name="squircle">Squircle</string>
     <string name="components">componente</string>
     <string name="calculating">Se calculează…</string>
 
     <string name="hidden_apps">Aplicații ascunse</string>
 
     <string name="license">Licență</string>
-    <string name="main_dependencies">Dependențe principale</string>
-    <string name="all_dependencies">Toate dependențele</string>
 
     <string name="nothing_here_yet">Nimic aici deocamdată!</string>
     <string name="create_a_widget">Adaugă un widget</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Aceasta va crea o nouă categorie cu numele furnizat.</string>
 
     <string name="briefing">Briefing-ul tău</string>
-    <string name="briefing_configurator">Briefing</string>
     <string name="import_feed">Importă un flux</string>
     <string name="link_feed">Importă</string>
     <string name="unknown_feed">Flux necunoscut</string>

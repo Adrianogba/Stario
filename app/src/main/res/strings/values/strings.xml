@@ -47,7 +47,6 @@
 
     <!-- Settings -->
     <string name="preferences">Preferences</string>
-    <string name="notification_dots">Notification dots</string>
     <string name="vibrations">Vibrations</string>
     <string name="theme">Theme</string>
     <string name="pages">Page manager</string>
@@ -121,7 +120,6 @@
     <!-- Icons pop-up -->
     <string name="corner_radius">Corner radius</string>
     <string name="regular">Regular</string>
-    <string name="squircle">Squircle</string>
     <string name="components">components</string>
     <string name="calculating">Calculating…</string>
 
@@ -130,8 +128,6 @@
 
     <!-- License pop-up -->
     <string name="license">License</string>
-    <string name="main_dependencies">Main dependencies</string>
-    <string name="all_dependencies">All dependencies</string>
 
     <!-- Widgets -->
     <string name="nothing_here_yet">Nothing here yet!</string>
@@ -179,7 +175,6 @@
 
     <!-- Briefing -->
     <string name="briefing">Your briefing</string>
-    <string name="briefing_configurator">Briefing</string>
     <string name="import_feed">Import a feed</string>
     <string name="link_feed">Import</string>
     <string name="unknown_feed">Unknown Feed</string>

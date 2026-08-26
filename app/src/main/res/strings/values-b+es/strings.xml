@@ -21,7 +21,6 @@
     <string name="rearrange">Reorganizar</string>
 
     <string name="preferences">Preferencias</string>
-    <string name="notification_dots">Puntos de notificación</string>
     <string name="vibrations">Vibraciones</string>
     <string name="theme">Tema</string>
     <string name="pages">Gestor de páginas</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Radio de las esquinas</string>
     <string name="regular">Regular</string>
-    <string name="squircle">Squircle</string>
     <string name="components">componentes</string>
     <string name="calculating">Calculando…</string>
 
     <string name="hidden_apps">Apps ocultas</string>
 
     <string name="license">Licencia</string>
-    <string name="main_dependencies">Dependencias principales</string>
-    <string name="all_dependencies">Todas las dependencias</string>
 
     <string name="nothing_here_yet">¡No hay nada aquí todavía!</string>
     <string name="create_a_widget">Añadir un widget</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Esto creará una nueva categoría con el nombre proporcionado.</string>
 
     <string name="briefing">Tu resumen</string>
-    <string name="briefing_configurator">Resumen</string>
     <string name="import_feed">Importar fuente</string>
     <string name="link_feed">Importar</string>
     <string name="unknown_feed">Fuente desconocida</string>

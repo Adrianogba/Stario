@@ -21,7 +21,6 @@
     <string name="rearrange">重排</string>
 
     <string name="preferences">偏好设置</string>
-    <string name="notification_dots">通知圆点</string>
     <string name="vibrations">振动</string>
     <string name="theme">主题</string>
     <string name="pages">页面管理</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">圆角半径</string>
     <string name="regular">常规</string>
-    <string name="squircle">连续曲率正方形</string>
     <string name="components">个组件</string>
     <string name="calculating">计算中…</string>
 
     <string name="hidden_apps">隐藏的应用</string>
 
     <string name="license">许可</string>
-    <string name="main_dependencies">主要依赖</string>
-    <string name="all_dependencies">所有依赖</string>
 
     <string name="nothing_here_yet">这里空空如也！</string>
     <string name="create_a_widget">添加小部件</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">这将创建一个具有指定名称的新类别。</string>
 
     <string name="briefing">简报</string>
-    <string name="briefing_configurator">简报配置</string>
     <string name="import_feed">导入订阅源</string>
     <string name="link_feed">导入</string>
     <string name="unknown_feed">未知订阅源</string>

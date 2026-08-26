@@ -21,7 +21,6 @@
     <string name="rearrange">Переупорядочить</string>
 
     <string name="preferences">Настройки</string>
-    <string name="notification_dots">Индикаторы уведомлений</string>
     <string name="vibrations">Вибрация</string>
     <string name="theme">Тема</string>
     <string name="pages">Диспетчер страниц</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Радиус скругления углов</string>
     <string name="regular">Обычный</string>
-    <string name="squircle">Сквиркл</string>
     <string name="components">компоненты</string>
     <string name="calculating">Вычисление…</string>
 
     <string name="hidden_apps">Скрытые приложения</string>
 
     <string name="license">Лицензия</string>
-    <string name="main_dependencies">Основные зависимости</string>
-    <string name="all_dependencies">Все зависимости</string>
 
     <string name="nothing_here_yet">Здесь пока ничего нет!</string>
     <string name="create_a_widget">Добавить виджет</string>
@@ -138,7 +134,6 @@
     <string name="category_warning">Будет создана новая категория с указанным названием.</string>
 
     <string name="briefing">Ваш дайджест</string>
-    <string name="briefing_configurator">Дайджест</string>
     <string name="import_feed">Импортировать ленту</string>
     <string name="link_feed">Импорт</string>
     <string name="unknown_feed">Неизвестная лента</string>

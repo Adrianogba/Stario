@@ -21,7 +21,6 @@
     <string name="rearrange">Neu anordnen</string>
 
     <string name="preferences">Einstellungen</string>
-    <string name="notification_dots">Benachrichtigungspunkte</string>
     <string name="vibrations">Vibrationen</string>
     <string name="theme">Design</string>
     <string name="pages">Seitenverwaltung</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Eckenradius</string>
     <string name="regular">Standard</string>
-    <string name="squircle">Squircle</string>
     <string name="components">Komponenten</string>
     <string name="calculating">Berechnung…</string>
 
     <string name="hidden_apps">Versteckte Apps</string>
 
     <string name="license">Lizenz</string>
-    <string name="main_dependencies">Hauptabhängigkeiten</string>
-    <string name="all_dependencies">Alle Abhängigkeiten</string>
 
     <string name="nothing_here_yet">Hier gibt es noch nichts!</string>
     <string name="create_a_widget">Widget hinzufügen</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Dadurch wird eine neue Kategorie mit dem angegebenen Namen erstellt.</string>
 
     <string name="briefing">Dein Briefing</string>
-    <string name="briefing_configurator">Briefing</string>
     <string name="import_feed">Feed importieren</string>
     <string name="link_feed">Importieren</string>
     <string name="unknown_feed">Unbekannter Feed</string>

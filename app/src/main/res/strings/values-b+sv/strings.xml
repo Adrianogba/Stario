@@ -21,7 +21,6 @@
     <string name="rearrange">Ordna om</string>
 
     <string name="preferences">Inställningar</string>
-    <string name="notification_dots">Aviseringsprickar</string>
     <string name="vibrations">Vibrationer</string>
     <string name="theme">Tema</string>
     <string name="pages">Sidhanterare</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Hörnradie</string>
     <string name="regular">Regelbunden</string>
-    <string name="squircle">Squircle</string>
     <string name="components">komponenter</string>
     <string name="calculating">Beräknar…</string>
 
     <string name="hidden_apps">Dolda appar</string>
 
     <string name="license">Licens</string>
-    <string name="main_dependencies">Huvudberoenden</string>
-    <string name="all_dependencies">Alla beroenden</string>
 
     <string name="nothing_here_yet">Här finns ingenting än!</string>
     <string name="create_a_widget">Lägg till en widget</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Detta kommer att skapa en ny kategori med det angivna namnet.</string>
 
     <string name="briefing">Din briefing</string>
-    <string name="briefing_configurator">Briefing</string>
     <string name="import_feed">Importera ett flöde</string>
     <string name="link_feed">Importera</string>
     <string name="unknown_feed">Okänt flöde</string>

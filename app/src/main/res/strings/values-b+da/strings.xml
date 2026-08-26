@@ -21,7 +21,6 @@
     <string name="rearrange">Omarranger</string>
 
     <string name="preferences">Præferencer</string>
-    <string name="notification_dots">Beskedprikker</string>
     <string name="vibrations">Vibrationer</string>
     <string name="theme">Tema</string>
     <string name="pages">Sidehåndtering</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Hjørneradius</string>
     <string name="regular">Regulær</string>
-    <string name="squircle">Squircle</string>
     <string name="components">komponenter</string>
     <string name="calculating">Beregner…</string>
 
     <string name="hidden_apps">Skjulte apps</string>
 
     <string name="license">Licens</string>
-    <string name="main_dependencies">Hovedafhængigheder</string>
-    <string name="all_dependencies">Alle afhængigheder</string>
 
     <string name="nothing_here_yet">Her er tomt endnu!</string>
     <string name="create_a_widget">Tilføj en widget</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Dette vil oprette en ny kategori med det angivne navn.</string>
 
     <string name="briefing">Din briefing</string>
-    <string name="briefing_configurator">Briefing</string>
     <string name="import_feed">Importer et feed</string>
     <string name="link_feed">Importer</string>
     <string name="unknown_feed">Ukendt feed</string>

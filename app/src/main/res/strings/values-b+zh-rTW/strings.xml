@@ -21,7 +21,6 @@
     <string name="rearrange">重排</string>
 
     <string name="preferences">偏好設定</string>
-    <string name="notification_dots">通知點</string>
     <string name="vibrations">震動</string>
     <string name="theme">主題</string>
     <string name="pages">分頁管理</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">圓角半徑</string>
     <string name="regular">一般</string>
-    <string name="squircle">連續曲率正方形</string>
     <string name="components">個組件</string>
     <string name="calculating">計算中…</string>
 
     <string name="hidden_apps">隱藏的應用程式</string>
 
     <string name="license">授權</string>
-    <string name="main_dependencies">主要依賴項</string>
-    <string name="all_dependencies">所有依賴項</string>
 
     <string name="nothing_here_yet">這裡空空如也！</string>
     <string name="create_a_widget">新增小工具</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">這將建立一個指定名稱的新類別。</string>
 
     <string name="briefing">你的簡報</string>
-    <string name="briefing_configurator">簡報設定</string>
     <string name="import_feed">匯入來源</string>
     <string name="link_feed">匯入</string>
     <string name="unknown_feed">未知來源</string>

@@ -21,7 +21,6 @@
     <string name="rearrange">Herschikken</string>
 
     <string name="preferences">Voorkeuren</string>
-    <string name="notification_dots">Meldingsstippen</string>
     <string name="vibrations">Trillingen</string>
     <string name="theme">Thema</string>
     <string name="pages">Paginabeheer</string>
@@ -87,15 +86,12 @@
 
     <string name="corner_radius">Hoekstraal</string>
     <string name="regular">Regulier</string>
-    <string name="squircle">Squircle</string>
     <string name="components">componenten</string>
     <string name="calculating">Berekenen…</string>
 
     <string name="hidden_apps">Verborgen apps</string>
 
     <string name="license">Licentie</string>
-    <string name="main_dependencies">Belangrijkste afhankelijkheden</string>
-    <string name="all_dependencies">Alle afhankelijkheden</string>
 
     <string name="nothing_here_yet">Nog niets hier!</string>
     <string name="create_a_widget">Widget toevoegen</string>
@@ -134,7 +130,6 @@
     <string name="category_warning">Dit maakt een nieuwe categorie aan met de opgegeven naam.</string>
 
     <string name="briefing">Jouw briefing</string>
-    <string name="briefing_configurator">Briefing</string>
     <string name="import_feed">Feed importeren</string>
     <string name="link_feed">Importeren</string>
     <string name="unknown_feed">Onbekende feed</string>
