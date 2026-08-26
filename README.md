@@ -214,6 +214,35 @@ should degrade to the current flat surfaces if it is refused.
 3. A preference to switch it on, defaulting off, gated on the permission.
 4. Then the search widget and the popup menus, if it holds up.
 
+#### Where the switch goes
+
+In the theme dialog, directly under Enforce dark mode. That dialog already has
+the exact shape needed: `pop_up_theme.xml` holds a `force_dark_container` with
+a `MaterialSwitch` above the colour list, and `ThemeDialog` already reads the
+preference, writes it on toggle, and reports on dismiss whether anything
+changed so the activity gets recreated. A glass switch is that same pattern a
+second time:
+
+1. A `LIQUID_GLASS` key beside `FORCE_DARK` in `ThemedActivity`.
+2. A second container and switch in `pop_up_theme.xml`.
+3. The same read, write and dismiss-diff in `ThemeDialog`, so flipping it
+   recreates the activity the way a colour change already does.
+
+**Surface style and colour stay separate axes, and that is the point.** Glass
+changes how a surface is drawn; the theme still decides what colour it is.
+The colour list keeps working untouched, Dynamic included, because
+`ThemeRecyclerAdapter` already resolves colours through
+`activity.getAttributeData(theme, attr)`. Tint the glass from the same
+`colorPrimaryContainer` and `colorPrimary` attributes and Material You colours
+carry over for free. Nothing about the twelve themes has to change.
+
+Two things the switch has to handle honestly:
+
+- It depends on `READ_MEDIA_IMAGES`. Ask when the switch is turned on, never
+  before, and leave the switch off if it is refused rather than showing glass
+  that cannot sample anything.
+- It should be off by default until it has been looked at on a real device.
+
 #### What it does not replace
 
 Sheets blur their background with `Window.setBackgroundBlurRadius`, which the
