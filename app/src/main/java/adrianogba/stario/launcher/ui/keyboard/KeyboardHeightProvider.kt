@@ -19,10 +19,7 @@
 package adrianogba.stario.launcher.ui.keyboard
 
 import android.app.Activity
-import android.graphics.Point
-import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +29,6 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import adrianogba.stario.launcher.ui.Measurements
-import adrianogba.stario.launcher.utils.Utils
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 
@@ -116,30 +112,11 @@ class KeyboardHeightProvider(private val activity: Activity) : PopupWindow(activ
             return 0
         }
 
-        if (Utils.isMinimumSDK(Build.VERSION_CODES.R)) {
-            val windowInsets = parentView.rootWindowInsets ?: return 0
+        val windowInsets = parentView.rootWindowInsets ?: return 0
 
-            val insets = windowInsets.getInsets(WindowInsets.Type.ime())
+        val insets = windowInsets.getInsets(WindowInsets.Type.ime())
 
-            return max(0, insets.bottom - Measurements.getNavHeight())
-        }
-
-        @Suppress("DEPRECATION")
-        val display = activity.windowManager.defaultDisplay
-        val screenSize = Point()
-
-        @Suppress("DEPRECATION")
-        display.getSize(screenSize)
-
-        val displayCutout = display.cutout
-        if (displayCutout != null) {
-            screenSize.y += displayCutout.safeInsetTop
-        }
-
-        val rect = Rect()
-        popupView.getWindowVisibleDisplayFrame(rect)
-
-        return screenSize.y - rect.bottom
+        return max(0, insets.bottom - Measurements.getNavHeight())
     }
 
     fun interface KeyboardHeightListener {

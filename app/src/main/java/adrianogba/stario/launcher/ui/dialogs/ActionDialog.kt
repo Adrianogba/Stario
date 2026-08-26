@@ -19,7 +19,6 @@
 package adrianogba.stario.launcher.ui.dialogs
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,7 +40,6 @@ import adrianogba.stario.launcher.ui.keyboard.KeyboardHeightProvider
 import adrianogba.stario.launcher.ui.utils.HomeWatcher
 import adrianogba.stario.launcher.ui.utils.UiUtils
 import adrianogba.stario.launcher.ui.utils.animation.KeyboardAnimationHelper
-import adrianogba.stario.launcher.utils.Utils
 import kotlin.math.min
 
 abstract class ActionDialog(
@@ -102,27 +100,16 @@ abstract class ActionDialog(
         val heightProvider = KeyboardHeightProvider(activity)
         this.heightProvider = heightProvider
 
-        if (Utils.isMinimumSDK(Build.VERSION_CODES.R)) {
-            KeyboardAnimationHelper.configureKeyboardAnimator(
-                window!!.decorView, heightProvider
-            ) { translation ->
-                content.setPadding(
-                    content.paddingLeft, content.paddingTop,
-                    content.paddingRight, (Measurements.getNavHeight() - translation).toInt()
-                )
-            }
-
-            heightProvider.addKeyboardHeightListener { height -> behavior.isDraggable = height == 0 }
-        } else {
-            heightProvider.addKeyboardHeightListener { height ->
-                content.setPadding(
-                    content.paddingLeft, content.paddingTop,
-                    content.paddingRight, Measurements.getNavHeight() + height
-                )
-
-                behavior.isDraggable = height == 0
-            }
+        KeyboardAnimationHelper.configureKeyboardAnimator(
+            window!!.decorView, heightProvider
+        ) { translation ->
+            content.setPadding(
+                content.paddingLeft, content.paddingTop,
+                content.paddingRight, (Measurements.getNavHeight() - translation).toInt()
+            )
         }
+
+        heightProvider.addKeyboardHeightListener { height -> behavior.isDraggable = height == 0 }
 
         Measurements.addNavListener { value ->
             content.setPadding(

@@ -27,7 +27,6 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.PaintDrawable
-import android.os.Build
 import android.os.Bundle
 import android.transition.Transition
 import android.transition.TransitionListenerAdapter
@@ -55,7 +54,6 @@ import adrianogba.stario.launcher.ui.back.BackGestureEventBus
 import adrianogba.stario.launcher.ui.common.AnimatedInsetDrawable
 import adrianogba.stario.launcher.ui.utils.UiUtils
 import adrianogba.stario.launcher.ui.utils.animation.Animation
-import adrianogba.stario.launcher.utils.Utils
 import java.util.Arrays
 import java.util.HashMap
 
@@ -78,11 +76,7 @@ abstract class ThemedActivity : AppCompatActivity() {
 
         //default theme if it doesn't exist
         if (!themePreferences.contains(THEME)) {
-            if (Utils.isMinimumSDK(Build.VERSION_CODES.R)) {
-                themePreferences.edit().putString(THEME, Theme.THEME_DYNAMIC.toString()).apply()
-            } else {
-                themePreferences.edit().putString(THEME, Theme.THEME_BLUE.toString()).apply()
-            }
+            themePreferences.edit().putString(THEME, Theme.THEME_DYNAMIC.toString()).apply()
         }
 
         //night mode flags
@@ -122,9 +116,7 @@ abstract class ThemedActivity : AppCompatActivity() {
             window.setBackgroundDrawable(windowBackground)
             window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
 
-            if (Utils.isMinimumSDK(Build.VERSION_CODES.R)) {
-                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-            }
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         }
 
         onBackPressedDispatcher.addCallback(this,

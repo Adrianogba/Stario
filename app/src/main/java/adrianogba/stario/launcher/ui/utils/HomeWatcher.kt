@@ -22,8 +22,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
-import adrianogba.stario.launcher.utils.Utils
 
 class HomeWatcher(private val context: Context) {
     private val filter = IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
@@ -39,12 +37,7 @@ class HomeWatcher(private val context: Context) {
     fun startWatch() {
         val receiver = this.receiver ?: return
 
-        if (Utils.isMinimumSDK(Build.VERSION_CODES.TIRAMISU)) {
-            context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            @Suppress("UnspecifiedRegisterReceiverFlag")
-            context.registerReceiver(receiver, filter)
-        }
+        context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
     }
 
     fun stopWatch() {

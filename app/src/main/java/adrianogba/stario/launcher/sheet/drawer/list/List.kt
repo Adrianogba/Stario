@@ -20,7 +20,6 @@ package adrianogba.stario.launcher.sheet.drawer.list
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
 import android.view.LayoutInflater
@@ -120,12 +119,7 @@ class List : ListDrawerPage {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         if (savedInstanceState != null && savedInstanceState.containsKey(USER_HANDLE_KEY)) {
-            handle = if (Utils.isMinimumSDK(Build.VERSION_CODES.TIRAMISU)) {
-                savedInstanceState.getParcelable(USER_HANDLE_KEY, UserHandle::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                savedInstanceState.getParcelable(USER_HANDLE_KEY)
-            }
+            handle = savedInstanceState.getParcelable(USER_HANDLE_KEY, UserHandle::class.java)
         }
 
         // getProfile is nullable now that ProfileManager is Kotlin. The Java

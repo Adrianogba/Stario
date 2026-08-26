@@ -22,13 +22,11 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.database.ContentObserver
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
-import adrianogba.stario.launcher.utils.Utils
 import adrianogba.stario.launcher.utils.objects.ObservableObject
 import java.util.WeakHashMap
 
@@ -85,28 +83,21 @@ object Measurements {
         defaultPadding = dpToPx(20f)
 
         root.setOnApplyWindowInsetsListener { _, insets ->
-            if (Utils.isMinimumSDK(Build.VERSION_CODES.R)) {
-                SYS_UI_HEIGHT.updateObject(
-                    insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).top
-                )
+            SYS_UI_HEIGHT.updateObject(
+                insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).top
+            )
 
-                val isKeyboardVisible = insets.isVisible(WindowInsets.Type.ime())
+            val isKeyboardVisible = insets.isVisible(WindowInsets.Type.ime())
 
-                if (isKeyboardVisible && ((activity.window.attributes.softInputMode
-                            and WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-                            != WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-                ) {
-                    NAV_HEIGHT.updateObject(insets.getInsets(WindowInsets.Type.ime()).bottom)
-                } else {
-                    NAV_HEIGHT.updateObject(
-                        insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom
-                    )
-                }
+            if (isKeyboardVisible && ((activity.window.attributes.softInputMode
+                        and WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+                        != WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+            ) {
+                NAV_HEIGHT.updateObject(insets.getInsets(WindowInsets.Type.ime()).bottom)
             } else {
-                @Suppress("DEPRECATION")
-                SYS_UI_HEIGHT.updateObject(insets.systemWindowInsetTop)
-                @Suppress("DEPRECATION")
-                NAV_HEIGHT.updateObject(insets.systemWindowInsetBottom)
+                NAV_HEIGHT.updateObject(
+                    insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom
+                )
             }
 
             val listener = LISTENERS[root]
