@@ -2,23 +2,25 @@
 
 <img src="docs/representative.png" alt="Stario representative">
 
-[![Build](https://img.shields.io/github/actions/workflow/status/albu-razvan/Stario/build.yml?label=Build)](https://github.com/albu-razvan/Stario/actions/workflows/build.yml)
-[<img src="https://shields.rbtlog.dev/simple/com.stario.launcher" alt="RB shield">](https://shields.rbtlog.dev/com.stario.launcher)
-[![Latest release](https://img.shields.io/github/downloads/albu-razvan/Stario/total?label=Download&logo=android&logoColor=white)](https://github.com/albu-razvan/Stario/releases/latest)
-[![Discord](https://img.shields.io/discord/1110537583726964820?label=Discord&logo=discord&logoColor=white)](https://discord.gg/WuVapMt9gY)
+A personal fork of [Stario](https://github.com/albu-razvan/Stario) by Răzvan Albu,
+continued after the original project was archived in 2026.
 
-## Deprecation Notice
+> [!NOTE]
+> **This fork is built for personal use and is not distributed.**
+>
+> Upstream was archived because Play Store policy, OEM restrictions and tightening
+> platform APIs made an independently-developed launcher hard to sustain. None of
+> those constraints apply to a sideloaded personal build, so this fork deliberately
+> uses platform capabilities that a published launcher could not.
+>
+> Original work Copyright (C) 2025 Răzvan Albu, licensed GPL-3.0. This fork remains
+> GPL-3.0 and preserves all upstream copyright notices.
 
-> [!WARNING]
-> Stario began as a personal project inspired by Android’s flexibility and openness.
->
-> Unfortunately, the Android ecosystem has changed significantly in recent years. New platform restrictions, OEM limitations, tighter system integrations, and evolving Play ecosystem policies have made it increasingly difficult for independent developers to provide fully integrated experience across devices.
->
-> The September 2026 changes (read more at [Keep Android Open](https://keepandroidopen.org/)) are, to me, a clear signal of the direction Android is heading. While these changes may not impact Stario directly, they’ve collectively removed much of the motivation I had to continue pushing the project forward.
->
-> The project will remain open source for anyone interested in continuing development, or preserving the spirit of Android customization that inspired projects like this one in the first place.
->
-> Thank you to everyone who contributed, tested builds, submitted issues, translated the app, or used Stario over the years.
+## Fork changes
+
+- Application ID changed to `adrianogba.stario.launcher`
+- Build modernized: Gradle 9.7.1, AGP 9, Kotlin 2.4, compileSdk 37, Java 21, JDK 25
+- Source being migrated from Java to Kotlin
 
 ## Overview
 
@@ -60,10 +62,10 @@ Stario Launcher. This version offers significant improvements in both performanc
 - **Page Sorting**  
   Easily reorder your home screen pages to suit your workflow.
 
-## Download
+## Availability
 
-- Get the latest release of Stario from the [GitHub Releases page](https://github.com/albu-razvan/Stario/releases/latest).
-- Find Stario at [IzzyOnDroid](https://apt.izzysoft.de/packages/com.stario.launcher).
+- This fork is not published. Build it yourself with the instructions below.
+- Upstream releases remain available at [albu-razvan/Stario](https://github.com/albu-razvan/Stario/releases/latest).
 
 ## Compatibility
 
@@ -132,8 +134,3 @@ apksigcopier compare stario-from-source.apk stario-built-locally.apk
 ```
 
 > NOTE: `apksigcopier compare` requires [apksigner](https://developer.android.com/tools/apksigner).
-
-## Join the Community
-
-Got questions or want to connect with other users and contributors? Join
-the [Stario Discord Server](https://discord.gg/WuVapMt9gY).

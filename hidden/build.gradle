@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.stario.launcher.hidden'
+    namespace 'adrianogba.stario.launcher.hidden'
     compileSdk 37
     compileSdkMinor 1
 

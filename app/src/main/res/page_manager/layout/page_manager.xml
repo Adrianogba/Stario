@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.stario.launcher.ui.common.FadingEdgeLayout
+        <adrianogba.stario.launcher.ui.common.FadingEdgeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:edge="top|bottom|left|right"
@@ -37,13 +38,13 @@
             app:size_right="100dp"
             app:size_top="100dp">
 
-            <com.stario.launcher.ui.common.GradientView
+            <adrianogba.stario.launcher.ui.common.GradientView
                 android:id="@+id/gradient"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:alpha="0" />
 
-        </com.stario.launcher.ui.common.FadingEdgeLayout>
+        </adrianogba.stario.launcher.ui.common.FadingEdgeLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/pages_container"

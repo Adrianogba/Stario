@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>
   -->
 
-<com.stario.launcher.ui.common.FadingEdgeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<adrianogba.stario.launcher.ui.common.FadingEdgeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -137,7 +138,7 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <com.stario.launcher.ui.keyboard.extract.ExtractEditText
+                <adrianogba.stario.launcher.ui.keyboard.extract.ExtractEditText
                     android:id="@+id/edit_text"
                     android:layout_width="0px"
                     android:layout_height="wrap_content"
@@ -173,4 +174,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</com.stario.launcher.ui.common.FadingEdgeLayout>
+</adrianogba.stario.launcher.ui.common.FadingEdgeLayout>

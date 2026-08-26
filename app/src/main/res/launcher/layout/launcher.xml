@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>
   -->
 
-<com.stario.launcher.ui.common.lock.ClosingAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
+<adrianogba.stario.launcher.ui.common.lock.ClosingAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -31,12 +32,12 @@
         android:rotation="180"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.stario.launcher.sheet.SheetsFocusController
+    <adrianogba.stario.launcher.sheet.SheetsFocusController
         android:id="@+id/controller"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.stario.launcher.ui.common.lock.LockDetector
+        <adrianogba.stario.launcher.ui.common.lock.LockDetector
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -45,9 +46,9 @@
             app:grid_no_space_warning="@string/home_no_space_warning"
             app:grid_preference_key="homescreen">
 
-        </com.stario.launcher.ui.common.lock.LockDetector>
+        </adrianogba.stario.launcher.ui.common.lock.LockDetector>
 
-    </com.stario.launcher.sheet.SheetsFocusController>
+    </adrianogba.stario.launcher.sheet.SheetsFocusController>
 
     <View
         android:id="@+id/navigation_bar_contrast"
@@ -56,4 +57,4 @@
         android:background="@drawable/contrast_gradient"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-</com.stario.launcher.ui.common.lock.ClosingAnimationView>
+</adrianogba.stario.launcher.ui.common.lock.ClosingAnimationView>

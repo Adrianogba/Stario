@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <com.stario.launcher.ui.recyclers.autogrid.AutoGridRecyclerView
+    <adrianogba.stario.launcher.ui.recyclers.autogrid.AutoGridRecyclerView
         android:id="@+id/drawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@id/drawer">
 
-        <com.stario.launcher.ui.common.text.WaveUnderlineTextView
+        <adrianogba.stario.launcher.ui.common.text.WaveUnderlineTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

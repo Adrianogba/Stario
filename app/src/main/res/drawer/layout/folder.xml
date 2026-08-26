@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
     android:paddingRight="10dp"
     android:paddingBottom="5dp">
 
-    <com.stario.launcher.ui.recyclers.ClickableRecyclerView
+    <adrianogba.stario.launcher.ui.recyclers.ClickableRecyclerView
         android:id="@+id/items"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>
   -->
 
-<com.stario.launcher.sheet.SheetCoordinator xmlns:android="http://schemas.android.com/apk/res/android"
+<adrianogba.stario.launcher.sheet.SheetCoordinator xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
@@ -30,6 +31,6 @@
         android:layout_gravity="center_vertical|right"
         android:alpha="0"
         android:fitsSystemWindows="false"
-        app:layout_behavior="com.stario.launcher.sheet.behavior.right.RightSheetBehavior" />
+        app:layout_behavior="adrianogba.stario.launcher.sheet.behavior.right.RightSheetBehavior" />
 
-</com.stario.launcher.sheet.SheetCoordinator>
+</adrianogba.stario.launcher.sheet.SheetCoordinator>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>
   -->
 
-<com.stario.launcher.ui.common.glance.GlanceConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<adrianogba.stario.launcher.ui.common.glance.GlanceConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container_media"
     android:layout_width="match_parent"
@@ -68,7 +69,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <com.stario.launcher.ui.common.text.DelayedMarqueeTextView
+                <adrianogba.stario.launcher.ui.common.text.DelayedMarqueeTextView
                     android:id="@+id/song"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -117,7 +118,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_rewind" />
 
-            <com.stario.launcher.ui.common.media.SliderComposeView
+            <adrianogba.stario.launcher.ui.common.media.SliderComposeView
                 android:id="@+id/slider"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -152,4 +153,4 @@
 
     </LinearLayout>
 
-</com.stario.launcher.ui.common.glance.GlanceConstraintLayout>
+</adrianogba.stario.launcher.ui.common.glance.GlanceConstraintLayout>

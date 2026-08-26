@@ -9,12 +9,12 @@ def hasSigningConfig = ['keystorePath', 'keystorePassword', 'keyAlias', 'keyPass
         .every { project.hasProperty(it) }
 
 android {
-    namespace 'com.stario.launcher'
+    namespace 'adrianogba.stario.launcher'
     compileSdk 37
     compileSdkMinor 1
 
     defaultConfig {
-        applicationId 'com.stario.launcher'
+        applicationId 'adrianogba.stario.launcher'
         minSdkVersion 29
         targetSdkVersion 36
         versionCode 97

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
     android:layout_height="wrap_content"
     app:carbon_maxHeight="400dp">
 
-    <com.stario.launcher.ui.common.FadingEdgeLayout
+    <adrianogba.stario.launcher.ui.common.FadingEdgeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="25dp"
@@ -41,6 +42,6 @@
             android:paddingBottom="10dp"
             android:overScrollMode="never" />
 
-    </com.stario.launcher.ui.common.FadingEdgeLayout>
+    </adrianogba.stario.launcher.ui.common.FadingEdgeLayout>
 
 </carbon.widget.RelativeLayout>

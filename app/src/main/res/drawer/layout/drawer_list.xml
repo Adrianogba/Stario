@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>
   -->
 
-<com.stario.launcher.ui.recyclers.FastScroller xmlns:android="http://schemas.android.com/apk/res/android"
+<adrianogba.stario.launcher.ui.recyclers.FastScroller xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fast_scroller"
     android:layout_width="match_parent"
@@ -25,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.stario.launcher.ui.recyclers.autogrid.AutoGridRecyclerView
+        <adrianogba.stario.launcher.ui.recyclers.autogrid.AutoGridRecyclerView
             android:id="@+id/drawer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,4 +62,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</com.stario.launcher.ui.recyclers.FastScroller>
+</adrianogba.stario.launcher.ui.recyclers.FastScroller>

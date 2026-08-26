@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@
         android:layout_margin="10dp"
         android:clipChildren="false">
 
-        <com.stario.launcher.ui.icons.AdaptiveIconView
+        <adrianogba.stario.launcher.ui.icons.AdaptiveIconView
             android:id="@+id/icon"
             android:layout_width="0px"
             android:layout_height="0px"
