@@ -128,7 +128,9 @@ class List : ListDrawerPage {
             }
         }
 
-        val applicationManager = ProfileManager.getInstance().getProfile(handle)
+        // getProfile is nullable now that ProfileManager is Kotlin. The Java
+        // original dereferenced it unchecked, so this keeps throwing there.
+        val applicationManager = ProfileManager.getInstance().getProfile(handle)!!
         val adapter: AsyncRecyclerAdapter<*> = ListAdapter(activity, applicationManager)
 
         LayoutSizeObserver.attach(drawer, LayoutSizeObserver.WIDTH,
