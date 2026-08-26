@@ -47,8 +47,8 @@ class PinnedCategoryApplicationRecyclerAdapter(
         return Supplier { PinnedCategoryApplicationViewHolder(viewType) }
     }
 
-    override fun getApplication(index: Int): LauncherApplication {
-        return category?.get(index) ?: LauncherApplication.FALLBACK_APP
+    override fun getApplication(index: Int): LauncherApplication? {
+        return category?.get(index)
     }
 
     override fun getTotalItemCount(): Int = category?.size ?: 0

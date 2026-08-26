@@ -317,7 +317,7 @@ public final class ProfileApplicationManager {
         if (index >= 0 && index < visibleApplicationList.size()) {
             return visibleApplicationList.get(index);
         } else {
-            return LauncherApplication.FALLBACK_APP;
+            return null;
         }
     }
 
@@ -334,7 +334,7 @@ public final class ProfileApplicationManager {
             if (index >= 0 && index < applicationList.size()) {
                 return applicationList.get(index);
             } else {
-                return LauncherApplication.FALLBACK_APP;
+                return null;
             }
         } else {
             return get(index);
@@ -349,7 +349,7 @@ public final class ProfileApplicationManager {
      */
     @Nullable
     public LauncherApplication get(@NonNull String packageName) {
-        return applicationMap.getOrDefault(packageName, LauncherApplication.FALLBACK_APP);
+        return applicationMap.getOrDefault(packageName, null);
     }
 
     public int getActualSize() {
@@ -410,9 +410,9 @@ public final class ProfileApplicationManager {
     }
 
     private synchronized void removeApplication(String packageName) {
-        LauncherApplication application = applicationMap.getOrDefault(packageName, LauncherApplication.FALLBACK_APP);
+        LauncherApplication application = applicationMap.getOrDefault(packageName, null);
 
-        if (application != LauncherApplication.FALLBACK_APP) {
+        if (application != null) {
             for (LauncherApplicationListener listener : listeners) {
                 if (listener != null) {
                     listener.onPrepareRemoval();

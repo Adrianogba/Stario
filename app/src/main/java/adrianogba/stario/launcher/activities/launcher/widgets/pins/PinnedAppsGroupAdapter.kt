@@ -55,8 +55,8 @@ class PinnedAppsGroupAdapter(
         return Supplier { ViewHolder() }
     }
 
-    fun getApplication(index: Int): LauncherApplication {
-        return category?.get(index + startingIndex) ?: LauncherApplication.FALLBACK_APP
+    fun getApplication(index: Int): LauncherApplication? {
+        return category?.get(index + startingIndex)
     }
 
     override fun getTotalItemCount(): Int {

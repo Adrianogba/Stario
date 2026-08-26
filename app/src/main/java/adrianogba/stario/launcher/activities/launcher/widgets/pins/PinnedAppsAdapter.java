@@ -244,7 +244,7 @@ public class PinnedAppsAdapter extends RecyclerApplicationAdapter {
 
     protected LauncherApplication getApplication(int index) {
         return category != null ?
-                category.get(index) : LauncherApplication.FALLBACK_APP;
+                category.get(index) : null;
     }
 
     @Override

@@ -86,7 +86,7 @@ public class OptionAdapter extends SuggestionSearchAdapter {
                 for (ResolveInfo info : resolvers) {
                     LauncherApplication application = applicationManager.get(info.activityInfo.packageName);
 
-                    if (application != LauncherApplication.FALLBACK_APP) {
+                    if (application != null) {
                         OptionEntry entry = new OptionEntry(application, uri);
 
                         if (!options.contains(entry)) {
@@ -104,7 +104,7 @@ public class OptionAdapter extends SuggestionSearchAdapter {
                 for (ResolveInfo info : resolvers) {
                     LauncherApplication application = applicationManager.get(info.activityInfo.packageName);
 
-                    if (application != LauncherApplication.FALLBACK_APP &&
+                    if (application != null &&
                             info.activityInfo != null &&
                             info.activityInfo.enabled && info.activityInfo.exported &&
                             !info.activityInfo.name.toLowerCase().contains("redirect") &&

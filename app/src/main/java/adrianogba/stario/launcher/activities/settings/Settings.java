@@ -551,7 +551,7 @@ public class Settings extends ThemedActivity {
             LauncherApplication iconPackApp =
                     ProfileManager.getInstance().getApplication(packPackageName);
 
-            if (iconPackApp != LauncherApplication.FALLBACK_APP) {
+            if (iconPackApp != null) {
                 iconPackName.setText(iconPackApp.getLabel());
 
                 return;

@@ -149,7 +149,7 @@ public class ListAdapter extends RecyclerApplicationAdapter
         oldScrollerPosition = index;
         LauncherApplication application = applicationManager.get(index);
 
-        if (application != LauncherApplication.FALLBACK_APP) {
+        if (application != null) {
             String label = application.getLabel();
 
             if (!label.isEmpty()) {
@@ -206,7 +206,7 @@ public class ListAdapter extends RecyclerApplicationAdapter
     @Override
     protected LauncherApplication getApplication(int index) {
         return applicationManager != null ?
-                applicationManager.get(index) : LauncherApplication.FALLBACK_APP;
+                applicationManager.get(index) : null;
     }
 
     @Override

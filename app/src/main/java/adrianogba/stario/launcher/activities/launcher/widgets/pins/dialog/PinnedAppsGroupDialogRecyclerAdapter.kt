@@ -35,7 +35,7 @@ class PinnedAppsGroupDialogRecyclerAdapter(activity: ThemedActivity) :
             return applications[index]
         }
 
-        return LauncherApplication.FALLBACK_APP
+        return null
     }
 
     override fun allowApplicationStateEditing(): Boolean = true

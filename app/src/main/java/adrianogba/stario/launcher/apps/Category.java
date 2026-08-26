@@ -50,7 +50,7 @@ public class Category {
         if (index < applications.size()) {
             return applications.get(index);
         } else {
-            return LauncherApplication.FALLBACK_APP;
+            return null;
         }
     }
 

@@ -317,7 +317,7 @@ public abstract class RecyclerApplicationAdapter
 
                 LauncherApplication application = getApplication(index);
 
-                if (application != LauncherApplication.FALLBACK_APP) {
+                if (application != null) {
                     showPopup(application);
 
                     return true;
@@ -338,7 +338,7 @@ public abstract class RecyclerApplicationAdapter
 
                 LauncherApplication application = getApplication(index);
 
-                if (application != LauncherApplication.FALLBACK_APP) {
+                if (application != null) {
                     application.launch(activity);
                 }
             };
@@ -389,7 +389,7 @@ public abstract class RecyclerApplicationAdapter
     public void onBind(@NonNull ApplicationViewHolder viewHolder, int index) {
         LauncherApplication application = getApplication(index);
 
-        if (application != LauncherApplication.FALLBACK_APP) {
+        if (application != null) {
             viewHolder.setLabel(application.getLabel());
 
             // TODO: notification dots

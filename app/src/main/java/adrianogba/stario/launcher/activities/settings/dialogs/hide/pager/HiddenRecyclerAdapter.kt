@@ -146,7 +146,7 @@ class HiddenRecyclerAdapter(
 
     override fun getApplication(index: Int): LauncherApplication? =
         if (applicationManager != null) applicationManager.get(index, true)
-        else LauncherApplication.FALLBACK_APP
+        else null
 
     override fun getTotalItemCount(): Int = applicationManager!!.actualSize
 

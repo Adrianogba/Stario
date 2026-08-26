@@ -102,7 +102,7 @@ class FolderListItemAdapter(activity: ThemedActivity) : RecyclerApplicationAdapt
     override fun getLayout(viewType: Int): Int = R.layout.folder_item
 
     override fun getApplication(index: Int): LauncherApplication? {
-        return category?.get(index) ?: LauncherApplication.FALLBACK_APP
+        return category?.get(index)
     }
 
     override fun allowApplicationStateEditing(): Boolean = false
