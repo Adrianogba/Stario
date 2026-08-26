@@ -30,9 +30,13 @@ Numbers here are counted from the tree, so they go stale; re-check before trusti
 
 ### In progress
 
-- **Java to Kotlin.** 85 of 206 files, roughly 4.9k of 41k lines. Going leaf-first so the
+- **Java to Kotlin.** 92 of 206 files, roughly 5.5k of 41k lines. Going leaf-first so the
   build stays green: every batch compiles and gets installed on an emulator before the next
   one starts.
+- `LauncherApplication`, `ProfileApplicationManager`, `CategoryManager` and `Category` are
+  left for last and want converting as one group. They share package-private mutable state,
+  and `LauncherApplication.FALLBACK_APP` is a null typed as non-null that around twenty call
+  sites compare against instead of null-checking.
 
 ### Next
 
