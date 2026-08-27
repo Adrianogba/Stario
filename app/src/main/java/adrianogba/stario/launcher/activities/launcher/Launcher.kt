@@ -436,7 +436,7 @@ class Launcher : ThemedActivity() {
         }
 
         container.setRearrangeable(value)
-        controller.setControllerEnabled(!value)
+        controller.isControllerEnabled = !value
     }
 
     override fun onStart() {
