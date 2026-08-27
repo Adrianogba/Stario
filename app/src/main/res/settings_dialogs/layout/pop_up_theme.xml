@@ -37,6 +37,8 @@
             android:paddingTop="15dp"
             android:paddingBottom="20dp">
 
+            <include layout="@layout/surface_style_chips" />
+
             <carbon.widget.RelativeLayout
                 android:id="@+id/force_dark_container"
                 android:layout_width="match_parent"

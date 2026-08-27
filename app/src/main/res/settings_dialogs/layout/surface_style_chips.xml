@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2025 Răzvan Albu
+  ~ Copyright (C) 2026 Adriano Pontes
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="15dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <carbon.widget.FrameLayout
+        android:id="@+id/style_material"
+        android:layout_width="0dp"
+        android:layout_height="110dp"
+        android:layout_marginEnd="6dp"
+        android:layout_weight="1"
+        android:background="@drawable/ripple"
+        app:carbon_cornerRadius="20dp"
+        app:carbon_stroke="?attr/colorOutlineVariant"
+        app:carbon_strokeWidth="1dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorSurfaceContainerHighest" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/dm_sans_medium"
+            android:letterSpacing="-0.03"
+            android:text="@string/surface_material"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/style_material_check"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_check" />
+
+    </carbon.widget.FrameLayout>
+
+    <carbon.widget.FrameLayout
+        android:id="@+id/style_glass"
+        android:layout_width="0dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="6dp"
+        android:layout_weight="1"
+        android:background="@drawable/ripple"
+        app:carbon_cornerRadius="20dp"
+        app:carbon_stroke="?attr/colorOutlineVariant"
+        app:carbon_strokeWidth="1dp">
+
+        <adrianogba.stario.launcher.ui.common.glass.GlassPreviewView
+            android:id="@+id/style_glass_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/dm_sans_medium"
+            android:letterSpacing="-0.03"
+            android:text="@string/surface_liquid_glass"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/style_glass_check"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_check" />
+
+    </carbon.widget.FrameLayout>
+
+</LinearLayout>

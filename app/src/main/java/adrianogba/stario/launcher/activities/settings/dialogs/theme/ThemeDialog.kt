@@ -22,14 +22,17 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.materialswitch.MaterialSwitch
 import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.preferences.Entry
+import adrianogba.stario.launcher.themes.SurfaceStyle
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.dialogs.ActionDialog
+import adrianogba.stario.launcher.ui.common.glass.GlassPreviewView
 
 class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
     private var listener: OnDismissListener? = null
@@ -54,6 +57,8 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
         root.findViewById<View>(R.id.force_dark_container)
             .setOnClickListener { materialSwitch.performClick() }
 
+        val initialStyle = setupSurfaceStyle(root, themePreferences)
+
         val recycler = root.findViewById<RecyclerView>(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(
             activity, LinearLayoutManager.HORIZONTAL, false
@@ -64,10 +69,71 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
         }
 
         super.setOnDismissListener(DialogInterface.OnDismissListener {
-            listener?.onDismiss(recreateActivity || isForceDarkOn != materialSwitch.isChecked)
+            val style = SurfaceStyle.from(
+                themePreferences.getString(ThemedActivity.SURFACE_STYLE, null)
+            )
+
+            listener?.onDismiss(
+                recreateActivity ||
+                        isForceDarkOn != materialSwitch.isChecked ||
+                        initialStyle != style
+            )
         })
 
         return root
+    }
+
+    /**
+     * The two chips are drawn in the style they select, so the control shows
+     * what it is offering rather than describing it. The glass one renders
+     * real refraction over the current theme's own colours, which is also the
+     * first place the glass code has to work.
+     */
+    private fun setupSurfaceStyle(
+        root: View, preferences: android.content.SharedPreferences
+    ): SurfaceStyle {
+        val initial = SurfaceStyle.from(
+            preferences.getString(ThemedActivity.SURFACE_STYLE, null)
+        )
+
+        val materialCheck = root.findViewById<ImageView>(R.id.style_material_check)
+        val glassCheck = root.findViewById<ImageView>(R.id.style_glass_check)
+
+        root.findViewById<GlassPreviewView>(R.id.style_glass_preview).setBackdropColors(
+            activity.getAttributeData(
+                com.google.android.material.R.attr.colorPrimaryContainer
+            ),
+            activity.getAttributeData(
+                com.google.android.material.R.attr.colorSecondaryContainer
+            ),
+            activity.getAttributeData(
+                com.google.android.material.R.attr.colorTertiaryContainer
+            )
+        )
+
+        fun show(style: SurfaceStyle) {
+            materialCheck.visibility =
+                if (style == SurfaceStyle.MATERIAL) View.VISIBLE else View.INVISIBLE
+            glassCheck.visibility =
+                if (style == SurfaceStyle.LIQUID_GLASS) View.VISIBLE else View.INVISIBLE
+        }
+
+        fun pick(style: SurfaceStyle) {
+            preferences.edit()
+                .putString(ThemedActivity.SURFACE_STYLE, style.name)
+                .apply()
+
+            show(style)
+        }
+
+        show(initial)
+
+        root.findViewById<View>(R.id.style_material)
+            .setOnClickListener { pick(SurfaceStyle.MATERIAL) }
+        root.findViewById<View>(R.id.style_glass)
+            .setOnClickListener { pick(SurfaceStyle.LIQUID_GLASS) }
+
+        return initial
     }
 
     override fun blurBehind(): Boolean = true

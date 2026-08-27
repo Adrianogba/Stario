@@ -497,6 +497,10 @@ abstract class ThemedActivity : AppCompatActivity() {
         const val THEME: String = "com.stario.THEME"
         const val FORCE_DARK: String = "com.stario.FORCE_DARK"
 
+        // Stores a SurfaceStyle name. Absent means MATERIAL, which is what
+        // every install has been getting until now.
+        const val SURFACE_STYLE: String = "com.stario.SURFACE_STYLE"
+
         private var requestCode = 0
     }
 }
