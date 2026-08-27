@@ -38,7 +38,7 @@ before trusting them.
 
 ### Doing
 
-- **Java to Kotlin.** 167 of 204 files. Across: the whole app model
+- **Java to Kotlin.** 190 of 209 files. Across: the whole app model
   (`LauncherApplication`, `Category`, `CategoryMappings`, `CategoryManager`,
   `ProfileManager`, `ProfileApplicationManager`, `IconPackManager`), the whole
   recycler stack (`AsyncRecyclerAdapter`, `RecyclerApplicationAdapter`,
