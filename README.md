@@ -56,7 +56,7 @@ before trusting them.
 
 ### Doing
 
-- **Java to Kotlin.** 199 of 209 files. Across: the whole app model, the whole
+- **Java to Kotlin.** 200 of 209 files. Across: the whole app model, the whole
   recycler stack, the drawer and its adapters, the sheet dialogs, the keyboard
   animation classes, `Utils`, `AdaptiveIconView`, `PopupMenu`, `GradientView`,
   `FadingEdgeLayout` and `DialogBackgroundDimmingController`. Going leaf-first
@@ -65,9 +65,9 @@ before trusting them.
 - Dead SDK checks are out of every Kotlin file. minSdk 33 makes each check for
   R, S and TIRAMISU always true. The Java files keep theirs until they are
   converted, so each one stays a single reviewable diff.
-- What is left is seven files, all of them large: `DynamicGridLayout` at 1412
-  lines is the biggest in the project, then `Media`, `Weather`,
-  `SheetsFocusController`, `Settings`, `SearchFragment` and `WidgetsDialog`.
+- What is left is six files, all of them large: `DynamicGridLayout` at 1412
+  lines is the biggest in the project, then `Media`, `SheetsFocusController`,
+  `Settings`, `SearchFragment` and `WidgetsDialog`.
 - `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all
   while carbon is here. They extend `carbon.widget.ConstraintLayout`, which
   exposes two declarations with the same JVM signature for `getElevation()`, and
