@@ -45,10 +45,14 @@ before trusting them.
 - Surface style option in the theme dialog, Material or Liquid Glass, with both
   chips drawn in the style they select over the same backdrop so the choice is
   visible rather than described
-- Dark mode toggle applies straight away instead of waiting for the dialog to
-  be dismissed
+- Dark mode and theme colour apply on the spot, with the dialog still open. A
+  theme is resolved when an activity inflates, so the activity is recreated and
+  the dialog comes straight back up on the other side. What used to happen was
+  a full process restart, which felt like being thrown out of settings
 - Theme colour list wraps onto centred lines instead of scrolling sideways, so
   all twelve are visible at once rather than eight of them hiding behind a swipe
+- Glance card and search widget render as glass under the Liquid Glass style,
+  tinted from the wallpaper's own extracted colours
 
 ### Doing
 
@@ -91,16 +95,18 @@ In rough order, once the migration is finished:
 Decided in principle, not started, and each has an open question worth settling
 before writing code:
 
-- **Liquid glass on real surfaces.** The option and both preview chips exist
-  and the glass itself is correct now, using the library's own recipe:
-  `vibrancy`, a surface tint at low alpha, and refraction. Nothing in the
-  launcher reads the preference yet. The home screen is ruled out, since the
-  wallpaper cannot be read at all, but the drawer, popups and sheets sit over
-  content this app draws and can be captured directly. See the liquid glass
-  section below.
-- **Wallpaper colours as a tint.** `getWallpaperColors()` needs no permission
-  and returns three colours. It would let home screen surfaces pick up the
-  wallpaper palette even though they cannot refract it.- **Compose for the settings screens.** 21 of the 74 layouts are settings and
+- **Glass with refraction on the drawer, popups and sheets.** These sit over
+  content this app draws, so their pixels can be captured and genuinely
+  refracted, which the home screen widgets cannot be. The switch and both
+  preview chips already do it. Question worth settling first is how much of
+  each surface should be glass, since Apple's own rule is that glass belongs to
+  the floating control layer and never to the content under it.
+- **A wallpaper Stario owns.** The only route to real refraction on the home
+  screen. If the user picks an image inside the app, through the photo picker
+  which needs no permission, the launcher can draw it itself and then sample
+  what it drew. Costs a second copy of the wallpaper and a decision about what
+  happens when the system wallpaper changes underneath it.
+- **Compose for the settings screens.** 21 of the 74 layouts are settings and
   settings dialogs, with no custom gesture work. The launcher surface should
   stay on Views. See the Compose section below.
 - **Inter as the type system.** Would suit the glass look, but the font should
@@ -250,16 +256,19 @@ surfaces over to glass, not a rewrite.
 Glass has to sample what is behind it, and on the home screen that is the
 wallpaper. The wallpaper is composited by the system behind a translucent
 window, so it is in no view or Compose tree this app owns. The only way at it
-is `WallpaperManager.getDrawable()`.
+are `WallpaperManager.getDrawable()` and `getWallpaperFile()`.
 
-Retested on an API 37 emulator, four configurations:
+Retested on an API 37 emulator, four configurations, both entry points:
 
-| Setup | `WallpaperManager.getDrawable()` |
-| --- | --- |
-| No permission, not default home | SecurityException, READ_EXTERNAL_STORAGE denied |
-| `READ_MEDIA_IMAGES` granted | same SecurityException |
-| Default home app, no permission | same SecurityException |
-| Default home app **and** `READ_MEDIA_IMAGES` granted | same SecurityException |
+| Setup | `getDrawable()` | `getWallpaperFile()` |
+| --- | --- | --- |
+| No permission, not default home | SecurityException, READ_EXTERNAL_STORAGE denied | same |
+| `READ_MEDIA_IMAGES` granted | same SecurityException | same |
+| Default home app, no permission | same SecurityException | same |
+| Default home app **and** `READ_MEDIA_IMAGES` granted | same SecurityException | same |
+
+`dumpsys wallpaper` confirmed the wallpaper was a static `ImageWallpaper` in
+every run, so this is not the live wallpaper exception.
 
 It asks for `READ_EXTERNAL_STORAGE`, which an app targeting 33 or above cannot
 hold. There is no combination that works. An earlier note here claimed
@@ -272,16 +281,31 @@ so reading it was locked down. AOSP's own launcher tints from
 `WallpaperManager.getWallpaperColors()`, which needs no permission and returns
 three colours rather than pixels.
 
-**So glass over the home screen is off the table.** What remains is genuinely
-available:
+To be exact about what this does and does not rule out, because it is easy to
+read it as "the library cannot refract": the library refracts fine, and does it
+in this app already. Refraction needs source pixels, and the library takes them
+from a canvas the app draws (`rememberCanvasBackdrop`) or from a layer captured
+off the app's own composables (`layerBackdrop`). That is also how every example
+in the library's catalog works, and how the same effect works in Flutter's
+`oc_liquid_glass`: what refracts is the app's own content. **The one thing that
+is off the table is refracting the system wallpaper**, because those pixels are
+not ours to read.
 
-- **Surfaces over the launcher's own content.** Anything inside the drawer,
-  the settings sheets, the popup menus or the briefing sits on top of views
-  this app draws, which can be captured and sampled directly. No permission,
-  no wallpaper.
-- **Wallpaper colours as a tint.** `getWallpaperColors()` is free and would let
-  a home screen surface pick up the wallpaper's palette even though it cannot
-  refract it. Not glass, but not nothing.
+So:
+
+- **Surfaces over the launcher's own content refract for real.** Anything
+  inside the drawer, the settings sheets, the popup menus or the briefing sits
+  on top of views this app draws, which can be captured and sampled directly.
+  The theme dialog's glass chip and `LiquidToggleView` both do this today.
+- **Home screen surfaces get everything except refraction.** Translucent body
+  with a light gradient, specular rim, inner shadow and drop shadow, tinted
+  from `getWallpaperColors()`, which is free. The launcher window is
+  translucent, so the real wallpaper shows through the pane without a single
+  pixel being read. It is glass that does not bend light.
+- **The one route to full refraction on the home screen** is a wallpaper the
+  app owns: the user picks an image inside Stario through the photo picker,
+  which needs no permission, Stario draws it, and Stario can then sample what
+  it drew. On the Evaluating list above.
 
 `WallpaperSource` is kept as the record of this: it fails cleanly, every caller
 treats null as no glass, and the class comment carries the finding so nobody
