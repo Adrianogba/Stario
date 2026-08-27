@@ -20,9 +20,11 @@ package adrianogba.stario.launcher.ui.common.glass
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
@@ -38,16 +40,17 @@ import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
-import androidx.compose.foundation.shape.RoundedCornerShape
+import com.kyant.backdrop.shadow.InnerShadow
+import com.kyant.backdrop.shadow.Shadow
 
 /**
- * One pane of liquid glass, drawn over a backdrop built from the current
- * theme's own colours.
+ * A pane of liquid glass sitting over a backdrop, with the backdrop visible
+ * around it. Seeing both at once is the whole point: glass only reads as glass
+ * where you can compare what is behind the pane against what is beside it.
  *
- * The backdrop is deliberately not the wallpaper. Reading the wallpaper needs
- * READ_MEDIA_IMAGES, and this view exists to show what the style looks like
- * before anyone has agreed to that. The refraction, blur and highlight are the
- * real ones from the library, so what you see here is what the surfaces do.
+ * The backdrop is deliberately not the wallpaper. Reading that needs
+ * READ_MEDIA_IMAGES, and this view has to render before anyone has agreed to
+ * that. The refraction, blur, highlight and shadows are the real ones.
  */
 class GlassPreviewView
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
@@ -58,8 +61,8 @@ class GlassPreviewView
     private val bottomColor = mutableIntStateOf(Color.Gray.value.toInt())
 
     /**
-     * The three colours the backdrop gradient runs through. Pass the theme's
-     * container colours so Dynamic and the twelve fixed themes all carry over.
+     * The three colours the backdrop runs through. Pass the theme's container
+     * colours so Dynamic and the twelve fixed themes all carry over.
      */
     fun setBackdropColors(top: Int, middle: Int, bottom: Int) {
         topColor.intValue = top
@@ -76,19 +79,29 @@ class GlassPreviewView
         val backdrop = rememberCanvasBackdrop { drawBackdropSource(top, middle, bottom) }
 
         Box(Modifier.fillMaxSize()) {
+            // The same drawing the glass samples, painted so it is visible
+            // around the pane as well as refracted through it.
+            Canvas(Modifier.fillMaxSize()) { drawBackdropSource(top, middle, bottom) }
+
             Box(
                 Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 14.dp, vertical = 22.dp)
                     .drawBackdrop(
                         backdrop = backdrop,
-                        // lens() only accepts a corner based shape, and this
-                        // matches the chip's own carbon_cornerRadius.
-                        shape = { RoundedCornerShape(20f.dp) },
+                        shape = { RoundedCornerShape(18f.dp) },
                         effects = {
-                            blur(2f.dp.toPx())
-                            lens(12f.dp.toPx(), 24f.dp.toPx())
+                            blur(3f.dp.toPx())
+                            lens(
+                                24f.dp.toPx(),
+                                48f.dp.toPx(),
+                                depthEffect = true,
+                                chromaticAberration = true
+                            )
                         },
-                        highlight = { Highlight.Default }
+                        highlight = { Highlight.Default },
+                        shadow = { Shadow.Default },
+                        innerShadow = { InnerShadow.Default }
                     )
             )
         }
