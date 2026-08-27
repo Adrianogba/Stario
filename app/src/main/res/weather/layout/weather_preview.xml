@@ -25,6 +25,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <adrianogba.stario.launcher.ui.common.glass.GlassSurfaceView
+        android:id="@+id/glass"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -63,16 +63,24 @@ class SearchWidget(private val activity: ThemedActivity) {
 
         val root = activity.layoutInflater.inflate(R.layout.home_search, gridItem, false)
 
-        val background = root.findViewById<View>(R.id.background)
-
-        // Under Liquid Glass the spinning tinted blob is replaced by a pane of
-        // glass. Both are the widget's ground, so only one of them can be up.
-        if (Glass.isEnabled(activity)) {
-            background.visibility = View.GONE
+        // Under Liquid Glass the glass pane becomes the widget's ground, cut to
+        // the same four lobed outline the drawable uses and turning at the same
+        // rate. The drawable's own fill would sit opaque behind the glass, so
+        // only one of the two can be up.
+        val background: View = if (Glass.isEnabled(activity)) {
+            root.findViewById<View>(R.id.background).visibility = View.GONE
 
             val glass = root.findViewById<GlassSurfaceView>(R.id.glass)
+            glass.setShapePath(
+                activity.getString(R.string.path_search_widget),
+                SHAPE_VIEWPORT, SHAPE_INSET
+            )
             glass.setTint(Glass.wallpaperTint(activity))
             glass.visibility = View.VISIBLE
+
+            glass
+        } else {
+            root.findViewById(R.id.background)
         }
 
         LayoutSizeObserver.attach(
@@ -135,5 +143,10 @@ class SearchWidget(private val activity: ThemedActivity) {
         const val SEARCH_WIDGET_KEY: String = "com.stario.HOMESCREEN_SEARCH_WIDGET_VISIBLE"
 
         private const val SEARCH_TAG = "SearchWidget"
+
+        // The search drawable declares a 350 viewport with its shape translated
+        // 35 in on both axes.
+        private const val SHAPE_VIEWPORT = 350f
+        private const val SHAPE_INSET = 35f
     }
 }

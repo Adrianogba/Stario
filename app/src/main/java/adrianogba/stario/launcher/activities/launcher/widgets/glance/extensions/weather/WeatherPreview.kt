@@ -33,6 +33,8 @@ import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.activities.launcher.widgets.glance.GlanceViewExtension
 import adrianogba.stario.launcher.preferences.Entry
 import adrianogba.stario.launcher.themes.ThemedActivity
+import adrianogba.stario.launcher.ui.common.glass.Glass
+import adrianogba.stario.launcher.ui.common.glass.GlassSurfaceView
 import adrianogba.stario.launcher.ui.utils.LayoutSizeObserver
 import adrianogba.stario.launcher.utils.Utils
 import kotlin.math.roundToInt
@@ -64,10 +66,28 @@ class WeatherPreview : GlanceViewExtension {
         val temperature = root.findViewById<TextView>(R.id.temperature)
         this.temperature = temperature
 
-        val background = root.findViewById<View>(R.id.rotating_background)
-        background.background = ResourcesCompat.getDrawable(
-            activity.resources, R.drawable.weather_background, activity.getTheme(true)
-        )
+        // Under Liquid Glass the glass pane becomes the chip's ground, cut to
+        // the same scalloped outline the drawable uses and turning at the same
+        // rate. The drawable's own fill would sit opaque behind the glass, so
+        // only one of the two can be up.
+        val background: View
+        if (Glass.isEnabled(activity)) {
+            root.findViewById<View>(R.id.rotating_background).visibility = View.GONE
+
+            val glass = root.findViewById<GlassSurfaceView>(R.id.glass)
+            glass.setShapePath(
+                activity.getString(R.string.path_weather_widget), SHAPE_VIEWPORT
+            )
+            glass.setTint(Glass.wallpaperTint(activity))
+            glass.visibility = View.VISIBLE
+
+            background = glass
+        } else {
+            background = root.findViewById(R.id.rotating_background)
+            background.background = ResourcesCompat.getDrawable(
+                activity.resources, R.drawable.weather_background, activity.getTheme(true)
+            )
+        }
 
         LayoutSizeObserver.attach(
             background, LayoutSizeObserver.WIDTH or LayoutSizeObserver.HEIGHT,
@@ -141,5 +161,8 @@ class WeatherPreview : GlanceViewExtension {
     private companion object {
         private const val CELSIUS = "\u00B0C"
         private const val FAHRENHEIT = "\u00B0F"
+
+        // The weather drawable declares a 320 viewport with no group offset.
+        private const val SHAPE_VIEWPORT = 320f
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -63,6 +64,7 @@ class GlassSurfaceView
     private val tintColor = mutableIntStateOf(Color.White.value.toInt())
     private val tintAlpha = mutableFloatStateOf(DEFAULT_ALPHA)
     private val capsule = mutableFloatStateOf(0f)
+    private val pathShape = mutableStateOf<VectorPathShape?>(null)
 
     init {
         if (attrs != null) {
@@ -87,6 +89,19 @@ class GlassSurfaceView
     }
 
     /**
+     * Cuts the pane to a vector drawable's own outline instead of a rectangle
+     * or a capsule. Feed this the same path string the drawable uses, so the
+     * glass is the widget rather than a pane behind it.
+     *
+     * @param viewport the drawable's declared viewportWidth
+     * @param inset the drawable's group translation, if it has one
+     */
+    @JvmOverloads
+    fun setShapePath(pathData: String, viewport: Float, inset: Float = 0f) {
+        pathShape.value = VectorPathShape(pathData, viewport, inset)
+    }
+
+    /**
      * Tint and how much of it. Feed this the wallpaper's own colours through
      * [WallpaperPalette] so the glass picks up the wall behind it.
      */
@@ -101,6 +116,7 @@ class GlassSurfaceView
         val tint = Color(tintColor.intValue).copy(alpha = tintAlpha.floatValue)
         val radius = cornerRadius.floatValue
         val isCapsule = capsule.floatValue == 1f
+        val path = pathShape.value
 
         val backdrop = remember { emptyBackdrop() }
 
@@ -109,7 +125,9 @@ class GlassSurfaceView
                 .fillMaxSize()
                 .drawBackdrop(
                     backdrop = backdrop,
-                    shape = { if (isCapsule) Capsule() else RoundedRectangle(radius.dp) },
+                    shape = {
+                        path ?: if (isCapsule) Capsule() else RoundedRectangle(radius.dp)
+                    },
                     effects = {},
                     highlight = { Highlight.Default },
                     shadow = {
