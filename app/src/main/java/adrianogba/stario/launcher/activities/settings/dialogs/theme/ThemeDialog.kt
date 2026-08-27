@@ -35,6 +35,7 @@ import adrianogba.stario.launcher.themes.SurfaceStyle
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.dialogs.ActionDialog
 import adrianogba.stario.launcher.ui.common.glass.GlassPreviewView
+import adrianogba.stario.launcher.ui.common.glass.LiquidToggleView
 import adrianogba.stario.launcher.ui.common.glass.MaterialPreviewView
 
 class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
@@ -45,6 +46,8 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
     override fun inflateContent(inflater: LayoutInflater): View {
         val themePreferences = activity.applicationContext.getSharedPreferences(Entry.THEME)
         val root = inflater.inflate(R.layout.pop_up_theme, null)
+
+        val initialStyle = setupSurfaceStyle(root, themePreferences)
 
         val isForceDarkOn = themePreferences.getBoolean(ThemedActivity.FORCE_DARK, false)
 
@@ -62,10 +65,37 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
             dismiss()
         }
 
+        // Under Liquid Glass the Material switch is replaced by the glass one.
+        // Apple's guidance puts glass on the floating control layer, not on
+        // content, so the row itself stays as it is and only the control changes.
+        if (initialStyle == SurfaceStyle.LIQUID_GLASS) {
+            val liquid = root.findViewById<LiquidToggleView>(R.id.liquid_dark)
+
+            liquid.setColors(
+                activity.getAttributeData(
+                    com.google.android.material.R.attr.colorSurfaceContainerHighest
+                ),
+                activity.getAttributeData(
+                    com.google.android.material.R.attr.colorPrimaryContainer
+                )
+            )
+            liquid.isChecked = isForceDarkOn
+            liquid.listener = LiquidToggleView.OnCheckedChange { checked ->
+                materialSwitch.isChecked = checked
+            }
+
+            liquid.visibility = View.VISIBLE
+            root.findViewById<View>(R.id.liquid_dark_label).visibility = View.VISIBLE
+
+            // The label is the MaterialSwitch's own text, so hiding the switch
+            // takes the words with it. The line above puts them back.
+            materialSwitch.visibility = View.INVISIBLE
+        }
+
         root.findViewById<View>(R.id.force_dark_container)
             .setOnClickListener { materialSwitch.performClick() }
 
-        val initialStyle = setupSurfaceStyle(root, themePreferences)
+
 
         val recycler = root.findViewById<RecyclerView>(R.id.recycler)
         // Wraps onto as many centred lines as it needs. A single sideways

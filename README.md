@@ -338,6 +338,35 @@ Two things the switch has to handle honestly:
   that cannot sample anything.
 - It should be off by default until it has been looked at on a real device.
 
+#### Components, and what Apple's guidance actually asks for
+
+The backdrop library ships the effect and no components, by design. Its catalog
+app does contain reference implementations (`LiquidButton`, `LiquidToggle`,
+`LiquidSlider`, `LiquidBottomTabs`) under Apache-2.0, which is one-way
+compatible with GPL-3.0 in our direction, so they can be adapted rather than
+guessed at.
+
+There is no mature component library to depend on instead. Searching the
+`liquid-glass` Kotlin topic turns up one project at 3.5k stars, the effect
+library already in use here, and everything offering ready-made controls sits
+in single digits. Not worth a dependency; porting the reference implementations
+is the safer route.
+
+Three points from Apple's guidance shape where any of this belongs:
+
+1. **Glass is for the floating control layer, never for content.** Lists,
+   tables and media stay as they are. That rules out making settings rows
+   glass, and points at the switches, buttons and sheet chrome instead.
+2. **Do not stack glass on glass.** One pane per surface.
+3. **Two variants.** Regular adapts to what is beneath it and filters more;
+   Clear lets detail through. Regular is the right default here.
+
+So far: `LiquidToggleView`, a switch whose thumb refracts its own track
+through a layer backdrop, swaps blur for refraction while held, and swells on
+press. It replaces the Material switch in the theme dialog when the style is
+set to Liquid Glass, and the row around it stays exactly as it was, which is
+what point 1 asks for.
+
 #### What it does not replace
 
 Sheets blur their background with `Window.setBackgroundBlurRadius`, which the

@@ -46,6 +46,7 @@ sunriseSunset = "1.2"
 dateparser = "1.0.11"
 
 backdrop = "2.0.1"
+kyantShapes = "1.2.1"
 
 junit = "4.13.2"
 
@@ -109,6 +110,7 @@ dateparser = { module = "com.github.sisyphsu:dateparser", version.ref = "datepar
 # Liquid glass surfaces. Needs API 33 for the AGSL shader, which is why
 # minSdk is 33.
 backdrop = { module = "io.github.kyant0:backdrop", version.ref = "backdrop" }
+kyant-shapes = { module = "io.github.kyant0:shapes", version.ref = "kyantShapes" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 

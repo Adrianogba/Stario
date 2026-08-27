@@ -151,6 +151,9 @@ dependencies {
     implementation libs.compose.ui.unit
     implementation libs.compose.material3
     implementation libs.backdrop
+    // Continuous curvature corners. Backdrop pulls it in already, but only as
+    // an implementation dependency, so Capsule is not on our compile path.
+    implementation libs.kyant.shapes
 
     implementation libs.google.material
     implementation libs.google.flexbox
