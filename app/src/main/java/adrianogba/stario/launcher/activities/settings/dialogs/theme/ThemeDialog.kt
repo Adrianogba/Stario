@@ -33,6 +33,7 @@ import adrianogba.stario.launcher.themes.SurfaceStyle
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.dialogs.ActionDialog
 import adrianogba.stario.launcher.ui.common.glass.GlassPreviewView
+import adrianogba.stario.launcher.ui.common.glass.MaterialPreviewView
 
 class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
     private var listener: OnDismissListener? = null
@@ -52,6 +53,11 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
             themePreferences.edit()
                 .putBoolean(ThemedActivity.FORCE_DARK, isChecked)
                 .apply()
+
+            // The activity re-reads the theme in onCreate, so dark mode cannot
+            // take effect while this dialog is up. Closing here means the flip
+            // is applied straight away instead of waiting for a manual dismiss.
+            dismiss()
         }
 
         root.findViewById<View>(R.id.force_dark_container)
@@ -99,17 +105,26 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
         val materialCheck = root.findViewById<ImageView>(R.id.style_material_check)
         val glassCheck = root.findViewById<ImageView>(R.id.style_glass_check)
 
-        root.findViewById<GlassPreviewView>(R.id.style_glass_preview).setBackdropColors(
-            activity.getAttributeData(
-                com.google.android.material.R.attr.colorPrimaryContainer
-            ),
-            activity.getAttributeData(
-                com.google.android.material.R.attr.colorSecondaryContainer
-            ),
-            activity.getAttributeData(
-                com.google.android.material.R.attr.colorTertiaryContainer
-            )
+        val surface = activity.getAttributeData(
+            com.google.android.material.R.attr.colorSurface
         )
+        val primary = activity.getAttributeData(
+            com.google.android.material.R.attr.colorPrimaryContainer
+        )
+        val secondary = activity.getAttributeData(
+            com.google.android.material.R.attr.colorSecondaryContainer
+        )
+        val tertiary = activity.getAttributeData(
+            com.google.android.material.R.attr.colorTertiaryContainer
+        )
+
+        val glass = root.findViewById<GlassPreviewView>(R.id.style_glass_preview)
+        glass.setSurfaceColor(surface)
+        glass.setBackdropColors(primary, secondary, tertiary)
+
+        val material = root.findViewById<MaterialPreviewView>(R.id.style_material_preview)
+        material.setSurfaceColor(surface)
+        material.setBackdropColors(primary, secondary, tertiary)
 
         fun show(style: SurfaceStyle) {
             materialCheck.visibility =

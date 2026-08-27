@@ -35,26 +35,34 @@ before trusting them.
 - Location picker no longer seeds four cities that were not suggestions
 - Reviewed the [yutila-org fork](https://github.com/yutila-org/stario) for
   anything worth taking
+- Version is 3.0.0-beta. This fork has diverged enough from 2.16 that carrying
+  the old numbering was misleading
+- Language picker in Preferences, System default and English, over
+  `AppCompatDelegate.setApplicationLocales`. Worth knowing: the repo already
+  carried 19 translations from upstream and `locales_config.xml` already listed
+  them, so Android's own per-app picker has offered them since API 33. Adding
+  one to the in-app list is a single enum entry
+- Surface style option in the theme dialog, Material or Liquid Glass, with both
+  chips drawn in the style they select over the same backdrop so the choice is
+  visible rather than described
+- Dark mode toggle applies straight away instead of waiting for the dialog to
+  be dismissed
 
 ### Doing
 
-- **Java to Kotlin.** 190 of 209 files. Across: the whole app model
-  (`LauncherApplication`, `Category`, `CategoryMappings`, `CategoryManager`,
-  `ProfileManager`, `ProfileApplicationManager`, `IconPackManager`), the whole
-  recycler stack (`AsyncRecyclerAdapter`, `RecyclerApplicationAdapter`,
-  `FolderListAdapter`, `RecyclerItemAnimator`, `OverScrollRecyclerView`,
-  `OverScrollEffect`, `FastScroller`), the keyboard animation classes,
-  `GradientView`, `FadingEdgeLayout`, `DialogBackgroundDimmingController`, the
-  sheet gesture core, `Measurements`, `UiUtils`, `ActionDialog` and
-  `ThemedActivity`. Going leaf-first so the build stays green: every batch
-  compiles, and anything central gets installed on an emulator before the next
-  batch starts.
+- **Java to Kotlin.** 195 of 209 files. Across: the whole app model, the whole
+  recycler stack, the drawer and its adapters, the sheet dialogs, the keyboard
+  animation classes, `Utils`, `AdaptiveIconView`, `PopupMenu`, `GradientView`,
+  `FadingEdgeLayout` and `DialogBackgroundDimmingController`. Going leaf-first
+  so the build stays green: every batch compiles, and anything central gets
+  installed on an emulator before the next batch starts.
 - Dead SDK checks are out of every Kotlin file. minSdk 33 makes each check for
   R, S and TIRAMISU always true. The Java files keep theirs until they are
   converted, so each one stays a single reviewable diff.
-- What is left is the view layer and the sheets: `DynamicGridLayout` at 1412
-  lines is the biggest single file in the project, then `Media`, `Weather`,
-  `SheetsFocusController` and `StylizedClockView`.
+- What is left is eleven files, all of them large: `DynamicGridLayout` at 1412
+  lines is the biggest in the project, then `Media`, `Weather`,
+  `SheetsFocusController`, `StylizedClockView`, `Settings`, `SearchFragment`,
+  `WidgetsDialog`, `PageManager`, `Launcher` and `GlanceDialogExtension`.
 - `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all
   while carbon is here. They extend `carbon.widget.ConstraintLayout`, which
   exposes two declarations with the same JVM signature for `getElevation()`, and
@@ -81,10 +89,16 @@ In rough order, once the migration is finished:
 Decided in principle, not started, and each has an open question worth settling
 before writing code:
 
-- **Liquid glass as a surface option.** Feasible; the wallpaper read has been
-  tested and works. Open question is whether a launcher asking for
-  `READ_MEDIA_IMAGES` is an acceptable trade. See the liquid glass section below.
-- **Compose for the settings screens.** 21 of the 74 layouts are settings and
+- **Liquid glass on real surfaces.** The option and both preview chips exist
+  and the glass itself is correct now, using the library's own recipe:
+  `vibrancy`, a surface tint at low alpha, and refraction. Nothing in the
+  launcher reads the preference yet. The home screen is ruled out, since the
+  wallpaper cannot be read at all, but the drawer, popups and sheets sit over
+  content this app draws and can be captured directly. See the liquid glass
+  section below.
+- **Wallpaper colours as a tint.** `getWallpaperColors()` needs no permission
+  and returns three colours. It would let home screen surfaces pick up the
+  wallpaper palette even though they cannot refract it.- **Compose for the settings screens.** 21 of the 74 layouts are settings and
   settings dialogs, with no custom gesture work. The launcher surface should
   stay on Views. See the Compose section below.
 - **Inter as the type system.** Would suit the glass look, but the font should

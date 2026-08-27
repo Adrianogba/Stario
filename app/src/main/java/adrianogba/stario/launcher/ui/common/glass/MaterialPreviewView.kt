@@ -21,6 +21,7 @@ package adrianogba.stario.launcher.ui.common.glass
 import android.content.Context
 import android.util.AttributeSet
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,31 +29,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.unit.dp
-import com.kyant.backdrop.backdrops.rememberCanvasBackdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
-import com.kyant.backdrop.highlight.Highlight
-import com.kyant.backdrop.shadow.Shadow
 
 /**
- * A pane of liquid glass sitting over a backdrop, with the backdrop visible
- * around it. Seeing both at once is the whole point: glass only reads as glass
- * where you can compare what is behind the pane against what is beside it.
+ * The Material counterpart to [GlassPreviewView], drawn over the same backdrop
+ * so the two chips can be compared directly.
  *
- * The effects follow the library's own catalog components rather than being
- * invented here. The three that matter are vibrancy, which saturates what
- * shows through, the surface tint, which gives the pane a body instead of
- * leaving it a bare lens, and refraction at the edges.
- *
- * The backdrop is deliberately not the wallpaper. That cannot be read at all,
- * with or without permissions, which [WallpaperSource] documents.
+ * Where the glass pane refracts what is behind it, this one is what Material
+ * actually is: an opaque tonal card that sits on top and hides it, lifted by a
+ * shadow rather than by anything optical.
  */
-class GlassPreviewView
+class MaterialPreviewView
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     AbstractComposeView(context, attrs) {
 
@@ -61,20 +51,12 @@ class GlassPreviewView
     private val bottomColor = mutableIntStateOf(Color.Gray.value.toInt())
     private val surfaceColor = mutableIntStateOf(Color.White.value.toInt())
 
-    /**
-     * The three colours the backdrop runs through. Pass the theme's container
-     * colours so Dynamic and the twelve fixed themes all carry over.
-     */
     fun setBackdropColors(top: Int, middle: Int, bottom: Int) {
         topColor.intValue = top
         middleColor.intValue = middle
         bottomColor.intValue = bottom
     }
 
-    /**
-     * The pane's own tint, drawn over the refracted backdrop at low alpha. This
-     * is what stops the glass looking like a bare magnifier.
-     */
     fun setSurfaceColor(color: Int) {
         surfaceColor.intValue = color
     }
@@ -84,33 +66,22 @@ class GlassPreviewView
         val top = Color(topColor.intValue)
         val middle = Color(middleColor.intValue)
         val bottom = Color(bottomColor.intValue)
-        val surface = Color(surfaceColor.intValue).copy(alpha = 0.4f)
+        val surface = Color(surfaceColor.intValue)
 
-        val backdrop = rememberCanvasBackdrop { drawSurfacePreviewBackdrop(top, middle, bottom) }
+        val shape = RoundedCornerShape(18f.dp)
 
         Box(Modifier.fillMaxSize()) {
-            // The same drawing the glass samples, painted so it is visible
-            // around the pane as well as refracted through it.
-            Canvas(Modifier.fillMaxSize()) { drawSurfacePreviewBackdrop(top, middle, bottom) }
+            Canvas(Modifier.fillMaxSize()) {
+                drawSurfacePreviewBackdrop(top, middle, bottom)
+            }
 
             Box(
                 Modifier
                     .fillMaxSize()
                     .padding(horizontal = 14.dp, vertical = 22.dp)
-                    .drawBackdrop(
-                        backdrop = backdrop,
-                        shape = { RoundedCornerShape(18f.dp) },
-                        effects = {
-                            vibrancy()
-                            blur(8f.dp.toPx())
-                            lens(24f.dp.toPx(), 24f.dp.toPx())
-                        },
-                        highlight = { Highlight.Default },
-                        shadow = { Shadow.Default },
-                        onDrawSurface = { drawRect(surface) }
-                    )
+                    .shadow(3f.dp, shape)
+                    .background(surface, shape)
             )
         }
     }
-
 }

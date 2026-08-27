@@ -38,10 +38,10 @@
         app:carbon_stroke="?attr/colorOutlineVariant"
         app:carbon_strokeWidth="1dp">
 
-        <View
+        <adrianogba.stario.launcher.ui.common.glass.MaterialPreviewView
+            android:id="@+id/style_material_preview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorSurfaceContainerHighest" />
+            android:layout_height="match_parent" />
 
         <TextView
             android:layout_width="wrap_content"

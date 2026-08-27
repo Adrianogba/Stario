@@ -17,8 +17,8 @@ android {
         applicationId 'adrianogba.stario.launcher'
         minSdkVersion 33
         targetSdkVersion 37
-        versionCode 97
-        versionName '2.16'
+        versionCode 300
+        versionName '3.0.0-beta'
     }
 
     signingConfigs {
