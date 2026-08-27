@@ -13,46 +13,43 @@ before trusting them.
 
 ### Done
 
-- Toolchain brought up to current: Gradle 9.7.1, AGP 9.3.2, Kotlin 2.4.10,
-  compileSdk 37.1, targetSdk 37, Java 21, JDK 25 locally and in CI
-- Build moved onto a version catalog and the plugins DSL, so versions live in
-  one file
-- minSdk raised to 33, which the liquid glass shader needs and which made 34 of
-  the 36 SDK version checks in the source dead
-- Gradle daemon, build cache and parallel execution turned on. An incremental
-  compile went from about 40 seconds to under 3
-- Package renamed to `adrianogba.stario.launcher`
+**Toolchain**
+
+- Gradle 9.7.1, AGP 9.3.2, Kotlin 2.4.10, compileSdk 37.1, targetSdk 37, Java
+  21, JDK 25 locally and in CI
+- Version catalog and the plugins DSL, so versions live in one file
+- minSdk 33, which the liquid glass shader needs and which made 34 of the 36
+  SDK version checks in the source dead
+- Daemon, build cache and parallel execution on. An incremental compile went
+  from about 40 seconds to under 3
+- Package renamed to `adrianogba.stario.launcher`, version set to 3.0.0-beta
 - CI hardened: every action pinned to a commit SHA, concurrency group, gradle
   cache, debug APK uploaded as an artifact
-- Dropped the store metadata, archived APK and community files this fork has no
-  use for, plus 41 unused resources and three obsolete resource folders
-- `FALLBACK_APP` removed. It was a constant set to null that thirteen files
-  compared against instead of comparing to null, and it was hiding two real
-  nullability bugs that surfaced the moment it went
-- Info section points at this fork, its own site, and drops the Discord link
-- Weather units name both systems instead of only Imperial, and the clock
-  toggle says what it actually does
-- Location picker no longer seeds four cities that were not suggestions
-- Reviewed the [yutila-org fork](https://github.com/yutila-org/stario) for
-  anything worth taking
-- Version is 3.0.0-beta. This fork has diverged enough from 2.16 that carrying
-  the old numbering was misleading
-- Language picker in Preferences, System default and English, over
-  `AppCompatDelegate.setApplicationLocales`. Worth knowing: the repo already
-  carried 19 translations from upstream and `locales_config.xml` already listed
-  them, so Android's own per-app picker has offered them since API 33. Adding
-  one to the in-app list is a single enum entry
-- Surface style option in the theme dialog, Material or Liquid Glass, with both
-  chips drawn in the style they select over the same backdrop so the choice is
-  visible rather than described
-- Dark mode and theme colour apply on the spot, with the dialog still open. A
-  theme is resolved when an activity inflates, so the activity is recreated and
-  the dialog comes straight back up on the other side. What used to happen was
-  a full process restart, which felt like being thrown out of settings
-- Theme colour list wraps onto centred lines instead of scrolling sideways, so
-  all twelve are visible at once rather than eight of them hiding behind a swipe
-- Glance card and search widget render as glass under the Liquid Glass style,
-  tinted from the wallpaper's own extracted colours
+
+**Removed**
+
+- Store metadata, archived APK and community files this fork has no use for,
+  plus 41 unused resources and three obsolete resource folders
+- `FALLBACK_APP`, a constant set to null that thirteen files compared against
+  instead of comparing to null. It was hiding two real nullability bugs
+- The Discord link, and the four cities the location picker seeded as if they
+  were suggestions
+
+**Interface**
+
+- Language picker, System default and English, over
+  `AppCompatDelegate.setApplicationLocales`. The 19 translations and the
+  `locales_config.xml` listing them were already there, so each new language is
+  one enum entry
+- Surface style option, Material or Liquid Glass, with both chips drawn in the
+  style they select so the choice is shown rather than described
+- Dark mode and theme colour apply on the spot with the dialog still open,
+  instead of restarting the process
+- Theme colour list wraps onto centred lines, so all twelve are visible at once
+- Glance card and search widget render as glass, cut to the same outlines their
+  drawables use and still turning, tinted from the wallpaper's own colours
+- Weather units name both systems, and the clock toggle says what it does
+- Info section points at this fork and its own site
 
 ### Doing
 
