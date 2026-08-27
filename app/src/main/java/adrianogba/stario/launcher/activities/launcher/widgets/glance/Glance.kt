@@ -28,9 +28,8 @@ import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.sheet.SheetsFocusController
 import adrianogba.stario.launcher.ui.Measurements
 import adrianogba.stario.launcher.ui.common.glance.GlanceConstraintLayout
-import adrianogba.stario.launcher.ui.common.glass.WallpaperSource
-import adrianogba.stario.launcher.preferences.Entry
-import adrianogba.stario.launcher.themes.SurfaceStyle
+import adrianogba.stario.launcher.ui.common.glass.Glass
+import adrianogba.stario.launcher.ui.common.glass.GlassSurfaceView
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.common.grid.DraggableGridItem
 import adrianogba.stario.launcher.ui.common.grid.DynamicGridLayout
@@ -43,24 +42,22 @@ class Glance(private val activity: ThemedActivity) {
     private var root: GlanceConstraintLayout? = null
 
     /**
-     * Swaps the card's flat background for a pane of glass when that style is
-     * selected. The glass draws nothing without the wallpaper, so a refused
-     * permission leaves the Material background in place rather than a hole.
+     * Swaps the card's flat background for glass when that style is selected.
+     * The card is translucent, so the wallpaper the system composites behind
+     * this window shows through it for real.
      */
     private fun applySurfaceStyle(root: GlanceConstraintLayout) {
-        val style = SurfaceStyle.from(
-            activity.applicationContext.getSharedPreferences(Entry.THEME)
-                .getString(ThemedActivity.SURFACE_STYLE, null)
-        )
-
-        if (style != SurfaceStyle.LIQUID_GLASS ||
-            !WallpaperSource.isAvailable(activity)
-        ) {
+        if (!Glass.isEnabled(activity)) {
             return
         }
 
+        // The card's own fill has to go, or the glass has an opaque sheet
+        // rather than the wallpaper behind it.
         root.background = null
-        root.findViewById<View>(R.id.glass).visibility = View.VISIBLE
+
+        val glass = root.findViewById<GlassSurfaceView>(R.id.glass)
+        glass.setTint(Glass.wallpaperTint(activity))
+        glass.visibility = View.VISIBLE
     }
 
     fun attach(container: DynamicGridLayout) {

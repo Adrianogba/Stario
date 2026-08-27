@@ -105,6 +105,10 @@ public class Settings extends ThemedActivity {
     private TextView iconPackName;
     private TextView hideCount;
 
+    // Theme
+    private ThemeDialog themeDialog;
+    private boolean themeDialogShowing = false;
+
     // Misc
     private ActivityResultLauncher<Intent> homeRoleLauncher;
     private BroadcastReceiver batterySaverReceiver;
@@ -305,30 +309,39 @@ public class Settings extends ThemedActivity {
             themeName.append(" " + resources.getString(R.string.dark));
         }
 
-        findViewById(R.id.theme).setOnClickListener(new View.OnClickListener() {
-            private ThemeDialog dialog;
-            private boolean showing = false;
+        findViewById(R.id.theme).setOnClickListener(view -> showThemeDialog());
 
-            @Override
-            public void onClick(View view) {
-                if (dialog == null) {
-                    dialog = new ThemeDialog(Settings.this);
+        // A theme change recreates this activity so the new colours are actually
+        // visible, and the dialog has to come back up on the other side of that
+        // or the flip looks like it closed settings.
+        if (ThemeDialog.getPendingReopen()) {
+            ThemeDialog.setPendingReopen(false);
 
-                    dialog.setOnDismissListener((ThemeDialog.OnDismissListener) stateChanged -> {
-                        showing = false;
+            getRoot().post(this::showThemeDialog);
+        }
+    }
 
-                        if (stateChanged) {
-                            restart();
-                        }
-                    });
+    private void showThemeDialog() {
+        if (themeDialogShowing) {
+            return;
+        }
+
+        if (themeDialog == null) {
+            themeDialog = new ThemeDialog(this);
+
+            themeDialog.setOnDismissListener((ThemeDialog.OnDismissListener) stateChanged -> {
+                themeDialogShowing = false;
+
+                if (stateChanged) {
+                    // The launcher resolves its own theme when it inflates, so
+                    // it only picks this up on a full restart.
+                    restart();
                 }
+            });
+        }
 
-                if (!showing) {
-                    dialog.show();
-                    showing = true;
-                }
-            }
-        });
+        themeDialog.show();
+        themeDialogShowing = true;
     }
 
     private void initDisplaySection() {

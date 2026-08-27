@@ -40,7 +40,7 @@ import adrianogba.stario.launcher.ui.common.glass.MaterialPreviewView
 
 class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
     private var listener: OnDismissListener? = null
-    private var recreateActivity = false
+    private var suppressDismiss = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun inflateContent(inflater: LayoutInflater): View {
@@ -59,10 +59,7 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
                 .putBoolean(ThemedActivity.FORCE_DARK, isChecked)
                 .apply()
 
-            // The activity re-reads the theme in onCreate, so dark mode cannot
-            // take effect while this dialog is up. Closing here means the flip
-            // is applied straight away instead of waiting for a manual dismiss.
-            dismiss()
+            reopen()
         }
 
         // Under Liquid Glass the Material switch is replaced by the glass one.
@@ -104,24 +101,51 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
             flexWrap = FlexWrap.WRAP
             justifyContent = JustifyContent.CENTER
         }
-        recycler.adapter = ThemeRecyclerAdapter(activity) {
-            recreateActivity = true
-            dismiss()
-        }
+        recycler.adapter = ThemeRecyclerAdapter(activity) { reopen() }
 
         super.setOnDismissListener(DialogInterface.OnDismissListener {
+            if (suppressDismiss) {
+                return@OnDismissListener
+            }
+
             val style = SurfaceStyle.from(
                 themePreferences.getString(ThemedActivity.SURFACE_STYLE, null)
             )
 
-            listener?.onDismiss(
-                recreateActivity ||
-                        isForceDarkOn != materialSwitch.isChecked ||
-                        initialStyle != style
-            )
+            val changed = pendingStateChange ||
+                    isForceDarkOn != materialSwitch.isChecked ||
+                    initialStyle != style
+
+            pendingStateChange = false
+
+            listener?.onDismiss(changed)
         })
 
         return root
+    }
+
+    /**
+     * Re-themes everything behind the dialog and brings the dialog straight
+     * back up on top of the new colours.
+     *
+     * A theme is resolved when the activity inflates, so nothing already on
+     * screen can repaint itself in place. Recreating the activity is what makes
+     * the change visible, and reopening the dialog on the other side is what
+     * stops that reading as the dialog having been closed. The alternative the
+     * launcher used before was tearing the whole process down, which is why a
+     * dark mode flip used to feel like leaving settings.
+     */
+    private fun reopen() {
+        pendingStateChange = true
+        pendingReopen = true
+
+        // Dismissing first is what keeps the window from leaking through the
+        // recreate. The flag is what keeps that dismissal from being read as
+        // the user closing the dialog.
+        suppressDismiss = true
+        dismiss()
+
+        activity.recreate()
     }
 
     /**
@@ -200,5 +224,25 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
 
     fun interface OnDismissListener {
         fun onDismiss(stateChanged: Boolean)
+    }
+
+    companion object {
+        /**
+         * Set across the recreate a theme change needs, and read by the hosting
+         * activity once it is back, so the dialog survives its own host being
+         * rebuilt. Static because the dialog and the activity that owned it are
+         * both gone by the time this is read.
+         */
+        @JvmStatic
+        var pendingReopen: Boolean = false
+
+        /**
+         * Whether a theme actually changed at any point across those recreates.
+         * The reopened dialog starts from the new values, so it can no longer
+         * tell on its own that anything moved, and the caller still needs to
+         * know in order to re-theme the launcher behind settings.
+         */
+        @JvmStatic
+        var pendingStateChange: Boolean = false
     }
 }

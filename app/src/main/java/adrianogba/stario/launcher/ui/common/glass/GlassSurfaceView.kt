@@ -22,46 +22,47 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AbstractComposeView
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import adrianogba.stario.launcher.R
-import com.kyant.backdrop.backdrops.rememberCanvasBackdrop
+import com.kyant.backdrop.backdrops.emptyBackdrop
 import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
+import com.kyant.backdrop.shadow.Shadow
+import com.kyant.shapes.Capsule
+import com.kyant.shapes.RoundedRectangle
 
 /**
- * A liquid glass surface, meant to sit behind a launcher surface's content in
- * place of a flat background.
+ * A pane of glass for a launcher surface that sits directly on the wallpaper.
  *
- * It samples the wallpaper at its own position on screen, so what refracts
- * through it is what is actually behind it rather than a stand-in. When the
- * wallpaper is unavailable, because the permission was refused, it draws
- * nothing at all and whatever background the host view already has shows
- * through unchanged.
+ * The wallpaper cannot be sampled, so there is no refraction here. See
+ * [WallpaperSource] for the four ways that was tested. What is available is
+ * better than it sounds: the launcher window is translucent and the system
+ * composites the wallpaper behind it, so a translucent surface shows the real
+ * wallpaper through it without reading a single pixel.
+ *
+ * So this draws the parts of glass that do not need sampling. A low alpha body
+ * the wallpaper shows through, a bright specular rim, an inner shadow for
+ * thickness, and a soft drop shadow to lift it off the wallpaper. That is the
+ * floating control layer Apple's guidance describes, minus the blur.
  */
 class GlassSurfaceView
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     AbstractComposeView(context, attrs) {
 
-    private val wallpaper = mutableStateOf<ImageBitmap?>(null)
     private val cornerRadius = mutableFloatStateOf(DEFAULT_CORNER_RADIUS_DP)
-    private val offsetX = mutableIntStateOf(0)
-    private val offsetY = mutableIntStateOf(0)
-
-    private val location = IntArray(2)
+    private val tintColor = mutableIntStateOf(Color.White.value.toInt())
+    private val tintAlpha = mutableFloatStateOf(DEFAULT_ALPHA)
+    private val capsule = mutableFloatStateOf(0f)
 
     init {
         if (attrs != null) {
@@ -70,94 +71,76 @@ class GlassSurfaceView
             cornerRadius.floatValue = array.getFloat(
                 R.styleable.GlassSurfaceView_glassCornerRadius, DEFAULT_CORNER_RADIUS_DP
             )
+            capsule.floatValue =
+                if (array.getBoolean(R.styleable.GlassSurfaceView_glassCapsule, false)) 1f else 0f
 
             array.recycle()
         }
     }
 
     /**
-     * Corner radius in dp. Match it to whatever the host surface uses, or the
-     * glass rim will not follow the surface edge.
+     * Corner radius in dp. Match it to the host surface, or the rim will not
+     * follow the surface edge.
      */
     fun setCornerRadius(radius: Float) {
         cornerRadius.floatValue = radius
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-
-        wallpaper.value = WallpaperSource.get(context)
-
-        addOnLayoutChangeListener(positionListener)
-        updatePosition()
-    }
-
-    override fun onDetachedFromWindow() {
-        removeOnLayoutChangeListener(positionListener)
-
-        super.onDetachedFromWindow()
-    }
-
-    // AbstractComposeView makes onLayout final, so the position is picked up
-    // from a layout change listener instead.
-    private val positionListener =
-        OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> updatePosition() }
-
-    private fun updatePosition() {
-        getLocationOnScreen(location)
-
-        offsetX.intValue = location[0]
-        offsetY.intValue = location[1]
+    /**
+     * Tint and how much of it. Feed this the wallpaper's own colours through
+     * [WallpaperPalette] so the glass picks up the wall behind it.
+     */
+    @JvmOverloads
+    fun setTint(color: Int, alpha: Float = DEFAULT_ALPHA) {
+        tintColor.intValue = color
+        tintAlpha.floatValue = alpha
     }
 
     @Composable
     override fun Content() {
-        val image = wallpaper.value ?: return
+        val tint = Color(tintColor.intValue).copy(alpha = tintAlpha.floatValue)
+        val radius = cornerRadius.floatValue
+        val isCapsule = capsule.floatValue == 1f
 
-        val x = offsetX.intValue
-        val y = offsetY.intValue
-
-        val backdrop = rememberCanvasBackdrop { drawWallpaper(image, x, y) }
+        val backdrop = remember { emptyBackdrop() }
 
         Box(
             Modifier
                 .fillMaxSize()
                 .drawBackdrop(
                     backdrop = backdrop,
-                    shape = { RoundedCornerShape(cornerRadius.floatValue.dp) },
-                    effects = {
-                        blur(2f.dp.toPx())
-                        lens(
-                            20f.dp.toPx(),
-                            40f.dp.toPx(),
-                            depthEffect = true,
-                            chromaticAberration = true
-                        )
-                    },
+                    shape = { if (isCapsule) Capsule() else RoundedRectangle(radius.dp) },
+                    effects = {},
                     highlight = { Highlight.Default },
-                    innerShadow = { InnerShadow.Default }
+                    shadow = {
+                        Shadow(radius = 12f.dp, color = Color.Black.copy(alpha = 0.18f))
+                    },
+                    innerShadow = { InnerShadow.Default },
+                    onDrawSurface = {
+                        // Glass catches more light along its upper edge than
+                        // its lower one. A flat fill of the tint reads as a
+                        // translucent rectangle; the gradient is what makes the
+                        // same alpha read as a solid pane with thickness.
+                        drawRect(
+                            Brush.linearGradient(
+                                0f to tint.copy(
+                                    alpha = (tint.alpha * TOP_LIGHT).coerceAtMost(1f)
+                                ),
+                                1f to tint.copy(alpha = tint.alpha * BOTTOM_LIGHT),
+                                start = Offset.Zero,
+                                end = Offset(0f, size.height)
+                            )
+                        )
+                    }
                 )
-        )
-    }
-
-    /**
-     * Draws the wallpaper scaled to cover the screen and shifted so the part
-     * landing under this view is the part that would be behind it. Without the
-     * shift every surface would refract the wallpaper's top left corner.
-     */
-    private fun DrawScope.drawWallpaper(image: ImageBitmap, offsetX: Int, offsetY: Int) {
-        val metrics = resources.displayMetrics
-
-        drawImage(
-            image = image,
-            srcOffset = IntOffset.Zero,
-            srcSize = IntSize(image.width, image.height),
-            dstOffset = IntOffset(-offsetX, -offsetY),
-            dstSize = IntSize(metrics.widthPixels, metrics.heightPixels)
         )
     }
 
     private companion object {
         const val DEFAULT_CORNER_RADIUS_DP = 30f
+        const val DEFAULT_ALPHA = 0.32f
+
+        const val TOP_LIGHT = 1.35f
+        const val BOTTOM_LIGHT = 0.75f
     }
 }

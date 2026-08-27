@@ -45,6 +45,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <adrianogba.stario.launcher.ui.common.glass.GlassSurfaceView
+            android:id="@+id/glass"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:visibility="gone"
+            app:glassCapsule="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/icon"
             android:layout_width="match_parent"

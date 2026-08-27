@@ -48,6 +48,7 @@
 
     <declare-styleable name="GlassSurfaceView">
         <attr name="glassCornerRadius" format="float" />
+        <attr name="glassCapsule" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="FadingEdgeLayout">

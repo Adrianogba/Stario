@@ -31,6 +31,8 @@ import adrianogba.stario.launcher.preferences.Vibrations
 import adrianogba.stario.launcher.sheet.SheetsFocusController
 import adrianogba.stario.launcher.sheet.drawer.dialog.ApplicationsDialog
 import adrianogba.stario.launcher.themes.ThemedActivity
+import adrianogba.stario.launcher.ui.common.glass.Glass
+import adrianogba.stario.launcher.ui.common.glass.GlassSurfaceView
 import adrianogba.stario.launcher.ui.common.grid.DraggableGridItem
 import adrianogba.stario.launcher.ui.common.grid.DynamicGridLayout
 import adrianogba.stario.launcher.ui.utils.LayoutSizeObserver
@@ -62,6 +64,17 @@ class SearchWidget(private val activity: ThemedActivity) {
         val root = activity.layoutInflater.inflate(R.layout.home_search, gridItem, false)
 
         val background = root.findViewById<View>(R.id.background)
+
+        // Under Liquid Glass the spinning tinted blob is replaced by a pane of
+        // glass. Both are the widget's ground, so only one of them can be up.
+        if (Glass.isEnabled(activity)) {
+            background.visibility = View.GONE
+
+            val glass = root.findViewById<GlassSurfaceView>(R.id.glass)
+            glass.setTint(Glass.wallpaperTint(activity))
+            glass.visibility = View.VISIBLE
+        }
+
         LayoutSizeObserver.attach(
             background, LayoutSizeObserver.WIDTH or LayoutSizeObserver.HEIGHT,
             object : LayoutSizeObserver.OnChange {
