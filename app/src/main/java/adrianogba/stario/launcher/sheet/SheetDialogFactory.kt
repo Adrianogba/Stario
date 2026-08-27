@@ -26,7 +26,7 @@ import adrianogba.stario.launcher.themes.ThemedActivity
 
 object SheetDialogFactory {
     @JvmStatic
-    fun forType(type: SheetType, activity: ThemedActivity?, theme: Int): SheetDialog? {
+    fun forType(type: SheetType, activity: ThemedActivity, theme: Int): SheetDialog? {
         return when (type) {
             SheetType.TOP_SHEET -> TopSheetDialog(activity, theme)
             SheetType.RIGHT_SHEET -> RightSheetDialog(activity, theme)

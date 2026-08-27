@@ -26,7 +26,7 @@ import adrianogba.stario.launcher.sheet.SheetType
 import adrianogba.stario.launcher.sheet.behavior.SheetBehavior
 import adrianogba.stario.launcher.themes.ThemedActivity
 
-open class BottomSheetDialog(activity: ThemedActivity?, themeResId: Int) : SheetDialog(activity, themeResId) {
+open class BottomSheetDialog(activity: ThemedActivity, themeResId: Int) : SheetDialog(activity, themeResId) {
     private var container: SheetCoordinator? = null
 
     override fun getContainer(): SheetCoordinator {
@@ -34,7 +34,7 @@ open class BottomSheetDialog(activity: ThemedActivity?, themeResId: Int) : Sheet
             container = View.inflate(context, R.layout.bottom_sheet_dialog, null) as SheetCoordinator
 
             sheet = container!!.findViewById(R.id.design_bottom_sheet)
-            behavior = SheetBehavior.from(sheet)
+            behavior = SheetBehavior.from(sheet!!)
         }
 
         return container!!

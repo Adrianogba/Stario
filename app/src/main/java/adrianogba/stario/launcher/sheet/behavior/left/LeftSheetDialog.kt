@@ -26,7 +26,7 @@ import adrianogba.stario.launcher.sheet.SheetType
 import adrianogba.stario.launcher.sheet.behavior.SheetBehavior
 import adrianogba.stario.launcher.themes.ThemedActivity
 
-class LeftSheetDialog(activity: ThemedActivity?, themeResId: Int) : SheetDialog(activity, themeResId) {
+class LeftSheetDialog(activity: ThemedActivity, themeResId: Int) : SheetDialog(activity, themeResId) {
     private var container: SheetCoordinator? = null
 
     override fun getContainer(): SheetCoordinator {
@@ -34,7 +34,7 @@ class LeftSheetDialog(activity: ThemedActivity?, themeResId: Int) : SheetDialog(
             container = View.inflate(context, R.layout.left_sheet_dialog, null) as SheetCoordinator
 
             sheet = container!!.findViewById(R.id.design_left_sheet)
-            behavior = SheetBehavior.from(sheet)
+            behavior = SheetBehavior.from(sheet!!)
         }
 
         return container!!
