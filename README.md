@@ -47,6 +47,8 @@ before trusting them.
   visible rather than described
 - Dark mode toggle applies straight away instead of waiting for the dialog to
   be dismissed
+- Theme colour list wraps onto centred lines instead of scrolling sideways, so
+  all twelve are visible at once rather than eight of them hiding behind a swipe
 
 ### Doing
 

@@ -23,8 +23,10 @@ import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.materialswitch.MaterialSwitch
 import adrianogba.stario.launcher.R
@@ -66,9 +68,12 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
         val initialStyle = setupSurfaceStyle(root, themePreferences)
 
         val recycler = root.findViewById<RecyclerView>(R.id.recycler)
-        recycler.layoutManager = LinearLayoutManager(
-            activity, LinearLayoutManager.HORIZONTAL, false
-        )
+        // Wraps onto as many centred lines as it needs. A single sideways
+        // scrolling row hid most of the twelve themes behind a swipe.
+        recycler.layoutManager = FlexboxLayoutManager(activity).apply {
+            flexWrap = FlexWrap.WRAP
+            justifyContent = JustifyContent.CENTER
+        }
         recycler.adapter = ThemeRecyclerAdapter(activity) {
             recreateActivity = true
             dismiss()
