@@ -39,7 +39,7 @@ object LauncherSheets {
 
     @JvmStatic
     fun attach(launcher: Launcher, slideListener: SheetDialog.OnSlideListener?) {
-        val controller = launcher.getSheetsController()
+        val controller = launcher.sheetsController
 
         controller.setSlideListener(slideListener)
         controller.addSheetDialog(launcher, SheetDialogFragment.IMPLEMENTATIONS)
