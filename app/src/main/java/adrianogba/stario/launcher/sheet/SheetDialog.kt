@@ -248,7 +248,9 @@ abstract class SheetDialog(
         fun onSlide(slideOffset: Float)
     }
 
-    protected abstract fun getContainer(): SheetCoordinator
+    // Public rather than protected: SheetDialogFragment reaches it, and Java
+    // let it because the two are in the same package.
+    abstract fun getContainer(): SheetCoordinator
 
     abstract fun getType(): SheetType
 
