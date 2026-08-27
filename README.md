@@ -229,32 +229,47 @@ source dead.
 The intended shape is a glass option: a preference that switches the launcher
 surfaces over to glass, not a rewrite.
 
-#### Can we actually get the wallpaper? Yes, tested
+#### Can we get the wallpaper? No, and no permission fixes it
 
-Glass has to sample what is behind it, and the wallpaper is composited by the
-system behind a translucent window, so it is in no view or Compose tree this
-app owns. The library's `CanvasBackdrop` accepts arbitrary drawing as the
-backdrop source, so the question is only whether the wallpaper bitmap can be
-read at all.
+Glass has to sample what is behind it, and on the home screen that is the
+wallpaper. The wallpaper is composited by the system behind a translucent
+window, so it is in no view or Compose tree this app owns. The only way at it
+is `WallpaperManager.getDrawable()`.
 
-Probed on an API 37 emulator, three attempts:
+Retested on an API 37 emulator, four configurations:
 
 | Setup | `WallpaperManager.getDrawable()` |
 | --- | --- |
 | No permission, not default home | SecurityException, READ_EXTERNAL_STORAGE denied |
-| No permission, set as default home | same SecurityException |
-| `READ_MEDIA_IMAGES` declared and granted | `BitmapDrawable 922x1024` |
+| `READ_MEDIA_IMAGES` granted | same SecurityException |
+| Default home app, no permission | same SecurityException |
+| Default home app **and** `READ_MEDIA_IMAGES` granted | same SecurityException |
 
-So being the default launcher is **not** sufficient, contrary to what is often
-assumed. From Android 13 the wallpaper counts as media and needs
-`READ_MEDIA_IMAGES`, granted at runtime like any other media permission.
+It asks for `READ_EXTERNAL_STORAGE`, which an app targeting 33 or above cannot
+hold. There is no combination that works. An earlier note here claimed
+`READ_MEDIA_IMAGES` was sufficient; that was wrong, and the permission has been
+taken back out of the manifest rather than left there asking for photo access
+in exchange for nothing.
 
-That is the real cost of this feature, and it is worth being honest about it:
-a launcher asking for photo access looks alarming, even though the wallpaper
-is the only thing it reads. The permission should be requested lazily, only
-when someone turns the glass option on, never at first run, and the option
-should degrade to the current flat surfaces if it is refused.
+This is deliberate on Android's part. A wallpaper is often a personal photo,
+so reading it was locked down. AOSP's own launcher tints from
+`WallpaperManager.getWallpaperColors()`, which needs no permission and returns
+three colours rather than pixels.
 
+**So glass over the home screen is off the table.** What remains is genuinely
+available:
+
+- **Surfaces over the launcher's own content.** Anything inside the drawer,
+  the settings sheets, the popup menus or the briefing sits on top of views
+  this app draws, which can be captured and sampled directly. No permission,
+  no wallpaper.
+- **Wallpaper colours as a tint.** `getWallpaperColors()` is free and would let
+  a home screen surface pick up the wallpaper's palette even though it cannot
+  refract it. Not glass, but not nothing.
+
+`WallpaperSource` is kept as the record of this: it fails cleanly, every caller
+treats null as no glass, and the class comment carries the finding so nobody
+retries it.
 #### The rest, if that trade is acceptable
 
 1. A reusable `AbstractComposeView` rendering one glass surface, taking the

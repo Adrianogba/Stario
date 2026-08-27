@@ -26,9 +26,12 @@ import android.widget.LinearLayout
 import androidx.fragment.app.FragmentActivity
 import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.sheet.SheetsFocusController
-import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.Measurements
 import adrianogba.stario.launcher.ui.common.glance.GlanceConstraintLayout
+import adrianogba.stario.launcher.ui.common.glass.WallpaperSource
+import adrianogba.stario.launcher.preferences.Entry
+import adrianogba.stario.launcher.themes.SurfaceStyle
+import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.common.grid.DraggableGridItem
 import adrianogba.stario.launcher.ui.common.grid.DynamicGridLayout
 import adrianogba.stario.launcher.ui.utils.animation.Animation
@@ -39,6 +42,27 @@ class Glance(private val activity: ThemedActivity) {
     private var extensionContainer: LinearLayout? = null
     private var root: GlanceConstraintLayout? = null
 
+    /**
+     * Swaps the card's flat background for a pane of glass when that style is
+     * selected. The glass draws nothing without the wallpaper, so a refused
+     * permission leaves the Material background in place rather than a hole.
+     */
+    private fun applySurfaceStyle(root: GlanceConstraintLayout) {
+        val style = SurfaceStyle.from(
+            activity.applicationContext.getSharedPreferences(Entry.THEME)
+                .getString(ThemedActivity.SURFACE_STYLE, null)
+        )
+
+        if (style != SurfaceStyle.LIQUID_GLASS ||
+            !WallpaperSource.isAvailable(activity)
+        ) {
+            return
+        }
+
+        root.background = null
+        root.findViewById<View>(R.id.glass).visibility = View.VISIBLE
+    }
+
     fun attach(container: DynamicGridLayout) {
         val gridItem = DraggableGridItem(activity)
         gridItem.itemId = GLANCE_TAG
@@ -48,6 +72,8 @@ class Glance(private val activity: ThemedActivity) {
         this.root = root
 
         extensionContainer = root.findViewById(R.id.extensions)
+
+        applySurfaceStyle(root)
 
         val transition = LayoutTransition()
 

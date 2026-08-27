@@ -46,6 +46,10 @@
         <attr name="clockPillForegroundColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="GlassSurfaceView">
+        <attr name="glassCornerRadius" format="float" />
+    </declare-styleable>
+
     <declare-styleable name="FadingEdgeLayout">
         <attr name="edge" format="integer">
             <flag name="top" value="1" />
