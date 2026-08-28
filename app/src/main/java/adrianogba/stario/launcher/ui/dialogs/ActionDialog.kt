@@ -36,6 +36,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.Measurements
+import adrianogba.stario.launcher.ui.common.glass.Glass
 import adrianogba.stario.launcher.ui.keyboard.KeyboardHeightProvider
 import adrianogba.stario.launcher.ui.utils.HomeWatcher
 import adrianogba.stario.launcher.ui.utils.UiUtils
@@ -96,6 +97,18 @@ abstract class ActionDialog(
 
         val content = root.findViewById<ViewGroup>(R.id.content)
         content.addView(inflateContent(activity.layoutInflater))
+
+        // Every settings dialog in the app comes through here, so this is the
+        // one place the sheet itself has to learn about glass. A bottom sheet
+        // floats over the screen it was opened from, which is exactly the layer
+        // Apple's guidance says glass belongs to.
+        Glass.applyTo(
+            content, SHEET_CORNER_RADIUS_DP,
+            activity.getAttributeData(
+                com.google.android.material.R.attr.colorSurfaceContainer
+            ),
+            topCornersOnly = true
+        )
 
         val heightProvider = KeyboardHeightProvider(activity)
         this.heightProvider = heightProvider
@@ -309,6 +322,9 @@ abstract class ActionDialog(
 
     private companion object {
         private const val DIMMING_MULTIPLIER = 0.7f
+
+        // Matches the top corners of background_sheet, which glass replaces.
+        private const val SHEET_CORNER_RADIUS_DP = 30f
 
         private fun getViewDragHelper(behavior: BottomSheetBehavior<*>): ViewDragHelper? {
             return try {

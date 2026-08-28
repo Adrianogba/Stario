@@ -18,6 +18,14 @@
 
 package adrianogba.stario.launcher.ui.common.glass
 
+import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Interpolator
+import androidx.core.graphics.ColorUtils
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.materialswitch.MaterialSwitch
+import adrianogba.stario.launcher.Stario
 import adrianogba.stario.launcher.preferences.Entry
 import adrianogba.stario.launcher.themes.SurfaceStyle
 import adrianogba.stario.launcher.themes.ThemedActivity
@@ -41,6 +49,143 @@ object Glass {
     }
 
     /**
+     * Whether the Liquid Glass style is on, for a plain context rather than an
+     * activity. Views and drawables get one of these where they do not get the
+     * other.
+     */
+    @JvmStatic
+    fun isEnabled(context: Context): Boolean {
+        val style = SurfaceStyle.from(
+            (context.applicationContext as Stario)
+                .getSharedPreferences(Entry.THEME)
+                .getString(ThemedActivity.SURFACE_STYLE, null)
+        )
+
+        return style == SurfaceStyle.LIQUID_GLASS
+    }
+
+    /**
+     * Dresses a floating surface in glass, and leaves it alone under Material.
+     *
+     * Apple's guidance puts glass on the layer that floats above content and
+     * never on the content itself, so this is for dialogs, menus and bars. The
+     * rows and cards inside them keep their own backgrounds, which is also what
+     * Apple's own Settings does.
+     *
+     * @param cornerRadiusDp match it to the surface being replaced, or the rim
+     * will not follow the edge
+     * @param tint the colour the pane takes, usually the surface colour it is
+     * standing in for
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun applyTo(
+        view: View,
+        cornerRadiusDp: Float,
+        tint: Int,
+        topCornersOnly: Boolean = false,
+        alpha: Float = -1f
+    ) {
+        if (!isEnabled(view.context)) {
+            return
+        }
+
+        val density = view.resources.displayMetrics.density
+        val radius = cornerRadiusDp * density
+
+        // Bottom sheets sit flush with the bottom of the screen, so only their
+        // top corners are ever rounded.
+        val bottom = if (topCornersOnly) 0f else radius
+        val radii = floatArrayOf(
+            radius, radius, radius, radius, bottom, bottom, bottom, bottom
+        )
+
+        view.background = if (alpha < 0f) {
+            GlassDrawable(tint, radii, RIM_WIDTH_DP * density)
+        } else {
+            GlassDrawable(tint, radii, RIM_WIDTH_DP * density, alpha)
+        }
+    }
+
+    /**
+     * Restyles every switch under [root] as a Liquid Glass switch.
+     *
+     * Walking the tree rather than asking each screen to opt in means one call
+     * per host reaches all of them, and screens added later get it for free.
+     * The widget itself is left in place and only its two drawables change, so
+     * the thumb travel, the row that forwards clicks into it, the listener the
+     * screen attached and the accessibility node all keep working.
+     */
+    @JvmStatic
+    fun applyToSwitchesIn(root: View) {
+        if (!isEnabled(root.context)) {
+            return
+        }
+
+        when (root) {
+            is MaterialSwitch -> applyToSwitch(root)
+
+            is ViewGroup ->
+                for (index in 0 until root.childCount) {
+                    applyToSwitchesIn(root.getChildAt(index))
+                }
+        }
+    }
+
+    private fun applyToSwitch(switchView: MaterialSwitch) {
+        val context = switchView.context
+        val density = context.resources.displayMetrics.density
+
+        val accent = resolve(context, com.google.android.material.R.attr.colorPrimaryContainer)
+        val channel = resolve(
+            context, com.google.android.material.R.attr.colorSurfaceContainerHighest
+        )
+
+        // The tints are what Material uses to recolour its own drawables, and
+        // they would paint straight over the gradients below.
+        switchView.trackTintList = null
+        switchView.thumbTintList = null
+        switchView.trackDecorationDrawable = null
+
+        switchView.trackDrawable = GlassSwitchDrawables.Track(
+            translucent(channel, TRACK_OFF_ALPHA), accent, RIM_WIDTH_DP * density,
+            (TRACK_WIDTH_DP * density).toInt(), (TRACK_HEIGHT_DP * density).toInt()
+        )
+
+        switchView.thumbDrawable = GlassSwitchDrawables.Thumb(
+            translucent(channel, TRACK_OFF_ALPHA), accent,
+            (THUMB_WIDTH_DP * density).toInt(), (THUMB_HEIGHT_DP * density).toInt(),
+            RIM_WIDTH_DP * density, THUMB_GLOW_DP * density
+        )
+    }
+
+    private fun resolve(context: Context, attribute: Int): Int {
+        val value = android.util.TypedValue()
+        context.theme.resolveAttribute(attribute, value, true)
+
+        return value.data
+    }
+
+    /**
+     * The interpolator a glass surface should move on.
+     *
+     * Apple's glass overshoots slightly and settles, rather than easing to a
+     * stop. This is that shape as an interpolator, so existing animate() calls
+     * can take it without being rewritten as springs.
+     */
+    @JvmStatic
+    fun interpolator(context: Context): Interpolator =
+        if (isEnabled(context)) OvershootSettleInterpolator() else FastOutSlowInInterpolator()
+
+    /**
+     * Softens a colour towards transparency, for text and icons that now sit on
+     * glass rather than on an opaque surface.
+     */
+    @JvmStatic
+    fun translucent(color: Int, alpha: Float): Int =
+        ColorUtils.setAlphaComponent(color, (alpha * 255).toInt().coerceIn(0, 255))
+
+    /**
      * The tint a surface floating on the wallpaper should take.
      *
      * Pulled from the wallpaper's own extracted colours rather than the theme,
@@ -57,4 +202,27 @@ object Glass {
             )
         )
     }
+
+    /**
+     * Overshoots by a little and settles back, which is how Apple's glass
+     * arrives. A plain decelerate stops dead and reads as a panel rather than
+     * something with mass.
+     */
+    private class OvershootSettleInterpolator : Interpolator {
+        override fun getInterpolation(input: Float): Float {
+            val t = input - 1f
+
+            return t * t * ((OVERSHOOT + 1f) * t + OVERSHOOT) + 1f
+        }
+    }
+
+    private const val RIM_WIDTH_DP = 1f
+    private const val OVERSHOOT = 0.9f
+
+    private const val TRACK_OFF_ALPHA = 0.55f
+    private const val TRACK_WIDTH_DP = 52f
+    private const val TRACK_HEIGHT_DP = 32f
+    private const val THUMB_WIDTH_DP = 34f
+    private const val THUMB_HEIGHT_DP = 30f
+    private const val THUMB_GLOW_DP = 4f
 }

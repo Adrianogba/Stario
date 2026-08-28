@@ -55,6 +55,7 @@ import com.google.android.material.transition.platform.MaterialElevationScale
 import adrianogba.stario.launcher.R
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.Measurements
+import adrianogba.stario.launcher.ui.common.glass.Glass
 import adrianogba.stario.launcher.ui.recyclers.DividerItemDecorator
 import adrianogba.stario.launcher.ui.recyclers.overscroll.OverScrollRecyclerView
 import adrianogba.stario.launcher.ui.utils.animation.Animation
@@ -88,7 +89,8 @@ class PopupMenu @JvmOverloads constructor(
 
         val enter = MaterialElevationScale(true)
         enter.setDuration(Animation.SHORT.duration.toLong())
-        enter.setInterpolator(DecelerateInterpolator())
+        // Glass arrives with a little overshoot rather than easing to a stop.
+        enter.setInterpolator(Glass.interpolator(activity))
 
         popupWindow.enterTransition = enter
 
@@ -133,6 +135,15 @@ class PopupMenu @JvmOverloads constructor(
         recycler.setPadding(padding, padding, padding, padding)
 
         recycler.background = AppCompatResources.getDrawable(activity, R.drawable.popup_background)
+
+        // A popup is the floating layer by definition, so it takes glass
+        // whenever the style is on.
+        Glass.applyTo(
+            recycler, POPUP_CORNER_RADIUS_DP,
+            activity.getAttributeData(
+                com.google.android.material.R.attr.colorSurfaceContainer
+            )
+        )
         recycler.itemAnimator = null
         recycler.addItemDecoration(
             DividerItemDecorator(
@@ -488,6 +499,9 @@ class PopupMenu @JvmOverloads constructor(
     )
 
     companion object {
+        // Matches popup_background, which glass replaces.
+        private const val POPUP_CORNER_RADIUS_DP = 25f
+
         const val PIVOT_DEFAULT: Short = 0b00
         const val PIVOT_CENTER_VERTICAL: Short = 0b01
         const val PIVOT_CENTER_HORIZONTAL: Short = 0b10

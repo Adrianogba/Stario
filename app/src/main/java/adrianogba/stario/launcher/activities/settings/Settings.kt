@@ -124,6 +124,7 @@ class Settings : ThemedActivity() {
         initFooterLinks()
 
         handleOrientation()
+
         root!!.post { startPostponedEnterTransition() }
     }
 
