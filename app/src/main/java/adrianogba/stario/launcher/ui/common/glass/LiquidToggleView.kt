@@ -39,7 +39,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,12 +59,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.backdrops.emptyBackdrop
 import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
@@ -141,7 +137,15 @@ class LiquidToggleView
             }
         }
 
-        val trackBackdrop = rememberLayerBackdrop()
+        // An empty backdrop, so the pane samples nothing and is simply
+        // transparent. Sampling the track through a layer and bending it with
+        // a lens is the obvious way to do this and it does not survive the
+        // press: the pane is scaled by a graphicsLayer, the sample is not taken
+        // in the same space, and the track's image lands offset by half the
+        // pane and reads as a second bar inside the glass. A transparent pane
+        // shows the real track underneath it instead, which is what it should
+        // look like anyway, and the rim and the inner shadow carry the rest.
+        val paneBackdrop = remember { emptyBackdrop() }
 
         Box(
             // Bigger than the track on purpose. The pane grows by half again
@@ -173,14 +177,25 @@ class LiquidToggleView
             // control twice.
             contentAlignment = Alignment.CenterStart
         ) {
+            // The layer the pane samples covers the whole control, not just
+            // the track inside it. A layer the size of the track alone is
+            // smaller than the area the pane travels over and is transformed
+            // against, so the sample lands offset and the track shows up as a
+            // second bar somewhere inside the glass.
             Box(
                 Modifier
-                    .padding(SLACK.dp)
-                    .layerBackdrop(trackBackdrop)
-                    .clip(Capsule())
-                    .drawBehind { drawRect(lerp(track, accent, fraction.value.coerceIn(0f, 1f))) }
-                    .size(TRACK_WIDTH.dp, TRACK_HEIGHT.dp)
-            )
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    Modifier
+                        .clip(Capsule())
+                        .drawBehind {
+                            drawRect(lerp(track, accent, fraction.value.coerceIn(0f, 1f)))
+                        }
+                        .size(TRACK_WIDTH.dp, TRACK_HEIGHT.dp)
+                )
+            }
 
             Box(
                 Modifier
@@ -199,25 +214,9 @@ class LiquidToggleView
                         this.scaleY = scaleY.value
                     }
                     .drawBackdrop(
-                        backdrop = trackBackdrop,
+                        backdrop = paneBackdrop,
                         shape = { Capsule() },
-                        effects = {
-                            // Frosted at rest and clear under the finger. The
-                            // blur and the lens trade places, which is what
-                            // makes the track resolve as the pane is held.
-                            vibrancy()
-                            blur(REST_BLUR.dp.toPx() * (1f - press.value))
-                            // No chromatic aberration. It splits what the
-                            // pane bends into red, green and blue fringes, and
-                            // over a single flat colour that reads as a rainbow
-                            // smear rather than as glass. What should come
-                            // through is the track's own colour.
-                            lens(
-                                LENS_HEIGHT.dp.toPx(),
-                                LENS_AMOUNT.dp.toPx() *
-                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value)
-                            )
-                        },
+                        effects = {},
                         highlight = {
                             Highlight.Default.copy(
                                 alpha = 1f,
@@ -225,14 +224,14 @@ class LiquidToggleView
                             )
                         },
                         shadow = {
-                            // A glow in the track's own colour, not a drop
-                            // shadow. Light leaves the edge of a lens rather
-                            // than being blocked by it, so a black shadow reads
-                            // as a grey halo sitting on the row.
+                            // Small, neutral and fixed. A shadow here is drawn
+                            // with a downward offset, so tinting it the track's
+                            // colour put a coloured band along the bottom of
+                            // the pane that read as a second bar rather than as
+                            // a glow.
                             Shadow(
-                                radius = (5f + 5f * press.value).dp,
-                                color = lerp(track, accent, fraction.value.coerceIn(0f, 1f))
-                                    .copy(alpha = GLOW_ALPHA)
+                                radius = SHADOW_RADIUS.dp,
+                                color = Color.Black.copy(alpha = SHADOW_ALPHA)
                             )
                         },
                         innerShadow = {
@@ -266,29 +265,22 @@ class LiquidToggleView
 
     private companion object {
         const val TRACK_WIDTH = 46
-        const val TRACK_HEIGHT = 24
+        const val TRACK_HEIGHT = 20
 
         // A lozenge, not a circle, and roughly the proportions Prismal uses:
         // its thumb is 40 by 24 on a 64 by 28 track.
         // Inside the track at rest, with a little margin, which is an ordinary
         // switch. Growing past the track is what the press does, and is the
         // only time the control looks like glass.
-        const val THUMB_WIDTH = 22
-        const val THUMB_HEIGHT = 18
-        const val THUMB_PADDING = 3
+        const val THUMB_WIDTH = 20
+        const val THUMB_HEIGHT = 16
+        const val THUMB_PADDING = 2
 
         /** Room around the track for the pane to grow into. */
         const val SLACK = 8
 
-        const val LENS_HEIGHT = 14f
-        const val LENS_AMOUNT = 22f
-
-        const val REST_BLUR = 6f
-        const val REST_LENS = 0.30f
-        const val PRESS_LENS = 1f
-
         /** How much the pane grows while held. */
-        const val PRESSED_SCALE = 1.5f
+        const val PRESSED_SCALE = 1.9f
 
         // Solid at rest and clear under the finger. The pane is a knob until
         // it is touched, and only then does it become something you can see
@@ -296,7 +288,8 @@ class LiquidToggleView
         const val REST_OPACITY = 0.95f
         const val HELD_OPACITY = 0.14f
 
-        const val GLOW_ALPHA = 0.45f
+        const val SHADOW_RADIUS = 4f
+        const val SHADOW_ALPHA = 0.18f
 
         // Stiff and critically damped, so travel is decisive.
         val TRAVEL_SPRING = spring<Float>(1f, 1000f, 0.001f)

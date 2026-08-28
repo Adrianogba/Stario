@@ -40,6 +40,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -66,12 +67,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.unit.dp
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.backdrops.emptyBackdrop
 import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
@@ -149,7 +146,15 @@ class LiquidSliderView
             }
         }
 
-        val trackBackdrop = rememberLayerBackdrop()
+        // An empty backdrop, so the pane samples nothing and is simply
+        // transparent. Sampling the track through a layer and bending it with
+        // a lens is the obvious way to do this and it does not survive the
+        // press: the pane is scaled by a graphicsLayer, the sample is not taken
+        // in the same space, and the track's image lands offset by half the
+        // pane and reads as a second bar inside the glass. A transparent pane
+        // shows the real track underneath it instead, which is what it should
+        // look like anyway, and the rim and the inner shadow carry the rest.
+        val paneBackdrop = remember { emptyBackdrop() }
 
         fun report(fraction: Float) {
             val clamped = fraction.coerceIn(0f, 1f)
@@ -234,12 +239,21 @@ class LiquidSliderView
                 },
             contentAlignment = Alignment.CenterStart
         ) {
+            // The layer the pane samples covers the whole control, not just
+            // the bar inside it. A layer the size of the bar alone is smaller
+            // than the area the pane travels over and is transformed against,
+            // so the sample lands offset and the bar shows up as a second one
+            // somewhere inside the glass.
             Box(
                 Modifier
-                    // Inset so the track stops short of the row's edge instead
+                    .fillMaxSize(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+              Box(
+                Modifier
+                    // Inset so the bar stops short of the row's edge instead
                     // of running into it, and so the pane has room at both ends.
                     .padding(horizontal = INSET.dp)
-                    .layerBackdrop(trackBackdrop)
                     .clip(Capsule())
                     .fillMaxWidth()
                     .height(TRACK_HEIGHT.dp)
@@ -252,7 +266,8 @@ class LiquidSliderView
                             size = Size(size.width * position.value.coerceIn(0f, 1f), size.height)
                         )
                     }
-            )
+              )
+            }
 
             Box(
                 Modifier
@@ -272,22 +287,9 @@ class LiquidSliderView
                         this.scaleY = scaleY.value
                     }
                     .drawBackdrop(
-                        backdrop = trackBackdrop,
+                        backdrop = paneBackdrop,
                         shape = { Capsule() },
-                        effects = {
-                            vibrancy()
-                            blur(REST_BLUR.dp.toPx() * (1f - press.value))
-                            // No chromatic aberration. It splits what the
-                            // pane bends into red, green and blue fringes, and
-                            // over a single flat colour that reads as a rainbow
-                            // smear rather than as glass. What should come
-                            // through is the track's own colour.
-                            lens(
-                                LENS_HEIGHT.dp.toPx(),
-                                LENS_AMOUNT.dp.toPx() *
-                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value)
-                            )
-                        },
+                        effects = {},
                         highlight = {
                             Highlight.Default.copy(
                                 alpha = 1f,
@@ -295,14 +297,14 @@ class LiquidSliderView
                             )
                         },
                         shadow = {
-                            // A glow in the track's own colour, not a drop
-                            // shadow. Light leaves the edge of a lens rather
-                            // than being blocked by it, so a black shadow reads
-                            // as a grey halo sitting on the row.
+                            // Small, neutral and fixed. A shadow here is drawn
+                            // with a downward offset, so tinting it the track's
+                            // colour put a coloured band along the bottom of
+                            // the pane that read as a second bar rather than as
+                            // a glow.
                             Shadow(
-                                radius = (5f + 5f * press.value).dp,
-                                color = lerp(track, accent, position.value.coerceIn(0f, 1f))
-                                    .copy(alpha = GLOW_ALPHA)
+                                radius = SHADOW_RADIUS.dp,
+                                color = Color.Black.copy(alpha = SHADOW_ALPHA)
                             )
                         },
                         innerShadow = {
@@ -340,14 +342,7 @@ class LiquidSliderView
         const val THUMB_WIDTH = 34
         const val THUMB_HEIGHT = 24
 
-        const val LENS_HEIGHT = 14f
-        const val LENS_AMOUNT = 22f
-
-        const val REST_BLUR = 6f
-        const val REST_LENS = 0.30f
-        const val PRESS_LENS = 1f
-
-        const val PRESSED_SCALE = 1.5f
+        const val PRESSED_SCALE = 1.7f
 
         // Solid at rest and clear under the finger. The pane is a knob until
         // it is touched, and only then does it become something you can see
@@ -355,7 +350,8 @@ class LiquidSliderView
         const val REST_OPACITY = 0.95f
         const val HELD_OPACITY = 0.14f
 
-        const val GLOW_ALPHA = 0.45f
+        const val SHADOW_RADIUS = 4f
+        const val SHADOW_ALPHA = 0.18f
 
         val TRAVEL_SPRING = spring<Float>(1f, 1000f, 0.001f)
         val PRESS_SPRING = spring<Float>(1f, 1000f, 0.001f)

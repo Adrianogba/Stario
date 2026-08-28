@@ -82,9 +82,10 @@ down to the popup's original interpolator.
   Apple's rule and what its own Settings does
 - Switches and sliders become the iOS controls. At rest they are ordinary: an
   opaque knob on a coloured track. Touching one is the whole effect, the knob
-  swelling past the track, clearing, and refracting what is under it. That
-  refraction is real, since the track is drawn by the same view and can be
-  sampled
+  swelling well past the track and clearing until the track reads straight
+  through it. The pane is transparent rather than refracting: sampling the
+  track and bending it does not survive being scaled by a graphicsLayer, and
+  put a displaced copy of the track inside the glass
 - The motion is adapted from [Prismal](https://github.com/styropyr0/Prismal),
   MIT, which was cloned and run before being passed over as a dependency: it
   renders each component through its own GLSurfaceView and leans far harder on
