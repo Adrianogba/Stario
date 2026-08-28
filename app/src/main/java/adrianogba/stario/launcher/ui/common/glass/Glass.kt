@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.view.animation.Interpolator
 import androidx.core.graphics.ColorUtils
+import kotlin.math.roundToInt
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.slider.Slider
 import adrianogba.stario.launcher.Stario
@@ -193,10 +194,20 @@ object Glass {
         glass.setValueSilently((slider.value - slider.valueFrom) / span)
 
         glass.listener = LiquidSliderView.OnValueChanged { fraction ->
-            val next = slider.valueFrom + fraction * span
+            val raw = slider.valueFrom + fraction * span
+
+            // Snapped to the step the slider was configured with. A stepped
+            // Slider throws on any value that is not valueFrom plus a multiple
+            // of stepSize, so a continuous drag cannot be handed to it raw.
+            val step = slider.stepSize
+            val stepped = if (step > 0f) {
+                slider.valueFrom + ((raw - slider.valueFrom) / step).roundToInt() * step
+            } else {
+                raw
+            }
 
             // Still the thing every screen reads and listens to.
-            val clamped = next.coerceIn(slider.valueFrom, slider.valueTo)
+            val clamped = stepped.coerceIn(slider.valueFrom, slider.valueTo)
 
             if (slider.value != clamped) {
                 slider.value = clamped

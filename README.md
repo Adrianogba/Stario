@@ -75,9 +75,13 @@ before trusting them.
   Glass style, through a Drawable rather than a view, so one call in
   `ActionDialog` reaches all ten dialogs
 - Switches and sliders become the iOS controls: a flat track with a pane of
-  glass on it that genuinely refracts the track underneath. The pane is round
-  and near opaque at rest and swells sideways as it is held or dragged, like a
-  drop of water, thinning until the track shows through it
+  glass on it that genuinely refracts the track underneath. The pane is frosted
+  at rest and turns to clear glass as it is held, growing about its own centre
+  on two springs damped slightly differently so it wobbles as it settles. The
+  motion model is adapted from [Prismal](https://github.com/styropyr0/Prismal),
+  MIT, which was evaluated as a dependency and passed over: its renderer is
+  OpenGL per component and its look is far heavier on chromatic dispersion than
+  Apple's, but its components had the timings right
 - Surface style applies on the spot, the same way dark mode does
 - Accessibility is checked rather than assumed. The switches keep their own
   node, since the widget stays visible and carries the label; the slider's

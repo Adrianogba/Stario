@@ -14,6 +14,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
+ * The motion model is adapted from Prismal by Saurav Sajeev, MIT licensed:
+ * https://github.com/styropyr0/Prismal
+ *
+ * Copyright (c) 2025 Saurav Sajeev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  */
 
 package adrianogba.stario.launcher.ui.common.glass
@@ -61,23 +76,19 @@ import com.kyant.backdrop.shadow.Shadow
 import com.kyant.shapes.Capsule
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.max
 
 /**
  * A slider built from the same parts as [LiquidToggleView], because iOS builds
  * them the same way.
  *
- * The track is a channel with the filled part in the accent colour, and a pane
- * of glass rides it exactly as the switch's does: round and near opaque at
- * rest, swelling sideways and thinning as it is held so the track comes through
- * it, and pulling back round when released. Dragging swells it too, in
- * proportion to how fast it is moving, so a flick deforms it more than a slow
- * drag does.
+ * The track is a channel with the filled part in the accent colour, and the pane
+ * that rides it is the switch's, unchanged: a frosted lozenge at rest that turns
+ * to clear glass as it is held, growing about its own centre on two springs
+ * damped slightly differently so it wobbles as it settles.
  *
- * The refraction is real here for the same reason it is on the switch. The
- * track is drawn by this view, so the pane samples it through a layer backdrop
- * instead of approximating what is underneath.
+ * Refraction here is real for the same reason it is on the switch. The track is
+ * drawn by this view, so the pane samples it through a layer backdrop rather
+ * than approximating what is underneath.
  */
 class LiquidSliderView
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
@@ -115,6 +126,8 @@ class LiquidSliderView
 
         val position = remember { Animatable(valueState.floatValue) }
         val press = remember { Animatable(0f) }
+        val scaleX = remember { Animatable(1f) }
+        val scaleY = remember { Animatable(1f) }
 
         val track = trackColorState.value
         val accent = accentColorState.value
@@ -142,6 +155,16 @@ class LiquidSliderView
             listener?.onValueChanged(clamped)
         }
 
+        fun hold(down: Boolean) {
+            scope.launch { press.animateTo(if (down) 1f else 0f, PRESS_SPRING) }
+            scope.launch {
+                scaleX.animateTo(if (down) PRESSED_SCALE else 1f, SCALE_X_SPRING)
+            }
+            scope.launch {
+                scaleY.animateTo(if (down) PRESSED_SCALE else 1f, SCALE_Y_SPRING)
+            }
+        }
+
         Box(
             Modifier
                 .fillMaxWidth()
@@ -149,20 +172,20 @@ class LiquidSliderView
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onPress = {
-                            scope.launch { press.animateTo(1f, PRESS_SPRING) }
+                            hold(true)
 
                             tryAwaitRelease()
 
-                            scope.launch { press.animateTo(0f, PRESS_SPRING) }
+                            hold(false)
                         },
                         onTap = { offset -> report(offset.x / size.width) }
                     )
                 }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
-                        onDragStart = { scope.launch { press.animateTo(1f, PRESS_SPRING) } },
-                        onDragEnd = { scope.launch { press.animateTo(0f, PRESS_SPRING) } },
-                        onDragCancel = { scope.launch { press.animateTo(0f, PRESS_SPRING) } }
+                        onDragStart = { hold(true) },
+                        onDragEnd = { hold(false) },
+                        onDragCancel = { hold(false) }
                     ) { change, _ ->
                         report(change.position.x / size.width)
                     }
@@ -204,34 +227,25 @@ class LiquidSliderView
             Box(
                 Modifier
                     .graphicsLayer {
-                        val thumb = THUMB_SIZE.dp.toPx()
+                        val thumb = THUMB_WIDTH.dp.toPx()
                         val travel = (width.floatValue - thumb).coerceAtLeast(0f)
-                        val fraction = position.value.coerceIn(0f, 1f)
 
-                        translationX = travel * fraction
+                        translationX = travel * position.value.coerceIn(0f, 1f)
 
-                        // Held, or moving fast, both swell it, the same way the
-                        // switch's pane behaves.
-                        val speed = (abs(position.velocity) / REFERENCE_VELOCITY)
-                            .coerceIn(0f, 1f)
-                        val swell = max(press.value, speed)
-
-                        scaleX = 1f + GROWTH * swell
-                        scaleY = 1f - GROWTH * swell * VOLUME_LOSS
-
-                        // Grows towards whichever end of the track it has more
-                        // room for, so it never spills off either end.
-                        transformOrigin = TransformOrigin(fraction, 0.5f)
+                        transformOrigin = TransformOrigin(0.5f, 0.5f)
+                        this.scaleX = scaleX.value
+                        this.scaleY = scaleY.value
                     }
                     .drawBackdrop(
                         backdrop = trackBackdrop,
                         shape = { Capsule() },
                         effects = {
                             vibrancy()
-                            blur(2f.dp.toPx())
+                            blur(REST_BLUR.dp.toPx() * (1f - press.value))
                             lens(
                                 LENS_HEIGHT.dp.toPx(),
-                                LENS_AMOUNT.dp.toPx() * (0.15f + 0.85f * press.value),
+                                LENS_AMOUNT.dp.toPx() *
+                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value),
                                 chromaticAberration = true
                             )
                         },
@@ -256,7 +270,7 @@ class LiquidSliderView
                             )
                         }
                     )
-                    .size(THUMB_SIZE.dp, THUMB_SIZE.dp)
+                    .size(THUMB_WIDTH.dp, THUMB_HEIGHT.dp)
             )
         }
     }
@@ -266,21 +280,28 @@ class LiquidSliderView
     }
 
     private companion object {
-        const val HEIGHT = 40
+        const val HEIGHT = 44
         const val TRACK_HEIGHT = 10
-        const val THUMB_SIZE = 26
+
+        const val THUMB_WIDTH = 34
+        const val THUMB_HEIGHT = 24
 
         const val LENS_HEIGHT = 14f
-        const val LENS_AMOUNT = 20f
+        const val LENS_AMOUNT = 22f
 
-        const val GROWTH = 0.55f
-        const val VOLUME_LOSS = 0.45f
-        const val REFERENCE_VELOCITY = 6f
+        const val REST_BLUR = 6f
+        const val REST_LENS = 0.30f
+        const val PRESS_LENS = 1f
 
-        const val REST_OPACITY = 0.88f
-        const val HELD_OPACITY = 0.34f
+        const val PRESSED_SCALE = 1.5f
 
-        val TRAVEL_SPRING = spring<Float>(0.55f, 380f, 0.001f)
+        const val REST_OPACITY = 0.80f
+        const val HELD_OPACITY = 0.26f
+
+        val TRAVEL_SPRING = spring<Float>(1f, 1000f, 0.001f)
         val PRESS_SPRING = spring<Float>(1f, 1000f, 0.001f)
+
+        val SCALE_X_SPRING = spring<Float>(0.6f, 250f, 0.001f)
+        val SCALE_Y_SPRING = spring<Float>(0.7f, 250f, 0.001f)
     }
 }
