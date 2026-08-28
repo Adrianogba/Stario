@@ -126,7 +126,7 @@ class SearchWidget(private val activity: ThemedActivity) {
     private fun updateContainerState(container: DynamicGridLayout, shouldBeVisible: Boolean) {
         UiUtils.post {
             if (shouldBeVisible && !isAttached) {
-                container.addItem(gridItem, layoutData)
+                container.addItem(gridItem!!, layoutData)
                 isAttached = true
             } else if (!shouldBeVisible && isAttached) {
                 container.removeItem(gridItem)

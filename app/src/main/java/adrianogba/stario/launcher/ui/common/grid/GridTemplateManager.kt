@@ -116,7 +116,9 @@ class GridTemplateManager(
             // Gson can write a null here straight from the JSON, which is why
             // the original guarded it.
             for (item in itemList.orEmpty()) {
-                itemMap[item.id] = item
+                // An entry with no id could never be matched to a view, so it
+                // is dropped rather than stored under a null key.
+                itemMap[item.id ?: continue] = item
             }
         }
 

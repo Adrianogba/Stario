@@ -35,6 +35,29 @@ before trusting them.
 - The Discord link, and the four cities the location picker seeded as if they
   were suggestions
 
+**Java to Kotlin**
+
+- All 206 convertible files, leaf first so the build stayed green. Every file
+  compiles before the next one starts, and anything on a path a user can reach
+  was driven on an emulator before being committed
+- Dead SDK checks went with them. minSdk 33 made every check for R, S and
+  TIRAMISU always true, and one of them in `SearchFragment` was hiding an
+  entire second keyboard implementation that could never run
+- Three files stay as they are. `ClosingAnimationView` and
+  `GlanceConstraintLayout` extend `carbon.widget.ConstraintLayout`, which
+  declares two `getElevation()` methods with the same JVM signature, and Kotlin
+  refuses to subclass that; it is not suppressible. `PreEventNestedScrollView`
+  is an androidx shim that has to sit in the androidx package
+- Repetition collapsed where it was hiding the shape of the code, not
+  everywhere. The eight settings rows that each held a dialog and a showing
+  flag, the three session picker loops in `Media`, the four row grouping walks
+  in `WidgetsDialog`, and the 41 entry weather symbol table that was a HashMap
+  of HashMaps keyed by three int constants
+- Bugs found on the way were commented, not silently fixed: an aliasing bug in
+  `DynamicGridLayout` where cloning a grid state shares its rectangles, a
+  padding call in `WidgetsDialog` that reads the bottom inset into the top
+  slot, and a delete path that only forgets an entry when it still parses
+
 **Interface**
 
 - Language picker, System default and English, over
@@ -53,25 +76,11 @@ before trusting them.
 
 ### Doing
 
-- **Java to Kotlin.** 205 of 209 files. Across: the whole app model, the whole
-  recycler stack, the drawer and its adapters, the sheet dialogs, the keyboard
-  animation classes, `Utils`, `AdaptiveIconView`, `PopupMenu`, `GradientView`,
-  `FadingEdgeLayout` and `DialogBackgroundDimmingController`. Going leaf-first
-  so the build stays green: every batch compiles, and anything central gets
-  installed on an emulator before the next batch starts.
-- Dead SDK checks are out of every Kotlin file. minSdk 33 makes each check for
-  R, S and TIRAMISU always true. The Java files keep theirs until they are
-  converted, so each one stays a single reviewable diff.
-- What is left is one file: `DynamicGridLayout`, at 1412 lines the biggest in
-  the project.
-- `ClosingAnimationView` and `GlanceConstraintLayout` cannot be converted at all
-  while carbon is here. They extend `carbon.widget.ConstraintLayout`, which
-  exposes two declarations with the same JVM signature for `getElevation()`, and
-  Kotlin refuses to subclass that. Not suppressible; it fails the compile.
+Nothing in flight. The Kotlin migration finished; see below.
 
 ### Next
 
-In rough order, once the migration is finished:
+In rough order:
 
 1. Collapse the four sheet dialogs into one. They are the same 44 line file four
    times and only 4 lines differ between any two. Easiest real win here.
