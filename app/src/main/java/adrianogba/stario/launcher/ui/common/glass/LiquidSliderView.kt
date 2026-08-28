@@ -38,8 +38,7 @@ import android.util.AttributeSet
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.progressSemantics
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -184,24 +183,38 @@ class LiquidSliderView
                 .fillMaxWidth()
                 .height(HEIGHT.dp)
                 .pointerInput(Unit) {
-                    detectTapGestures(
-                        onPress = {
-                            hold(true)
+                    // One loop for both a tap and a drag, rather than a tap
+                    // detector beside a drag detector. Those two race: the tap
+                    // detector treats the start of a drag as a cancellation and
+                    // releases the hold, so the pane went solid again the
+                    // moment it started moving.
+                    awaitPointerEventScope {
+                        while (true) {
+                            val down = awaitFirstDown(requireUnconsumed = false)
 
-                            tryAwaitRelease()
+                            hold(true)
+                            report(fractionAt(down.position.x, size.width))
+
+                            var pointer = down
+                            while (true) {
+                                val event = awaitPointerEvent()
+                                val change = event.changes
+                                    .firstOrNull { it.id == pointer.id } ?: break
+
+                                if (!change.pressed) {
+                                    break
+                                }
+
+                                if (change.position != pointer.position) {
+                                    report(fractionAt(change.position.x, size.width))
+                                    change.consume()
+                                }
+
+                                pointer = change
+                            }
 
                             hold(false)
-                        },
-                        onTap = { offset -> report(fractionAt(offset.x, size.width)) }
-                    )
-                }
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures(
-                        onDragStart = { hold(true) },
-                        onDragEnd = { hold(false) },
-                        onDragCancel = { hold(false) }
-                    ) { change, _ ->
-                        report(fractionAt(change.position.x, size.width))
+                        }
                     }
                 }
                 // This pane is the accessibility node for the control, not the

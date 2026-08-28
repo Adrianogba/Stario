@@ -265,16 +265,16 @@ class LiquidToggleView
     }
 
     private companion object {
-        const val TRACK_WIDTH = 52
-        const val TRACK_HEIGHT = 28
+        const val TRACK_WIDTH = 46
+        const val TRACK_HEIGHT = 24
 
         // A lozenge, not a circle, and roughly the proportions Prismal uses:
         // its thumb is 40 by 24 on a 64 by 28 track.
         // Inside the track at rest, with a little margin, which is an ordinary
         // switch. Growing past the track is what the press does, and is the
         // only time the control looks like glass.
-        const val THUMB_WIDTH = 26
-        const val THUMB_HEIGHT = 22
+        const val THUMB_WIDTH = 22
+        const val THUMB_HEIGHT = 18
         const val THUMB_PADDING = 3
 
         /** Room around the track for the pane to grow into. */
