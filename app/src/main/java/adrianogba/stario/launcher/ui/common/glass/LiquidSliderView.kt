@@ -60,6 +60,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalDensity
@@ -267,18 +268,30 @@ class LiquidSliderView
                             )
                         },
                         highlight = {
-                            Highlight.Default.copy(alpha = 0.9f + 0.1f * press.value)
+                            Highlight.Default.copy(
+                                alpha = 1f,
+                                width = Highlight.Default.width * 1.4f
+                            )
                         },
                         shadow = {
+                            // A glow in the track's own colour, not a drop
+                            // shadow. Light leaves the edge of a lens rather
+                            // than being blocked by it, so a black shadow reads
+                            // as a grey halo sitting on the row.
                             Shadow(
-                                radius = (5f + 4f * press.value).dp,
-                                color = Color.Black.copy(alpha = 0.24f)
+                                radius = (5f + 5f * press.value).dp,
+                                color = lerp(track, accent, position.value.coerceIn(0f, 1f))
+                                    .copy(alpha = GLOW_ALPHA)
                             )
                         },
                         innerShadow = {
                             InnerShadow(radius = 4f.dp, alpha = 0.35f)
                         },
                         onDrawSurface = {
+                            // Barely there. The pane is transparent: what makes
+                            // it visible is the rim and what it bends, not a
+                            // white fill, and anything heavier washes the track
+                            // out into one pale blob.
                             drawRect(
                                 Color.White.copy(
                                     alpha = REST_OPACITY -
@@ -315,8 +328,10 @@ class LiquidSliderView
 
         const val PRESSED_SCALE = 1.5f
 
-        const val REST_OPACITY = 0.80f
-        const val HELD_OPACITY = 0.26f
+        const val REST_OPACITY = 0.22f
+        const val HELD_OPACITY = 0.10f
+
+        const val GLOW_ALPHA = 0.45f
 
         val TRAVEL_SPRING = spring<Float>(1f, 1000f, 0.001f)
         val PRESS_SPRING = spring<Float>(1f, 1000f, 0.001f)

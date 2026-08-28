@@ -272,8 +272,16 @@ object Glass {
             Gravity.END or Gravity.CENTER_VERTICAL
         ).apply { marginEnd = switchView.paddingEnd }
 
+        // The off track is blended towards the foreground rather than taken
+        // straight from a surface role. Now that the pane is transparent, that
+        // track is the only thing marking the control, and a surface colour on
+        // a surface row leaves nothing to see in the light theme.
         toggle.setColors(
-            resolve(context, com.google.android.material.R.attr.colorSurfaceContainerHighest),
+            ColorUtils.blendARGB(
+                resolve(context, com.google.android.material.R.attr.colorSurfaceContainerHighest),
+                resolve(context, com.google.android.material.R.attr.colorOnSurface),
+                TRACK_CONTRAST
+            ),
             resolve(context, com.google.android.material.R.attr.colorPrimaryContainer)
         )
         toggle.setCheckedSilently(switchView.isChecked)
