@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
@@ -50,26 +51,31 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
 import com.kyant.shapes.Capsule
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 /**
- * A switch whose thumb is a pane of liquid glass refracting its own track.
+ * A switch in the shape iOS gives it: a flat coloured track with a wide pane of
+ * glass riding on top.
  *
- * Follows the shape of the reference implementation in the backdrop library's
- * catalog, which is Apache-2.0, rather than inventing behaviour:
- * https://github.com/Kyant0/AndroidLiquidGlass
+ * This is one of the few places in the app where refraction is real. A lens
+ * needs pixels to bend, and the track is drawn by this view, so the pane
+ * samples it through a layer backdrop rather than approximating it. That is why
+ * the track's colour appears inside the pane, pulled towards the middle with a
+ * clear margin at the rim, instead of being painted there.
  *
- * The three things that make it Liquid Glass rather than a blurred circle:
- * the thumb samples the track through a layer backdrop, so what refracts is
- * real content rather than a stand-in; pressing swaps blur for refraction and
- * brings up a specular highlight, so the glass reacts to touch; and the thumb
- * swells while held, which is the motion Apple's guidance describes for
- * controls in the floating layer.
+ * The motion is the other half of it. The pane behaves like a drop of water
+ * being dragged: it stretches along its direction of travel, with the trailing
+ * edge giving while the leading edge keeps its place, and pulls back round once
+ * it arrives. The stretch is driven by the spring's own velocity rather than by
+ * a separate timeline, so it deforms most where it is moving fastest and eases
+ * out through the overshoot exactly as the travel does.
  */
 class LiquidToggleView
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
@@ -87,6 +93,14 @@ class LiquidToggleView
             checkedState.value = value
         }
 
+    /**
+     * Sets the state without telling [listener] about it, for when something
+     * else is already the source of truth.
+     */
+    fun setCheckedSilently(checked: Boolean) {
+        checkedState.value = checked
+    }
+
     fun setColors(track: Int, accent: Int) {
         trackColorState.value = Color(track)
         accentColorState.value = Color(accent)
@@ -98,7 +112,6 @@ class LiquidToggleView
 
         val fraction = remember { Animatable(if (checkedState.value) 1f else 0f) }
         val press = remember { Animatable(0f) }
-        val scale = remember { Animatable(1f) }
 
         val track = trackColorState.value
         val accent = accentColorState.value
@@ -107,9 +120,7 @@ class LiquidToggleView
         // a preference write animates the same way a direct tap does.
         LaunchedEffect(Unit) {
             snapshotFlow { checkedState.value }.collectLatest { checked ->
-                fraction.animateTo(
-                    if (checked) 1f else 0f, spring(0.9f, 900f, 0.001f)
-                )
+                fraction.animateTo(if (checked) 1f else 0f, TRAVEL_SPRING)
             }
         }
 
@@ -122,12 +133,10 @@ class LiquidToggleView
                     detectTapGestures(
                         onPress = {
                             scope.launch { press.animateTo(1f, PRESS_SPRING) }
-                            scope.launch { scale.animateTo(PRESSED_SCALE, SCALE_SPRING) }
 
                             tryAwaitRelease()
 
                             scope.launch { press.animateTo(0f, PRESS_SPRING) }
-                            scope.launch { scale.animateTo(1f, SCALE_SPRING) }
                         },
                         onTap = { toggle() }
                     )
@@ -139,7 +148,7 @@ class LiquidToggleView
                 Modifier
                     .layerBackdrop(trackBackdrop)
                     .clip(Capsule())
-                    .drawBehind { drawRect(lerp(track, accent, fraction.value)) }
+                    .drawBehind { drawRect(lerp(track, accent, fraction.value.coerceIn(0f, 1f))) }
                     .size(TRACK_WIDTH.dp, TRACK_HEIGHT.dp)
             )
 
@@ -147,46 +156,62 @@ class LiquidToggleView
                 Modifier
                     .graphicsLayer {
                         val padding = THUMB_PADDING.dp.toPx()
-                        val travel = (TRACK_WIDTH - THUMB_SIZE - THUMB_PADDING * 2).dp.toPx()
+                        val travel = (TRACK_WIDTH - THUMB_WIDTH - THUMB_PADDING * 2).dp.toPx()
 
                         translationX = lerp(padding, padding + travel, fraction.value)
-                        scaleX = scale.value
-                        scaleY = scale.value
+
+                        // A droplet deforms in proportion to how fast it is
+                        // being dragged, so the spring's velocity drives this
+                        // rather than a timeline of its own. It also means the
+                        // overshoot at the end wobbles the pane, which is what
+                        // makes it read as liquid rather than as a sliding pill.
+                        val speed = abs(fraction.velocity) / REFERENCE_VELOCITY
+                        val stretch = speed.coerceIn(0f, 1f)
+
+                        scaleX = 1f + STRETCH * stretch
+                        scaleY = 1f - STRETCH * stretch * VOLUME_LOSS
+
+                        // The leading edge keeps its place and the tail gives,
+                        // so the pane trails behind itself.
+                        transformOrigin = if (fraction.velocity >= 0f) {
+                            TransformOrigin(1f, 0.5f)
+                        } else {
+                            TransformOrigin(0f, 0.5f)
+                        }
                     }
                     .drawBackdrop(
                         backdrop = trackBackdrop,
                         shape = { Capsule() },
                         effects = {
-                            val progress = press.value
-
-                            // Blurred at rest, refracting while held. Swapping
-                            // between the two is what reads as glass being
-                            // pushed rather than a shape being tinted.
-                            blur(8f.dp.toPx() * (1f - progress))
+                            // The lens is on at rest, not only while held. It is
+                            // what puts the track's colour inside the pane.
+                            vibrancy()
+                            blur(2f.dp.toPx())
                             lens(
-                                5f.dp.toPx() * progress,
-                                10f.dp.toPx() * progress,
+                                LENS_HEIGHT.dp.toPx(),
+                                LENS_AMOUNT.dp.toPx() * (1f + press.value),
                                 chromaticAberration = true
                             )
                         },
                         highlight = {
-                            Highlight.Ambient.copy(
-                                width = Highlight.Ambient.width / 1.5f,
-                                blurRadius = Highlight.Ambient.blurRadius / 1.5f,
-                                alpha = press.value
-                            )
+                            Highlight.Default.copy(alpha = 0.9f + 0.1f * press.value)
                         },
                         shadow = {
-                            Shadow(radius = 4f.dp, color = Color.Black.copy(alpha = 0.05f))
+                            Shadow(
+                                radius = (6f + 4f * press.value).dp,
+                                color = Color.Black.copy(alpha = 0.22f)
+                            )
                         },
                         innerShadow = {
-                            InnerShadow(radius = 4f.dp * press.value, alpha = press.value)
+                            InnerShadow(radius = 4f.dp, alpha = 0.35f)
                         },
                         onDrawSurface = {
-                            drawRect(Color.White.copy(alpha = 1f - press.value))
+                            // A touch of white body, so the pane is a lit object
+                            // rather than a bare magnifier over the track.
+                            drawRect(Color.White.copy(alpha = 0.18f + 0.10f * press.value))
                         }
                     )
-                    .size(THUMB_SIZE.dp, THUMB_SIZE.dp)
+                    .size(THUMB_WIDTH.dp, THUMB_HEIGHT.dp)
             )
         }
     }
@@ -205,11 +230,26 @@ class LiquidToggleView
     private companion object {
         const val TRACK_WIDTH = 52
         const val TRACK_HEIGHT = 32
-        const val THUMB_SIZE = 26
-        const val THUMB_PADDING = 3
-        const val PRESSED_SCALE = 1.15f
 
+        // Wide rather than round. The pane covering most of the control is what
+        // separates this from a Material switch at a glance.
+        const val THUMB_WIDTH = 34
+        const val THUMB_HEIGHT = 28
+        const val THUMB_PADDING = 2
+
+        const val LENS_HEIGHT = 14f
+        const val LENS_AMOUNT = 20f
+
+        /** How much longer the pane gets at full speed. */
+        const val STRETCH = 0.20f
+
+        /** A stretched droplet is also thinner, since its volume is fixed. */
+        const val VOLUME_LOSS = 0.45f
+
+        /** The speed, in fraction per second, that counts as fully stretched. */
+        const val REFERENCE_VELOCITY = 6f
+
+        val TRAVEL_SPRING = spring<Float>(0.55f, 380f, 0.001f)
         val PRESS_SPRING = spring<Float>(1f, 1000f, 0.001f)
-        val SCALE_SPRING = spring<Float>(0.6f, 250f, 0.001f)
     }
 }

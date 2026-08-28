@@ -71,6 +71,15 @@ before trusting them.
 - Theme colour list wraps onto centred lines, so all twelve are visible at once
 - Glance card and search widget render as glass, cut to the same outlines their
   drawables use and still turning, tinted from the wallpaper's own colours
+- Every settings dialog and every long press menu is glass under the Liquid
+  Glass style, through a Drawable rather than a view, so one call in
+  `ActionDialog` reaches all ten dialogs
+- Switches become the iOS control: a flat track with a wide pane of glass on it
+  that genuinely refracts the track underneath, and deforms like a drop of water
+  as it travels. The switch widget stays in place and keeps drawing its own
+  label and icon, so no layout, listener or accessibility node moves
+- Choosing Material leaves all of it exactly as it was, down to the popup's
+  original interpolator
 - Weather units name both systems, and the clock toggle says what it does
 - Info section points at this fork and its own site
 

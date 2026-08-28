@@ -67,6 +67,7 @@ import adrianogba.stario.launcher.sheet.drawer.search.SearchFragment
 import adrianogba.stario.launcher.sheet.drawer.search.recyclers.adapters.WebAdapter
 import adrianogba.stario.launcher.themes.ThemedActivity
 import adrianogba.stario.launcher.ui.Measurements
+import adrianogba.stario.launcher.ui.common.glass.Glass
 import adrianogba.stario.launcher.ui.dialogs.DialogBackgroundDimmingController
 import adrianogba.stario.launcher.ui.utils.LayoutSizeObserver
 import adrianogba.stario.launcher.ui.utils.UiUtils
@@ -124,6 +125,9 @@ class Settings : ThemedActivity() {
         initFooterLinks()
 
         handleOrientation()
+
+        // The dialogs get theirs in ActionDialog; this is the screen behind them.
+        Glass.applyToSwitchesIn(root!!)
 
         root!!.post { startPostponedEnterTransition() }
     }

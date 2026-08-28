@@ -110,6 +110,8 @@ abstract class ActionDialog(
             topCornersOnly = true
         )
 
+        Glass.applyToSwitchesIn(content)
+
         val heightProvider = KeyboardHeightProvider(activity)
         this.heightProvider = heightProvider
 

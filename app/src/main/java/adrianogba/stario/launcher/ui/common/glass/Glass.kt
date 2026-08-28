@@ -19,11 +19,12 @@
 package adrianogba.stario.launcher.ui.common.glass
 
 import android.content.Context
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.view.animation.Interpolator
 import androidx.core.graphics.ColorUtils
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.materialswitch.MaterialSwitch
 import adrianogba.stario.launcher.Stario
 import adrianogba.stario.launcher.preferences.Entry
@@ -133,30 +134,112 @@ object Glass {
     }
 
     private fun applyToSwitch(switchView: MaterialSwitch) {
+        val parent = switchView.parent as? ViewGroup ?: return
+        val index = parent.indexOfChild(switchView)
         val context = switchView.context
-        val density = context.resources.displayMetrics.density
 
-        val accent = resolve(context, com.google.android.material.R.attr.colorPrimaryContainer)
-        val channel = resolve(
-            context, com.google.android.material.R.attr.colorSurfaceContainerHighest
+        // The switch is the whole row here, not just the control on the end of
+        // it: the label is its android:text and the icon is its drawableStart.
+        // So it stays visible and keeps drawing both, and only the two
+        // drawables that make up the switch graphic are blanked out. The glass
+        // pane is then laid over the space they were occupying.
+        val trackSize = switchView.trackDrawable
+        val blankWidth = trackSize?.intrinsicWidth ?: 0
+        val blankHeight = trackSize?.intrinsicHeight ?: 0
+
+        val frame = FrameLayout(context)
+        frame.id = switchView.id
+        frame.layoutParams = switchView.layoutParams
+
+        parent.removeViewAt(index)
+
+        switchView.id = View.NO_ID
+        switchView.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
         )
 
-        // The tints are what Material uses to recolour its own drawables, and
-        // they would paint straight over the gradients below.
+        // Same footprint as the drawables they replace, so the label and icon
+        // do not shift by a pixel when the style changes.
         switchView.trackTintList = null
         switchView.thumbTintList = null
         switchView.trackDecorationDrawable = null
+        switchView.trackDrawable = CheckedStateBridge(blankWidth, blankHeight) {}
 
-        switchView.trackDrawable = GlassSwitchDrawables.Track(
-            translucent(channel, TRACK_OFF_ALPHA), accent, RIM_WIDTH_DP * density,
-            (TRACK_WIDTH_DP * density).toInt(), (TRACK_HEIGHT_DP * density).toInt()
-        )
+        val toggle = LiquidToggleView(context)
+        toggle.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.END or Gravity.CENTER_VERTICAL
+        ).apply { marginEnd = switchView.paddingEnd }
 
-        switchView.thumbDrawable = GlassSwitchDrawables.Thumb(
-            translucent(channel, TRACK_OFF_ALPHA), accent,
-            (THUMB_WIDTH_DP * density).toInt(), (THUMB_HEIGHT_DP * density).toInt(),
-            RIM_WIDTH_DP * density, THUMB_GLOW_DP * density
+        toggle.setColors(
+            resolve(context, com.google.android.material.R.attr.colorSurfaceContainerHighest),
+            resolve(context, com.google.android.material.R.attr.colorPrimaryContainer)
         )
+        toggle.setCheckedSilently(switchView.isChecked)
+
+        // The screen already attached its listener to the switch, so the switch
+        // stays the thing that decides. The pane only reports taps into it.
+        toggle.listener = LiquidToggleView.OnCheckedChange { checked ->
+            if (switchView.isChecked != checked) {
+                switchView.isChecked = checked
+            }
+        }
+
+        // The other direction, for rows that call performClick on the switch.
+        // A drawable hears about a check through refreshDrawableState, so this
+        // needs none of the single listener slot the screen is already using.
+        switchView.thumbDrawable = CheckedStateBridge(0, 0) { checked ->
+            toggle.setCheckedSilently(checked)
+        }
+
+        frame.addView(switchView)
+        frame.addView(toggle)
+
+        parent.addView(frame, index)
+    }
+
+    /**
+     * A drawable that paints nothing. It reserves the footprint of whatever it
+     * replaces, and reports the check changes of the switch it is attached to.
+     */
+    private class CheckedStateBridge(
+        private val width: Int,
+        private val height: Int,
+        private val onChanged: (Boolean) -> Unit
+    ) : android.graphics.drawable.Drawable() {
+
+        private var checked = false
+
+        override fun isStateful(): Boolean = true
+
+        override fun onStateChange(state: IntArray): Boolean {
+            val next = state.any { it == android.R.attr.state_checked }
+
+            if (next != checked) {
+                checked = next
+                onChanged(next)
+            }
+
+            return false
+        }
+
+        override fun draw(canvas: android.graphics.Canvas) {
+        }
+
+        override fun setAlpha(alpha: Int) {
+        }
+
+        override fun setColorFilter(colorFilter: android.graphics.ColorFilter?) {
+        }
+
+        @Deprecated("Deprecated in Java")
+        override fun getOpacity(): Int = android.graphics.PixelFormat.TRANSPARENT
+
+        override fun getIntrinsicWidth(): Int = width
+
+        override fun getIntrinsicHeight(): Int = height
     }
 
     private fun resolve(context: Context, attribute: Int): Int {
@@ -174,8 +257,8 @@ object Glass {
      * can take it without being rewritten as springs.
      */
     @JvmStatic
-    fun interpolator(context: Context): Interpolator =
-        if (isEnabled(context)) OvershootSettleInterpolator() else FastOutSlowInInterpolator()
+    fun interpolator(context: Context, material: Interpolator): Interpolator =
+        if (isEnabled(context)) OvershootSettleInterpolator() else material
 
     /**
      * Softens a colour towards transparency, for text and icons that now sit on

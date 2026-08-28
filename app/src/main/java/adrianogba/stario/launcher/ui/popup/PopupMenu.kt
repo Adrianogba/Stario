@@ -90,7 +90,7 @@ class PopupMenu @JvmOverloads constructor(
         val enter = MaterialElevationScale(true)
         enter.setDuration(Animation.SHORT.duration.toLong())
         // Glass arrives with a little overshoot rather than easing to a stop.
-        enter.setInterpolator(Glass.interpolator(activity))
+        enter.setInterpolator(Glass.interpolator(activity, DecelerateInterpolator()))
 
         popupWindow.enterTransition = enter
 
