@@ -74,10 +74,16 @@ before trusting them.
 - Every settings dialog and every long press menu is glass under the Liquid
   Glass style, through a Drawable rather than a view, so one call in
   `ActionDialog` reaches all ten dialogs
-- Switches become the iOS control: a flat track with a wide pane of glass on it
-  that genuinely refracts the track underneath, and deforms like a drop of water
-  as it travels. The switch widget stays in place and keeps drawing its own
-  label and icon, so no layout, listener or accessibility node moves
+- Switches and sliders become the iOS controls: a flat track with a pane of
+  glass on it that genuinely refracts the track underneath. The pane is round
+  and near opaque at rest and swells sideways as it is held or dragged, like a
+  drop of water, thinning until the track shows through it
+- Surface style applies on the spot, the same way dark mode does
+- Accessibility is checked rather than assumed. The switches keep their own
+  node, since the widget stays visible and carries the label; the slider's
+  pane declares its own progress semantics, because a view at zero alpha is
+  reported as not visible and drops out of the tree, so the hidden Material
+  slider could not have carried it
 - Choosing Material leaves all of it exactly as it was, down to the popup's
   original interpolator
 - Weather units name both systems, and the clock toggle says what it does

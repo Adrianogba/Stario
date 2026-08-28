@@ -26,6 +26,7 @@ import android.widget.FrameLayout
 import android.view.animation.Interpolator
 import androidx.core.graphics.ColorUtils
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.slider.Slider
 import adrianogba.stario.launcher.Stario
 import adrianogba.stario.launcher.preferences.Entry
 import adrianogba.stario.launcher.themes.SurfaceStyle
@@ -109,16 +110,17 @@ object Glass {
     }
 
     /**
-     * Restyles every switch under [root] as a Liquid Glass switch.
+     * Restyles every switch and slider under [root] as its Liquid Glass
+     *
+     * equivalent.
      *
      * Walking the tree rather than asking each screen to opt in means one call
-     * per host reaches all of them, and screens added later get it for free.
-     * The widget itself is left in place and only its two drawables change, so
-     * the thumb travel, the row that forwards clicks into it, the listener the
-     * screen attached and the accessibility node all keep working.
+     * per host reaches all of them, and screens added later get it for free. In
+     * both cases the original widget stays in the tree and stays the thing that
+     * decides, so the listener each screen attached keeps working untouched.
      */
     @JvmStatic
-    fun applyToSwitchesIn(root: View) {
+    fun applyToControlsIn(root: View) {
         if (!isEnabled(root.context)) {
             return
         }
@@ -126,11 +128,91 @@ object Glass {
         when (root) {
             is MaterialSwitch -> applyToSwitch(root)
 
+            is Slider -> applyToSlider(root)
+
             is ViewGroup ->
                 for (index in 0 until root.childCount) {
-                    applyToSwitchesIn(root.getChildAt(index))
+                    applyToControlsIn(root.getChildAt(index))
                 }
         }
+    }
+
+    /**
+     * Unlike the switches, a slider here is only the control: its label is a
+     * separate view. So the Material one is hidden outright rather than kept
+     * drawing, and the glass one laid over the space it holds.
+     *
+     * Slider keeps a list of change listeners rather than a single slot, so
+     * both directions are ordinary listeners and none of the switch's
+     * indirection is needed.
+     */
+    private fun applyToSlider(slider: Slider) {
+        val parent = slider.parent as? ViewGroup ?: return
+        val index = parent.indexOfChild(slider)
+        val context = slider.context
+
+        val frame = FrameLayout(context)
+        frame.id = slider.id
+        frame.layoutParams = slider.layoutParams
+
+        parent.removeViewAt(index)
+
+        slider.id = View.NO_ID
+        // A view at zero alpha is reported as not visible to the user, which
+        // takes it out of the accessibility tree, so this one cannot be the
+        // node for the control. It is hidden from the tree explicitly and the
+        // glass slider carries the semantics itself.
+        slider.alpha = 0f
+        slider.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        slider.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER_VERTICAL
+        )
+
+        val span = (slider.valueTo - slider.valueFrom).takeIf { it > 0f } ?: 1f
+
+        val glass = LiquidSliderView(context)
+
+        glass.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER_VERTICAL
+        )
+        // Blended towards the foreground rather than taken straight from a
+        // surface role, so the unfilled part of the track stays visible against
+        // the row it sits on in both light and dark.
+        glass.setColors(
+            ColorUtils.blendARGB(
+                resolve(context, com.google.android.material.R.attr.colorSurfaceContainerHighest),
+                resolve(context, com.google.android.material.R.attr.colorOnSurface),
+                TRACK_CONTRAST
+            ),
+            resolve(context, com.google.android.material.R.attr.colorPrimaryContainer)
+        )
+        glass.setValueSilently((slider.value - slider.valueFrom) / span)
+
+        glass.listener = LiquidSliderView.OnValueChanged { fraction ->
+            val next = slider.valueFrom + fraction * span
+
+            // Still the thing every screen reads and listens to.
+            val clamped = next.coerceIn(slider.valueFrom, slider.valueTo)
+
+            if (slider.value != clamped) {
+                slider.value = clamped
+            }
+        }
+
+        slider.addOnChangeListener { _, value, fromUser ->
+            if (!fromUser) {
+                glass.setValueSilently((value - slider.valueFrom) / span)
+            }
+        }
+
+        frame.addView(slider)
+        frame.addView(glass)
+
+        parent.addView(frame, index)
     }
 
     private fun applyToSwitch(switchView: MaterialSwitch) {
@@ -167,6 +249,12 @@ object Glass {
         switchView.trackDrawable = CheckedStateBridge(blankWidth, blankHeight) {}
 
         val toggle = LiquidToggleView(context)
+
+        // The switch underneath is the accessibility node: it has the label,
+        // the role, the state and the actions, all of it already correct. The
+        // pane is decoration over it, so it is taken out of the tree rather
+        // than announcing the same control a second time.
+        toggle.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
         toggle.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -303,6 +391,7 @@ object Glass {
     private const val OVERSHOOT = 0.9f
 
     private const val TRACK_OFF_ALPHA = 0.55f
+    private const val TRACK_CONTRAST = 0.22f
     private const val TRACK_WIDTH_DP = 52f
     private const val TRACK_HEIGHT_DP = 32f
     private const val THUMB_WIDTH_DP = 34f

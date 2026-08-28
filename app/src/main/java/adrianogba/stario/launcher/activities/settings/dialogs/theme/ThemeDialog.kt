@@ -193,11 +193,20 @@ class ThemeDialog(activity: ThemedActivity) : ActionDialog(activity) {
         }
 
         fun pick(style: SurfaceStyle) {
+            if (style == initial) {
+                return
+            }
+
             preferences.edit()
                 .putString(ThemedActivity.SURFACE_STYLE, style.name)
                 .apply()
 
             show(style)
+
+            // Surfaces read the style when they inflate, exactly as the theme
+            // does, so this takes the same route as the dark mode switch:
+            // recreate and bring the dialog back up on the other side.
+            reopen()
         }
 
         show(initial)

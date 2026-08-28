@@ -127,7 +127,7 @@ class Settings : ThemedActivity() {
         handleOrientation()
 
         // The dialogs get theirs in ActionDialog; this is the screen behind them.
-        Glass.applyToSwitchesIn(root!!)
+        Glass.applyToControlsIn(root!!)
 
         root!!.post { startPostponedEnterTransition() }
     }
