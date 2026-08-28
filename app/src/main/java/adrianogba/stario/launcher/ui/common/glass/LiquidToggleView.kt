@@ -38,6 +38,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -142,8 +143,14 @@ class LiquidToggleView
         val trackBackdrop = rememberLayerBackdrop()
 
         Box(
+            // Bigger than the track on purpose. The pane grows by half again
+            // while held, and this view is what clips it, so the room has to
+            // exist here or the swell gets cut off at the edges.
             Modifier
-                .size(TRACK_WIDTH.dp, TRACK_HEIGHT.dp)
+                .size(
+                    (TRACK_WIDTH + SLACK * 2).dp,
+                    (TRACK_HEIGHT + SLACK * 2).dp
+                )
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onPress = {
@@ -167,6 +174,7 @@ class LiquidToggleView
         ) {
             Box(
                 Modifier
+                    .padding(SLACK.dp)
                     .layerBackdrop(trackBackdrop)
                     .clip(Capsule())
                     .drawBehind { drawRect(lerp(track, accent, fraction.value.coerceIn(0f, 1f))) }
@@ -179,7 +187,8 @@ class LiquidToggleView
                         val padding = THUMB_PADDING.dp.toPx()
                         val travel = (TRACK_WIDTH - THUMB_WIDTH - THUMB_PADDING * 2).dp.toPx()
 
-                        translationX = lerp(padding, padding + travel, fraction.value)
+                        translationX = SLACK.dp.toPx() +
+                                lerp(padding, padding + travel, fraction.value)
 
                         // Grown about its own centre, not stretched along the
                         // travel. The two axes run on springs damped slightly
@@ -253,6 +262,9 @@ class LiquidToggleView
         const val THUMB_WIDTH = 34
         const val THUMB_HEIGHT = 24
         const val THUMB_PADDING = 3
+
+        /** Room around the track for the pane to grow into. */
+        const val SLACK = 8
 
         const val LENS_HEIGHT = 14f
         const val LENS_AMOUNT = 22f

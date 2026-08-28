@@ -43,6 +43,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +62,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.AbstractComposeView
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.unit.dp
@@ -123,6 +125,7 @@ class LiquidSliderView
     @Composable
     override fun Content() {
         val scope = rememberCoroutineScope()
+        val density = LocalDensity.current
 
         val position = remember { Animatable(valueState.floatValue) }
         val press = remember { Animatable(0f) }
@@ -155,6 +158,16 @@ class LiquidSliderView
             listener?.onValueChanged(clamped)
         }
 
+        // The track is inset from the view, so a touch has to be measured
+        // against the track rather than against the full width, or the value
+        // runs ahead of the thumb at both ends.
+        fun fractionAt(x: Float, viewWidth: Int): Float {
+            val inset = with(density) { INSET.dp.toPx() }
+            val usable = (viewWidth - inset * 2f).coerceAtLeast(1f)
+
+            return (x - inset) / usable
+        }
+
         fun hold(down: Boolean) {
             scope.launch { press.animateTo(if (down) 1f else 0f, PRESS_SPRING) }
             scope.launch {
@@ -178,7 +191,7 @@ class LiquidSliderView
 
                             hold(false)
                         },
-                        onTap = { offset -> report(offset.x / size.width) }
+                        onTap = { offset -> report(fractionAt(offset.x, size.width)) }
                     )
                 }
                 .pointerInput(Unit) {
@@ -187,7 +200,7 @@ class LiquidSliderView
                         onDragEnd = { hold(false) },
                         onDragCancel = { hold(false) }
                     ) { change, _ ->
-                        report(change.position.x / size.width)
+                        report(fractionAt(change.position.x, size.width))
                     }
                 }
                 // This pane is the accessibility node for the control, not the
@@ -209,6 +222,9 @@ class LiquidSliderView
         ) {
             Box(
                 Modifier
+                    // Inset so the track stops short of the row's edge instead
+                    // of running into it, and so the pane has room at both ends.
+                    .padding(horizontal = INSET.dp)
                     .layerBackdrop(trackBackdrop)
                     .clip(Capsule())
                     .fillMaxWidth()
@@ -230,7 +246,8 @@ class LiquidSliderView
                         val thumb = THUMB_WIDTH.dp.toPx()
                         val travel = (width.floatValue - thumb).coerceAtLeast(0f)
 
-                        translationX = travel * position.value.coerceIn(0f, 1f)
+                        translationX = INSET.dp.toPx() +
+                                travel * position.value.coerceIn(0f, 1f)
 
                         transformOrigin = TransformOrigin(0.5f, 0.5f)
                         this.scaleX = scaleX.value
@@ -282,6 +299,9 @@ class LiquidSliderView
     private companion object {
         const val HEIGHT = 44
         const val TRACK_HEIGHT = 10
+
+        /** Keeps the track off the edge of the row, and leaves the pane room. */
+        const val INSET = 10
 
         const val THUMB_WIDTH = 34
         const val THUMB_HEIGHT = 24
