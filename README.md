@@ -60,38 +60,43 @@ before trusting them.
 
 **Interface**
 
-- Language picker, System default and English, over
-  `AppCompatDelegate.setApplicationLocales`. The 19 translations and the
-  `locales_config.xml` listing them were already there, so each new language is
-  one enum entry
-- Surface style option, Material or Liquid Glass, with both chips drawn in the
-  style they select so the choice is shown rather than described
-- Dark mode and theme colour apply on the spot with the dialog still open,
-  instead of restarting the process
+- Language picker, System default and English. The 19 translations were already
+  in the repo, so each new language is one enum entry
+- Surface style option, Material or Liquid Glass, applied on the spot. Both
+  chips are drawn in the style they select, so the choice is shown rather than
+  described
+- Dark mode and theme colour also apply on the spot, with the dialog still
+  open, instead of restarting the process
 - Theme colour list wraps onto centred lines, so all twelve are visible at once
-- Glance card and search widget render as glass, cut to the same outlines their
-  drawables use and still turning, tinted from the wallpaper's own colours
-- Every settings dialog and every long press menu is glass under the Liquid
-  Glass style, through a Drawable rather than a view, so one call in
-  `ActionDialog` reaches all ten dialogs
-- Switches and sliders become the iOS controls: a flat track with a pane of
-  glass on it that genuinely refracts the track underneath. The pane is frosted
-  at rest and turns to clear glass as it is held, growing about its own centre
-  on two springs damped slightly differently so it wobbles as it settles. The
-  motion model is adapted from [Prismal](https://github.com/styropyr0/Prismal),
-  MIT, which was evaluated as a dependency and passed over: its renderer is
-  OpenGL per component and its look is far heavier on chromatic dispersion than
-  Apple's, but its components had the timings right
-- Surface style applies on the spot, the same way dark mode does
-- Accessibility is checked rather than assumed. The switches keep their own
-  node, since the widget stays visible and carries the label; the slider's
-  pane declares its own progress semantics, because a view at zero alpha is
-  reported as not visible and drops out of the tree, so the hidden Material
-  slider could not have carried it
-- Choosing Material leaves all of it exactly as it was, down to the popup's
-  original interpolator
-- Weather units name both systems, and the clock toggle says what it does
-- Info section points at this fork and its own site
+
+**Liquid Glass**
+
+Only under that style. Choosing Material leaves everything exactly as it was,
+down to the popup's original interpolator.
+
+- Glance card and search widget, cut to the same outlines their drawables use
+  and still turning, tinted from the wallpaper's own colours
+- Every settings dialog and every long press menu, through a Drawable rather
+  than a view, so one call in `ActionDialog` reaches all ten dialogs. Glass
+  goes on the floating layer only, never on the rows inside it, which is both
+  Apple's rule and what its own Settings does
+- Switches and sliders become the iOS controls. At rest they are ordinary: an
+  opaque knob on a coloured track. Touching one is the whole effect, the knob
+  swelling past the track, clearing, and refracting what is under it. That
+  refraction is real, since the track is drawn by the same view and can be
+  sampled
+- The motion is adapted from [Prismal](https://github.com/styropyr0/Prismal),
+  MIT, which was cloned and run before being passed over as a dependency: it
+  renders each component through its own GLSurfaceView and leans far harder on
+  chromatic dispersion than Apple does. Its timings were right though, and the
+  useful part was the springs, position stiff and critically damped, scale soft,
+  underdamped and unequal between the axes, which is what makes the knob wobble
+  as it settles
+- Accessibility was checked against a dumped node tree rather than assumed. The
+  switches keep their own node, since the widget stays visible and carries the
+  label; the slider's pane declares its own progress semantics, because a view
+  at zero alpha leaves the tree and the hidden Material slider could not have
+  carried it
 
 ### Doing
 

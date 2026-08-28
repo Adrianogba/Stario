@@ -13,7 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/> *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
  * The motion model is adapted from Prismal by Saurav Sajeev, MIT licensed:
  * https://github.com/styropyr0/Prismal
  *
@@ -75,11 +76,11 @@ import kotlinx.coroutines.launch
  * A switch in the shape iOS gives it: a flat coloured track with a pane of glass
  * riding on top.
  *
- * The pane is a lozenge rather than a circle, and at rest it is frosted: blurred,
- * barely refracting, nearly opaque. Pressing it is what turns it into glass. It
- * swells, uniformly rather than along one axis, the blur drops away, and
- * refraction and chromatic aberration come up together, so the track underneath
- * resolves through it. Letting go runs all of that backwards.
+ * At rest it is an ordinary switch and nothing more: a coloured capsule with a
+ * solid pane sitting inside it. Touching it is the whole effect. The pane swells
+ * past the track it was sitting in, uniformly rather than along one axis, the
+ * blur drops away, the fill clears and the refraction comes up, so the track
+ * resolves through it as glass. Letting go runs all of that backwards.
  *
  * The swell is where the character is. Position uses a stiff, critically damped
  * spring so travel is decisive, while the scale uses a soft underdamped one, and
@@ -206,11 +207,15 @@ class LiquidToggleView
                             // makes the track resolve as the pane is held.
                             vibrancy()
                             blur(REST_BLUR.dp.toPx() * (1f - press.value))
+                            // No chromatic aberration. It splits what the
+                            // pane bends into red, green and blue fringes, and
+                            // over a single flat colour that reads as a rainbow
+                            // smear rather than as glass. What should come
+                            // through is the track's own colour.
                             lens(
                                 LENS_HEIGHT.dp.toPx(),
                                 LENS_AMOUNT.dp.toPx() *
-                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value),
-                                chromaticAberration = true
+                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value)
                             )
                         },
                         highlight = {
@@ -234,10 +239,7 @@ class LiquidToggleView
                             InnerShadow(radius = 4f.dp, alpha = 0.35f)
                         },
                         onDrawSurface = {
-                            // Barely there. The pane is transparent: what makes
-                            // it visible is the rim and what it bends, not a
-                            // white fill, and anything heavier washes the track
-                            // out into one pale blob.
+                            // Solid at rest, clear while held.
                             drawRect(
                                 Color.White.copy(
                                     alpha = REST_OPACITY -
@@ -264,12 +266,15 @@ class LiquidToggleView
 
     private companion object {
         const val TRACK_WIDTH = 52
-        const val TRACK_HEIGHT = 32
+        const val TRACK_HEIGHT = 28
 
         // A lozenge, not a circle, and roughly the proportions Prismal uses:
         // its thumb is 40 by 24 on a 64 by 28 track.
-        const val THUMB_WIDTH = 34
-        const val THUMB_HEIGHT = 24
+        // Inside the track at rest, with a little margin, which is an ordinary
+        // switch. Growing past the track is what the press does, and is the
+        // only time the control looks like glass.
+        const val THUMB_WIDTH = 26
+        const val THUMB_HEIGHT = 22
         const val THUMB_PADDING = 3
 
         /** Room around the track for the pane to grow into. */
@@ -285,8 +290,11 @@ class LiquidToggleView
         /** How much the pane grows while held. */
         const val PRESSED_SCALE = 1.5f
 
-        const val REST_OPACITY = 0.22f
-        const val HELD_OPACITY = 0.10f
+        // Solid at rest and clear under the finger. The pane is a knob until
+        // it is touched, and only then does it become something you can see
+        // the track through.
+        const val REST_OPACITY = 0.95f
+        const val HELD_OPACITY = 0.14f
 
         const val GLOW_ALPHA = 0.45f
 

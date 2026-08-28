@@ -245,10 +245,14 @@ class LiquidSliderView
                 Modifier
                     .graphicsLayer {
                         val thumb = THUMB_WIDTH.dp.toPx()
-                        val travel = (width.floatValue - thumb).coerceAtLeast(0f)
 
+                        // The pane's centre runs the length of the bar, not its
+                        // edges, so at either end it sits over the tip and
+                        // overhangs it. Constraining the edges instead pins the
+                        // pane inside the bar and it never reaches the ends.
                         translationX = INSET.dp.toPx() +
-                                travel * position.value.coerceIn(0f, 1f)
+                                width.floatValue * position.value.coerceIn(0f, 1f) -
+                                thumb / 2f
 
                         transformOrigin = TransformOrigin(0.5f, 0.5f)
                         this.scaleX = scaleX.value
@@ -260,11 +264,15 @@ class LiquidSliderView
                         effects = {
                             vibrancy()
                             blur(REST_BLUR.dp.toPx() * (1f - press.value))
+                            // No chromatic aberration. It splits what the
+                            // pane bends into red, green and blue fringes, and
+                            // over a single flat colour that reads as a rainbow
+                            // smear rather than as glass. What should come
+                            // through is the track's own colour.
                             lens(
                                 LENS_HEIGHT.dp.toPx(),
                                 LENS_AMOUNT.dp.toPx() *
-                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value),
-                                chromaticAberration = true
+                                        (REST_LENS + (PRESS_LENS - REST_LENS) * press.value)
                             )
                         },
                         highlight = {
@@ -288,10 +296,7 @@ class LiquidSliderView
                             InnerShadow(radius = 4f.dp, alpha = 0.35f)
                         },
                         onDrawSurface = {
-                            // Barely there. The pane is transparent: what makes
-                            // it visible is the rim and what it bends, not a
-                            // white fill, and anything heavier washes the track
-                            // out into one pale blob.
+                            // Solid at rest, clear while held.
                             drawRect(
                                 Color.White.copy(
                                     alpha = REST_OPACITY -
@@ -313,8 +318,11 @@ class LiquidSliderView
         const val HEIGHT = 44
         const val TRACK_HEIGHT = 10
 
-        /** Keeps the track off the edge of the row, and leaves the pane room. */
-        const val INSET = 10
+        /**
+         * Keeps the bar off the edge of the row, and leaves room for the pane
+         * to hang past either end of it while grown.
+         */
+        const val INSET = 24
 
         const val THUMB_WIDTH = 34
         const val THUMB_HEIGHT = 24
@@ -328,8 +336,11 @@ class LiquidSliderView
 
         const val PRESSED_SCALE = 1.5f
 
-        const val REST_OPACITY = 0.22f
-        const val HELD_OPACITY = 0.10f
+        // Solid at rest and clear under the finger. The pane is a knob until
+        // it is touched, and only then does it become something you can see
+        // the track through.
+        const val REST_OPACITY = 0.95f
+        const val HELD_OPACITY = 0.14f
 
         const val GLOW_ALPHA = 0.45f
 
